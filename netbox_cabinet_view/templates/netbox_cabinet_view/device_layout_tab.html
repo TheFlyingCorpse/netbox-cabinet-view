@@ -1,6 +1,9 @@
 {% extends 'dcim/device/base.html' %}
 
 {% block content %}
+{% if ledger_enabled and has_mounts %}
+  {% include 'netbox_cabinet_view/inc/slot_ledger.html' %}
+{% endif %}
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">

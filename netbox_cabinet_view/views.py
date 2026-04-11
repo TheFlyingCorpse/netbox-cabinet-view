@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -9,6 +10,7 @@ from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
 from . import filtersets, forms, models, tables
+from .ledger import enumerate_ledger
 from .svg import CabinetLayoutSVG
 
 
@@ -183,15 +185,29 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'placements__device_bay__installed_device__role',
             'placements__module_bay__installed_module__module_type',
         )
+        has_mounts = mounts.exists()
         profile = getattr(instance.device_type, 'cabinet_profile', None)
+
+        # Finding D (v0.4.0): opt-in slot ledger. Default False so the
+        # normal "just show me the picture" workflow is unchanged.
+        plugin_cfg = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
+        ledger_enabled = plugin_cfg.get('SLOT_LEDGER_ENABLED', False)
+        ledger_sections = (
+            enumerate_ledger(instance, user=request.user)
+            if (ledger_enabled and has_mounts)
+            else []
+        )
+
         return {
             'mounts': mounts,
-            'has_mounts': mounts.exists(),
+            'has_mounts': has_mounts,
             # Internal dimensions for the empty-state scale-reference
             # canvas. May be None — the template degrades gracefully to
             # a plain Bootstrap card + button when unset.
             'internal_width_mm': profile.internal_width_mm if profile else None,
             'internal_height_mm': profile.internal_height_mm if profile else None,
+            'ledger_enabled': ledger_enabled,
+            'ledger_sections': ledger_sections,
         }
 
 

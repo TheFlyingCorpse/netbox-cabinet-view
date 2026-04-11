@@ -32,6 +32,14 @@ class CabinetViewConfig(PluginConfig):
         # (too narrow for a layout) and whenever the patch can't resolve its
         # target URL. Flip to False if a NetBox upgrade breaks the patch.
         'PATCH_RACK_ELEVATION': True,
+        # Finding D (v0.4.0): opt-in spreadsheet-style slot ledger above
+        # the SVG on the Layout tab. Default False because the table is
+        # noisy for dense cabinets and some users just want the picture.
+        # Flip to True in PLUGINS_CONFIG to try it:
+        #   PLUGINS_CONFIG = {
+        #       'netbox_cabinet_view': {'SLOT_LEDGER_ENABLED': True},
+        #   }
+        'SLOT_LEDGER_ENABLED': False,
     }
 
     def ready(self):
