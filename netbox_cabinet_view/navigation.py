@@ -5,21 +5,8 @@ menu = PluginMenu(
     label='Cabinet View',
     groups=(
         (
-            'Carriers & Mounts',
+            'Mounts & Placements',
             (
-                PluginMenuItem(
-                    link='plugins:netbox_cabinet_view:carrier_list',
-                    link_text='Carriers',
-                    permissions=['netbox_cabinet_view.view_carrier'],
-                    buttons=(
-                        PluginMenuButton(
-                            link='plugins:netbox_cabinet_view:carrier_add',
-                            title='Add',
-                            icon_class='mdi mdi-plus-thick',
-                            permissions=['netbox_cabinet_view.add_carrier'],
-                        ),
-                    ),
-                ),
                 PluginMenuItem(
                     link='plugins:netbox_cabinet_view:mount_list',
                     link_text='Mounts',
@@ -30,6 +17,19 @@ menu = PluginMenu(
                             title='Add',
                             icon_class='mdi mdi-plus-thick',
                             permissions=['netbox_cabinet_view.add_mount'],
+                        ),
+                    ),
+                ),
+                PluginMenuItem(
+                    link='plugins:netbox_cabinet_view:placement_list',
+                    link_text='Placements',
+                    permissions=['netbox_cabinet_view.view_placement'],
+                    buttons=(
+                        PluginMenuButton(
+                            link='plugins:netbox_cabinet_view:placement_add',
+                            title='Add',
+                            icon_class='mdi mdi-plus-thick',
+                            permissions=['netbox_cabinet_view.add_placement'],
                         ),
                     ),
                 ),

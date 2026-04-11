@@ -37,69 +37,35 @@ class DeviceTypeProfileDeleteView(generic.ObjectDeleteView):
 
 
 # ---------------------------------------------------------------------------
-# Carrier
-# ---------------------------------------------------------------------------
-
-class CarrierListView(generic.ObjectListView):
-    queryset = models.Carrier.objects.annotate(
-        mount_count=Count('mounts'),
-    ).select_related('host_device')
-    table = tables.CarrierTable
-    filterset = filtersets.CarrierFilterSet
-    filterset_form = forms.CarrierFilterForm
-
-
-class CarrierView(generic.ObjectView):
-    queryset = models.Carrier.objects.select_related('host_device').prefetch_related(
-        'mounts__device__device_type',
-        'mounts__device_bay__installed_device__device_type',
-        'mounts__module_bay__installed_module__module_type',
-    )
-
-    def get_extra_context(self, request, instance):
-        mount_table = tables.MountTable(
-            data=instance.mounts.restrict(request.user, 'view').select_related(
-                'device__device_type',
-                'device_bay__installed_device__device_type',
-                'module_bay__installed_module__module_type',
-            )
-        )
-        mount_table.configure(request)
-        return {'mount_table': mount_table}
-
-
-class CarrierEditView(generic.ObjectEditView):
-    queryset = models.Carrier.objects.all()
-    form = forms.CarrierForm
-
-
-class CarrierDeleteView(generic.ObjectDeleteView):
-    queryset = models.Carrier.objects.all()
-
-
-# ---------------------------------------------------------------------------
 # Mount
 # ---------------------------------------------------------------------------
 
 class MountListView(generic.ObjectListView):
-    queryset = models.Mount.objects.select_related(
-        'carrier__host_device',
-        'device__device_type',
-        'device_bay__installed_device__device_type',
-        'module_bay__installed_module__module_type',
-    )
+    queryset = models.Mount.objects.annotate(
+        placement_count=Count('placements'),
+    ).select_related('host_device')
     table = tables.MountTable
     filterset = filtersets.MountFilterSet
     filterset_form = forms.MountFilterForm
 
 
 class MountView(generic.ObjectView):
-    queryset = models.Mount.objects.select_related(
-        'carrier__host_device',
-        'device__device_type',
-        'device_bay__installed_device__device_type',
-        'module_bay__installed_module__module_type',
+    queryset = models.Mount.objects.select_related('host_device').prefetch_related(
+        'placements__device__device_type',
+        'placements__device_bay__installed_device__device_type',
+        'placements__module_bay__installed_module__module_type',
     )
+
+    def get_extra_context(self, request, instance):
+        placement_table = tables.PlacementTable(
+            data=instance.placements.restrict(request.user, 'view').select_related(
+                'device__device_type',
+                'device_bay__installed_device__device_type',
+                'module_bay__installed_module__module_type',
+            )
+        )
+        placement_table.configure(request)
+        return {'placement_table': placement_table}
 
 
 class MountEditView(generic.ObjectEditView):
@@ -112,33 +78,67 @@ class MountDeleteView(generic.ObjectDeleteView):
 
 
 # ---------------------------------------------------------------------------
+# Placement
+# ---------------------------------------------------------------------------
+
+class PlacementListView(generic.ObjectListView):
+    queryset = models.Placement.objects.select_related(
+        'mount__host_device',
+        'device__device_type',
+        'device_bay__installed_device__device_type',
+        'module_bay__installed_module__module_type',
+    )
+    table = tables.PlacementTable
+    filterset = filtersets.PlacementFilterSet
+    filterset_form = forms.PlacementFilterForm
+
+
+class PlacementView(generic.ObjectView):
+    queryset = models.Placement.objects.select_related(
+        'mount__host_device',
+        'device__device_type',
+        'device_bay__installed_device__device_type',
+        'module_bay__installed_module__module_type',
+    )
+
+
+class PlacementEditView(generic.ObjectEditView):
+    queryset = models.Placement.objects.all()
+    form = forms.PlacementForm
+
+
+class PlacementDeleteView(generic.ObjectDeleteView):
+    queryset = models.Placement.objects.all()
+
+
+# ---------------------------------------------------------------------------
 # Device detail integration — Layout tab + SVG endpoint
 # ---------------------------------------------------------------------------
 
 @register_model_view(Device, 'cabinet_layout', path='cabinet-layout')
 class DeviceCabinetLayoutView(generic.ObjectView):
-    """Adds a 'Layout' tab to the Device detail page, showing the host's carriers."""
+    """Adds a 'Layout' tab to the Device detail page, showing the host's mounts."""
 
     queryset = Device.objects.all()
     template_name = 'netbox_cabinet_view/device_layout_tab.html'
     tab = ViewTab(
         label=_('Layout'),
-        badge=lambda obj: obj.cabinet_carriers.count(),
-        permission='netbox_cabinet_view.view_carrier',
+        badge=lambda obj: obj.cabinet_mounts.count(),
+        permission='netbox_cabinet_view.view_mount',
         weight=2000,
         hide_if_empty=True,
     )
 
     def get_extra_context(self, request, instance):
-        carriers = instance.cabinet_carriers.prefetch_related(
-            'mounts__device__device_type',
-            'mounts__device__role',
-            'mounts__device_bay__installed_device__device_type',
-            'mounts__device_bay__installed_device__role',
-            'mounts__module_bay__installed_module__module_type',
+        mounts = instance.cabinet_mounts.prefetch_related(
+            'placements__device__device_type',
+            'placements__device__role',
+            'placements__device_bay__installed_device__device_type',
+            'placements__device_bay__installed_device__role',
+            'placements__module_bay__installed_module__module_type',
         )
         return {
-            'carriers': carriers,
+            'mounts': mounts,
         }
 
 
@@ -154,7 +154,7 @@ class DeviceCabinetLayoutSVGView(View):
       layout into a U slot without distortion).
     * ``?v=<str>`` — cache-buster token. Ignored by the view but varies
       the URL so the browser invalidates its cached copy whenever the
-      host device's carriers or mounts change.
+      host device's mounts or placements change.
     """
 
     def get(self, request, pk):

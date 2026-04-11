@@ -20,20 +20,6 @@ urlpatterns = [
     path('device-type-profiles/<int:pk>/',
          include(get_model_urls('netbox_cabinet_view', 'devicetypeprofile'))),
 
-    # Carrier
-    path('carriers/',
-         views.CarrierListView.as_view(), name='carrier_list'),
-    path('carriers/add/',
-         views.CarrierEditView.as_view(), name='carrier_add'),
-    path('carriers/<int:pk>/',
-         views.CarrierView.as_view(), name='carrier'),
-    path('carriers/<int:pk>/edit/',
-         views.CarrierEditView.as_view(), name='carrier_edit'),
-    path('carriers/<int:pk>/delete/',
-         views.CarrierDeleteView.as_view(), name='carrier_delete'),
-    path('carriers/<int:pk>/',
-         include(get_model_urls('netbox_cabinet_view', 'carrier'))),
-
     # Mount
     path('mounts/',
          views.MountListView.as_view(), name='mount_list'),
@@ -47,4 +33,18 @@ urlpatterns = [
          views.MountDeleteView.as_view(), name='mount_delete'),
     path('mounts/<int:pk>/',
          include(get_model_urls('netbox_cabinet_view', 'mount'))),
+
+    # Placement
+    path('placements/',
+         views.PlacementListView.as_view(), name='placement_list'),
+    path('placements/add/',
+         views.PlacementEditView.as_view(), name='placement_add'),
+    path('placements/<int:pk>/',
+         views.PlacementView.as_view(), name='placement'),
+    path('placements/<int:pk>/edit/',
+         views.PlacementEditView.as_view(), name='placement_edit'),
+    path('placements/<int:pk>/delete/',
+         views.PlacementDeleteView.as_view(), name='placement_delete'),
+    path('placements/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'placement'))),
 ]

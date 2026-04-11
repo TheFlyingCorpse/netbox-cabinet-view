@@ -7,12 +7,12 @@ from utilities.forms.fields import DynamicModelChoiceField
 from utilities.forms.rendering import FieldSet
 
 from .choices import (
-    CarrierSubtypeChoices,
-    CarrierTypeChoices,
+    MountSubtypeChoices,
+    MountTypeChoices,
     OrientationChoices,
     UnitChoices,
 )
-from .models import Carrier, DeviceTypeProfile, Mount
+from .models import DeviceTypeProfile, Mount, Placement
 
 
 # ---------------------------------------------------------------------------
@@ -28,12 +28,12 @@ class DeviceTypeProfileForm(NetBoxModelForm):
     fieldsets = (
         FieldSet('device_type', name=_('Device Type')),
         FieldSet(
-            'hosts_carriers', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
+            'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             name=_('Host / enclosure'),
         ),
         FieldSet(
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
-            name=_('Mountable on carriers'),
+            name=_('Mountable on mounts'),
         ),
         FieldSet('tags', name=_('Details')),
     )
@@ -42,7 +42,7 @@ class DeviceTypeProfileForm(NetBoxModelForm):
         model = DeviceTypeProfile
         fields = (
             'device_type',
-            'hosts_carriers', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
+            'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             'tags',
         )
@@ -51,22 +51,22 @@ class DeviceTypeProfileForm(NetBoxModelForm):
 class DeviceTypeProfileFilterForm(NetBoxModelFilterSetForm):
     model = DeviceTypeProfile
 
-    hosts_carriers = forms.NullBooleanField(required=False, label='Hosts carriers')
+    hosts_mounts = forms.NullBooleanField(required=False, label='Hosts mounts')
     mountable_on = forms.MultipleChoiceField(
-        choices=CarrierTypeChoices, required=False, label='Mountable on',
+        choices=MountTypeChoices, required=False, label='Mountable on',
     )
 
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', name=_('Search')),
-        FieldSet('hosts_carriers', 'mountable_on', name=_('Attributes')),
+        FieldSet('hosts_mounts', 'mountable_on', name=_('Attributes')),
     )
 
 
 # ---------------------------------------------------------------------------
-# Carrier
+# Mount
 # ---------------------------------------------------------------------------
 
-class CarrierForm(NetBoxModelForm):
+class MountForm(NetBoxModelForm):
     host_device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
         label='Host Device',
@@ -74,9 +74,9 @@ class CarrierForm(NetBoxModelForm):
     )
 
     fieldsets = (
-        FieldSet('host_device', 'name', 'description', name=_('Carrier')),
+        FieldSet('host_device', 'name', 'description', name=_('Mount')),
         FieldSet(
-            'carrier_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit',
             name=_('Type'),
         ),
         FieldSet(
@@ -85,16 +85,16 @@ class CarrierForm(NetBoxModelForm):
         ),
         FieldSet(
             'rows', 'row_height_mm',
-            name=_('Grid layout (grid carriers only)'),
+            name=_('Grid layout (grid mounts only)'),
         ),
         FieldSet('tags', name=_('Details')),
     )
 
     class Meta:
-        model = Carrier
+        model = Mount
         fields = (
             'host_device', 'name', 'description',
-            'carrier_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit',
             'offset_x_mm', 'offset_y_mm',
             'length_mm', 'width_mm', 'height_mm',
             'rows', 'row_height_mm',
@@ -102,17 +102,17 @@ class CarrierForm(NetBoxModelForm):
         )
 
 
-class CarrierFilterForm(NetBoxModelFilterSetForm):
-    model = Carrier
+class MountFilterForm(NetBoxModelFilterSetForm):
+    model = Mount
 
     host_device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(), required=False, label='Host Device',
     )
-    carrier_type = forms.MultipleChoiceField(
-        choices=CarrierTypeChoices, required=False, label='Carrier type',
+    mount_type = forms.MultipleChoiceField(
+        choices=MountTypeChoices, required=False, label='Mount type',
     )
     subtype = forms.MultipleChoiceField(
-        choices=CarrierSubtypeChoices, required=False, label='Subtype',
+        choices=MountSubtypeChoices, required=False, label='Subtype',
     )
     orientation = forms.MultipleChoiceField(
         choices=OrientationChoices, required=False, label='Orientation',
@@ -123,30 +123,30 @@ class CarrierFilterForm(NetBoxModelFilterSetForm):
 
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', name=_('Search')),
-        FieldSet('host_device_id', 'carrier_type', 'subtype', 'orientation', 'unit', name=_('Attributes')),
+        FieldSet('host_device_id', 'mount_type', 'subtype', 'orientation', 'unit', name=_('Attributes')),
     )
 
 
 # ---------------------------------------------------------------------------
-# Mount
+# Placement
 # ---------------------------------------------------------------------------
 
-class MountForm(NetBoxModelForm):
-    carrier = DynamicModelChoiceField(
-        queryset=Carrier.objects.all(),
-        label='Carrier',
+class PlacementForm(NetBoxModelForm):
+    mount = DynamicModelChoiceField(
+        queryset=Mount.objects.all(),
+        label='Mount',
     )
     device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
         required=False,
         label='Device (standalone)',
-        help_text='Use for bare rail mounts. Leave blank when using a DeviceBay or ModuleBay.',
+        help_text='Use for bare rail placements. Leave blank when using a DeviceBay or ModuleBay.',
     )
     device_bay = DynamicModelChoiceField(
         queryset=DeviceBay.objects.all(),
         required=False,
         label='Device Bay',
-        help_text='Use for chassis/parent-child mounts.',
+        help_text='Use for chassis/parent-child placements.',
     )
     module_bay = DynamicModelChoiceField(
         queryset=ModuleBay.objects.all(),
@@ -156,18 +156,18 @@ class MountForm(NetBoxModelForm):
     )
 
     fieldsets = (
-        FieldSet('carrier', name=_('Carrier')),
+        FieldSet('mount', name=_('Mount')),
         FieldSet('device', 'device_bay', 'module_bay', name=_('Target (pick exactly one)')),
         FieldSet('position', 'size', name=_('1D placement (DIN / subrack / busbar)')),
-        FieldSet('row', 'row_span', name=_('Grid placement (grid carriers only)')),
+        FieldSet('row', 'row_span', name=_('Grid placement (grid mounts only)')),
         FieldSet('position_x', 'position_y', 'size_x', 'size_y', name=_('2D placement (mounting plate)')),
         FieldSet('tags', name=_('Details')),
     )
 
     class Meta:
-        model = Mount
+        model = Placement
         fields = (
-            'carrier', 'device', 'device_bay', 'module_bay',
+            'mount', 'device', 'device_bay', 'module_bay',
             'position', 'size',
             'row', 'row_span',
             'position_x', 'position_y', 'size_x', 'size_y',
@@ -175,11 +175,11 @@ class MountForm(NetBoxModelForm):
         )
 
 
-class MountFilterForm(NetBoxModelFilterSetForm):
-    model = Mount
+class PlacementFilterForm(NetBoxModelFilterSetForm):
+    model = Placement
 
-    carrier_id = DynamicModelChoiceField(
-        queryset=Carrier.objects.all(), required=False, label='Carrier',
+    mount_id = DynamicModelChoiceField(
+        queryset=Mount.objects.all(), required=False, label='Mount',
     )
     device_id = DynamicModelChoiceField(
         queryset=Device.objects.all(), required=False, label='Device',
@@ -187,5 +187,5 @@ class MountFilterForm(NetBoxModelFilterSetForm):
 
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', name=_('Search')),
-        FieldSet('carrier_id', 'device_id', name=_('Attributes')),
+        FieldSet('mount_id', 'device_id', name=_('Attributes')),
     )

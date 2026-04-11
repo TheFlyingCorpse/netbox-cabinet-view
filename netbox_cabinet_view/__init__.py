@@ -26,7 +26,7 @@ class CabinetViewConfig(PluginConfig):
         # Whether the Layout tab's SVG embeds DeviceType/ModuleType front images by default.
         'INCLUDE_IMAGES_DEFAULT': True,
         # Monkey-patch the core `RackElevationSVG.draw_device_front` so that
-        # devices whose DeviceType has `hosts_carriers=True` render their
+        # devices whose DeviceType has `hosts_mounts=True` render their
         # cabinet layout SVG inside the rack elevation at their U slot.
         # Falls back to the stock `DeviceType.front_image` for 1U devices
         # (too narrow for a layout) and whenever the patch can't resolve its

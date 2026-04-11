@@ -5,12 +5,12 @@
 .cabinet-outline { fill: none; stroke: #888; stroke-width: 2; stroke-dasharray: 4 3; }
 .cabinet-label   { font: 600 13px sans-serif; fill: #555; }
 
-.carrier { stroke: #333; stroke-width: 1; }
-.carrier.din-rail       { fill: #c0c7d1; }
-.carrier.subrack        { fill: #e3ebf1; stroke: #456; }
-.carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
-.carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
-.carrier-label          { font: 500 11px sans-serif; fill: #444; }
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
 .slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }

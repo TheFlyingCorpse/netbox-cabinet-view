@@ -8,11 +8,11 @@ DynamicModelChoiceField autocomplete widgets can reverse the expected
 """
 from rest_framework import routers
 
-from .views import CarrierViewSet, DeviceTypeProfileViewSet, MountViewSet
+from .views import DeviceTypeProfileViewSet, MountViewSet, PlacementViewSet
 
 router = routers.DefaultRouter()
 router.register('device-type-profiles', DeviceTypeProfileViewSet)
-router.register('carriers', CarrierViewSet)
 router.register('mounts', MountViewSet)
+router.register('placements', PlacementViewSet)
 
 urlpatterns = router.urls

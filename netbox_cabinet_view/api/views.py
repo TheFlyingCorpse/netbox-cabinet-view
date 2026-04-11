@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 
-from ..models import Carrier, DeviceTypeProfile, Mount
-from .serializers import CarrierSerializer, DeviceTypeProfileSerializer, MountSerializer
+from ..models import DeviceTypeProfile, Mount, Placement
+from .serializers import DeviceTypeProfileSerializer, MountSerializer, PlacementSerializer
 
 
 class DeviceTypeProfileViewSet(ModelViewSet):
@@ -9,11 +9,11 @@ class DeviceTypeProfileViewSet(ModelViewSet):
     serializer_class = DeviceTypeProfileSerializer
 
 
-class CarrierViewSet(ModelViewSet):
-    queryset = Carrier.objects.all()
-    serializer_class = CarrierSerializer
-
-
 class MountViewSet(ModelViewSet):
     queryset = Mount.objects.all()
     serializer_class = MountSerializer
+
+
+class PlacementViewSet(ModelViewSet):
+    queryset = Placement.objects.all()
+    serializer_class = PlacementSerializer

@@ -5,12 +5,12 @@ from dcim.models import Device, DeviceType
 from netbox.filtersets import NetBoxModelFilterSet
 
 from .choices import (
-    CarrierSubtypeChoices,
-    CarrierTypeChoices,
+    MountSubtypeChoices,
+    MountTypeChoices,
     OrientationChoices,
     UnitChoices,
 )
-from .models import Carrier, DeviceTypeProfile, Mount
+from .models import DeviceTypeProfile, Mount, Placement
 
 
 class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
@@ -18,12 +18,12 @@ class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
         queryset=DeviceType.objects.all(),
         label='Device Type (ID)',
     )
-    mountable_on = django_filters.MultipleChoiceFilter(choices=CarrierTypeChoices)
+    mountable_on = django_filters.MultipleChoiceFilter(choices=MountTypeChoices)
 
     class Meta:
         model = DeviceTypeProfile
         fields = (
-            'id', 'device_type_id', 'hosts_carriers', 'mountable_on', 'mountable_subtype',
+            'id', 'device_type_id', 'hosts_mounts', 'mountable_on', 'mountable_subtype',
         )
 
     def search(self, queryset, name, value):
@@ -33,21 +33,21 @@ class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
         )
 
 
-class CarrierFilterSet(NetBoxModelFilterSet):
+class MountFilterSet(NetBoxModelFilterSet):
     host_device_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Device.objects.all(),
         label='Host Device (ID)',
     )
-    carrier_type = django_filters.MultipleChoiceFilter(choices=CarrierTypeChoices)
-    subtype = django_filters.MultipleChoiceFilter(choices=CarrierSubtypeChoices)
+    mount_type = django_filters.MultipleChoiceFilter(choices=MountTypeChoices)
+    subtype = django_filters.MultipleChoiceFilter(choices=MountSubtypeChoices)
     orientation = django_filters.MultipleChoiceFilter(choices=OrientationChoices)
     unit = django_filters.MultipleChoiceFilter(choices=UnitChoices)
 
     class Meta:
-        model = Carrier
+        model = Mount
         fields = (
             'id', 'name', 'host_device_id',
-            'carrier_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit',
         )
 
     def search(self, queryset, name, value):
@@ -56,10 +56,10 @@ class CarrierFilterSet(NetBoxModelFilterSet):
         )
 
 
-class MountFilterSet(NetBoxModelFilterSet):
-    carrier_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Carrier.objects.all(),
-        label='Carrier (ID)',
+class PlacementFilterSet(NetBoxModelFilterSet):
+    mount_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=Mount.objects.all(),
+        label='Mount (ID)',
     )
     device_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Device.objects.all(),
@@ -67,14 +67,14 @@ class MountFilterSet(NetBoxModelFilterSet):
     )
 
     class Meta:
-        model = Mount
+        model = Placement
         fields = (
-            'id', 'carrier_id', 'device_id', 'device_bay', 'module_bay',
+            'id', 'mount_id', 'device_id', 'device_bay', 'module_bay',
             'position', 'size', 'row', 'row_span',
         )
 
     def search(self, queryset, name, value):
         return queryset.filter(
             Q(device__name__icontains=value)
-            | Q(carrier__name__icontains=value)
+            | Q(mount__name__icontains=value)
         )
