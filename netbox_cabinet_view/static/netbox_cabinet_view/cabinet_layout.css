@@ -17,3 +17,19 @@
 .label       { font: 500 11px sans-serif; pointer-events: none; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Finding F, v0.4.0 — high-contrast mode for field tablets in bright light. */
+@media (prefers-contrast: more) {
+  .cabinet-outline { stroke: #fff; stroke-width: 3; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { stroke: #bbb; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+}

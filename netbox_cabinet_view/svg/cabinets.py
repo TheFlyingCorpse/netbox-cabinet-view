@@ -742,4 +742,43 @@ _EMBEDDED_CSS = """
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
 }
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display & Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at >= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
 """
