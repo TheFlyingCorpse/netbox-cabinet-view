@@ -12,7 +12,7 @@ back to the canonical seed values.
 
 Creates:
   * a Site + Location + Manufacturer + several DeviceRoles
-  * 11 DeviceType + DeviceTypeProfile rows covering all four carrier types
+  * 11 DeviceType + DeviceMountProfile rows covering all five mount types
     and both host + mountable roles
   * Devices wired up into six scenarios (DIN rail, mounting plate, WDM 8-slot
     shelf, WDM 2-slot shelf, LV panel busbar, modular PLC backplane)
@@ -37,7 +37,12 @@ from dcim.models import (
     Rack,
     Site,
 )
-from netbox_cabinet_view.models import DeviceTypeProfile, Mount, Placement
+from netbox_cabinet_view.models import (
+    DeviceMountProfile,
+    ModuleMountProfile,
+    Mount,
+    Placement,
+)
 
 
 def goc(_model_cls, defaults=None, **lookup):
@@ -64,8 +69,15 @@ def ensure_device_type(mfr, slug, model, **extras):
 
 
 def ensure_profile(dt, **fields):
-    obj, _ = DeviceTypeProfile.objects.update_or_create(
+    obj, _ = DeviceMountProfile.objects.update_or_create(
         device_type=dt, defaults=fields,
+    )
+    return obj
+
+
+def ensure_module_profile(mt, **fields):
+    obj, _ = ModuleMountProfile.objects.update_or_create(
+        module_type=mt, defaults=fields,
     )
     return obj
 
@@ -336,7 +348,27 @@ class Command(BaseCommand):
         mt_io = goc(ModuleType, manufacturer=mfr, model='DI 16x24VDC')
 
         # ------------------------------------------------------------------
-        # DeviceTypeProfiles
+        # ModuleMountProfiles (new in v0.4.0)
+        #
+        # Modules need per-type footprints just like devices do, otherwise
+        # every module renders at size=1 on its host mount. These are the
+        # profiles for the module types used in scenarios K (ODF cassettes)
+        # and J (IED chassis modules); the sizes here are in mm since all
+        # scenarios that use ModuleBay-backed placements drive the mount's
+        # unit=mm.
+        # ------------------------------------------------------------------
+        ensure_module_profile(mt_io, mountable_on='subrack', footprint_primary=10)
+        ensure_module_profile(mt_splice_cassette, mountable_on='grid', footprint_primary=70)
+        ensure_module_profile(mt_psu_module,    mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_cpu_module,    mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_bin_io_module, mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_ana_io_module, mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_hs_io_module,  mountable_on='grid', footprint_primary=60)
+        ensure_module_profile(mt_eth_module,    mountable_on='grid', footprint_primary=60)
+        ensure_module_profile(mt_fibre_module,  mountable_on='grid', footprint_primary=60)
+
+        # ------------------------------------------------------------------
+        # DeviceMountProfiles
         # ------------------------------------------------------------------
         ensure_profile(dt_din_rail,      hosts_mounts=True, internal_width_mm=480, internal_height_mm=80)
         ensure_profile(dt_relay,         mountable_on='din_rail', mountable_subtype='ts35', footprint_primary=1)

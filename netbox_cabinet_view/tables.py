@@ -3,17 +3,17 @@ import django_tables2 as tables
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import ChoiceFieldColumn
 
-from .models import DeviceTypeProfile, Mount, Placement
+from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
 
 
-class DeviceTypeProfileTable(NetBoxTable):
+class DeviceMountProfileTable(NetBoxTable):
     device_type = tables.Column(linkify=True)
     hosts_mounts = tables.BooleanColumn()
     mountable_on = ChoiceFieldColumn()
     mountable_subtype = ChoiceFieldColumn()
 
     class Meta(NetBoxTable.Meta):
-        model = DeviceTypeProfile
+        model = DeviceMountProfile
         fields = (
             'pk', 'id', 'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
@@ -23,6 +23,24 @@ class DeviceTypeProfileTable(NetBoxTable):
         default_columns = (
             'device_type', 'hosts_mounts', 'mountable_on', 'mountable_subtype',
             'footprint_primary', 'actions',
+        )
+
+
+class ModuleMountProfileTable(NetBoxTable):
+    module_type = tables.Column(linkify=True)
+    mountable_on = ChoiceFieldColumn()
+    mountable_subtype = ChoiceFieldColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ModuleMountProfile
+        fields = (
+            'pk', 'id', 'module_type',
+            'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'actions',
+        )
+        default_columns = (
+            'module_type', 'mountable_on', 'mountable_subtype',
+            'footprint_primary', 'footprint_secondary', 'actions',
         )
 
 

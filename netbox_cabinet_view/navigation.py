@@ -36,18 +36,31 @@ menu = PluginMenu(
             ),
         ),
         (
-            'Device Type Profiles',
+            'Mount Profiles',
             (
                 PluginMenuItem(
-                    link='plugins:netbox_cabinet_view:devicetypeprofile_list',
-                    link_text='Device Type Profiles',
-                    permissions=['netbox_cabinet_view.view_devicetypeprofile'],
+                    link='plugins:netbox_cabinet_view:devicemountprofile_list',
+                    link_text='Device Mount Profiles',
+                    permissions=['netbox_cabinet_view.view_devicemountprofile'],
                     buttons=(
                         PluginMenuButton(
-                            link='plugins:netbox_cabinet_view:devicetypeprofile_add',
+                            link='plugins:netbox_cabinet_view:devicemountprofile_add',
                             title='Add',
                             icon_class='mdi mdi-plus-thick',
-                            permissions=['netbox_cabinet_view.add_devicetypeprofile'],
+                            permissions=['netbox_cabinet_view.add_devicemountprofile'],
+                        ),
+                    ),
+                ),
+                PluginMenuItem(
+                    link='plugins:netbox_cabinet_view:modulemountprofile_list',
+                    link_text='Module Mount Profiles',
+                    permissions=['netbox_cabinet_view.view_modulemountprofile'],
+                    buttons=(
+                        PluginMenuButton(
+                            link='plugins:netbox_cabinet_view:modulemountprofile_add',
+                            title='Add',
+                            icon_class='mdi mdi-plus-thick',
+                            permissions=['netbox_cabinet_view.add_modulemountprofile'],
                         ),
                     ),
                 ),

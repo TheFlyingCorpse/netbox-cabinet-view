@@ -13,27 +13,51 @@ from .svg import CabinetLayoutSVG
 
 
 # ---------------------------------------------------------------------------
-# DeviceTypeProfile
+# DeviceMountProfile
 # ---------------------------------------------------------------------------
 
-class DeviceTypeProfileListView(generic.ObjectListView):
-    queryset = models.DeviceTypeProfile.objects.select_related('device_type__manufacturer')
-    table = tables.DeviceTypeProfileTable
-    filterset = filtersets.DeviceTypeProfileFilterSet
-    filterset_form = forms.DeviceTypeProfileFilterForm
+class DeviceMountProfileListView(generic.ObjectListView):
+    queryset = models.DeviceMountProfile.objects.select_related('device_type__manufacturer')
+    table = tables.DeviceMountProfileTable
+    filterset = filtersets.DeviceMountProfileFilterSet
+    filterset_form = forms.DeviceMountProfileFilterForm
 
 
-class DeviceTypeProfileView(generic.ObjectView):
-    queryset = models.DeviceTypeProfile.objects.select_related('device_type__manufacturer')
+class DeviceMountProfileView(generic.ObjectView):
+    queryset = models.DeviceMountProfile.objects.select_related('device_type__manufacturer')
 
 
-class DeviceTypeProfileEditView(generic.ObjectEditView):
-    queryset = models.DeviceTypeProfile.objects.all()
-    form = forms.DeviceTypeProfileForm
+class DeviceMountProfileEditView(generic.ObjectEditView):
+    queryset = models.DeviceMountProfile.objects.all()
+    form = forms.DeviceMountProfileForm
 
 
-class DeviceTypeProfileDeleteView(generic.ObjectDeleteView):
-    queryset = models.DeviceTypeProfile.objects.all()
+class DeviceMountProfileDeleteView(generic.ObjectDeleteView):
+    queryset = models.DeviceMountProfile.objects.all()
+
+
+# ---------------------------------------------------------------------------
+# ModuleMountProfile (new in v0.4.0)
+# ---------------------------------------------------------------------------
+
+class ModuleMountProfileListView(generic.ObjectListView):
+    queryset = models.ModuleMountProfile.objects.select_related('module_type__manufacturer')
+    table = tables.ModuleMountProfileTable
+    filterset = filtersets.ModuleMountProfileFilterSet
+    filterset_form = forms.ModuleMountProfileFilterForm
+
+
+class ModuleMountProfileView(generic.ObjectView):
+    queryset = models.ModuleMountProfile.objects.select_related('module_type__manufacturer')
+
+
+class ModuleMountProfileEditView(generic.ObjectEditView):
+    queryset = models.ModuleMountProfile.objects.all()
+    form = forms.ModuleMountProfileForm
+
+
+class ModuleMountProfileDeleteView(generic.ObjectDeleteView):
+    queryset = models.ModuleMountProfile.objects.all()
 
 
 # ---------------------------------------------------------------------------

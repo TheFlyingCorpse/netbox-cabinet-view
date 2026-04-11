@@ -1,12 +1,22 @@
 from rest_framework.viewsets import ModelViewSet
 
-from ..models import DeviceTypeProfile, Mount, Placement
-from .serializers import DeviceTypeProfileSerializer, MountSerializer, PlacementSerializer
+from ..models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
+from .serializers import (
+    DeviceMountProfileSerializer,
+    ModuleMountProfileSerializer,
+    MountSerializer,
+    PlacementSerializer,
+)
 
 
-class DeviceTypeProfileViewSet(ModelViewSet):
-    queryset = DeviceTypeProfile.objects.all()
-    serializer_class = DeviceTypeProfileSerializer
+class DeviceMountProfileViewSet(ModelViewSet):
+    queryset = DeviceMountProfile.objects.all()
+    serializer_class = DeviceMountProfileSerializer
+
+
+class ModuleMountProfileViewSet(ModelViewSet):
+    queryset = ModuleMountProfile.objects.all()
+    serializer_class = ModuleMountProfileSerializer
 
 
 class MountViewSet(ModelViewSet):

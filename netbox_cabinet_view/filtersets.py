@@ -1,7 +1,7 @@
 import django_filters
 from django.db.models import Q
 
-from dcim.models import Device, DeviceType
+from dcim.models import Device, DeviceType, ModuleType
 from netbox.filtersets import NetBoxModelFilterSet
 
 from .choices import (
@@ -10,10 +10,10 @@ from .choices import (
     OrientationChoices,
     UnitChoices,
 )
-from .models import DeviceTypeProfile, Mount, Placement
+from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
 
 
-class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
+class DeviceMountProfileFilterSet(NetBoxModelFilterSet):
     device_type_id = django_filters.ModelMultipleChoiceFilter(
         queryset=DeviceType.objects.all(),
         label='Device Type (ID)',
@@ -21,7 +21,7 @@ class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
     mountable_on = django_filters.MultipleChoiceFilter(choices=MountTypeChoices)
 
     class Meta:
-        model = DeviceTypeProfile
+        model = DeviceMountProfile
         fields = (
             'id', 'device_type_id', 'hosts_mounts', 'mountable_on', 'mountable_subtype',
         )
@@ -30,6 +30,26 @@ class DeviceTypeProfileFilterSet(NetBoxModelFilterSet):
         return queryset.filter(
             Q(device_type__model__icontains=value)
             | Q(device_type__manufacturer__name__icontains=value)
+        )
+
+
+class ModuleMountProfileFilterSet(NetBoxModelFilterSet):
+    module_type_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ModuleType.objects.all(),
+        label='Module Type (ID)',
+    )
+    mountable_on = django_filters.MultipleChoiceFilter(choices=MountTypeChoices)
+
+    class Meta:
+        model = ModuleMountProfile
+        fields = (
+            'id', 'module_type_id', 'mountable_on', 'mountable_subtype',
+        )
+
+    def search(self, queryset, name, value):
+        return queryset.filter(
+            Q(module_type__model__icontains=value)
+            | Q(module_type__manufacturer__name__icontains=value)
         )
 
 

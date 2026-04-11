@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from dcim.models import Device, DeviceBay, DeviceType, ModuleBay
+from dcim.models import Device, DeviceBay, DeviceType, ModuleBay, ModuleType
 from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
 from utilities.forms.fields import DynamicModelChoiceField
 from utilities.forms.rendering import FieldSet
@@ -12,14 +12,14 @@ from .choices import (
     OrientationChoices,
     UnitChoices,
 )
-from .models import DeviceTypeProfile, Mount, Placement
+from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
 
 
 # ---------------------------------------------------------------------------
-# DeviceTypeProfile
+# DeviceMountProfile (formerly DeviceTypeProfile)
 # ---------------------------------------------------------------------------
 
-class DeviceTypeProfileForm(NetBoxModelForm):
+class DeviceMountProfileForm(NetBoxModelForm):
     device_type = DynamicModelChoiceField(
         queryset=DeviceType.objects.all(),
         label='Device Type',
@@ -39,7 +39,7 @@ class DeviceTypeProfileForm(NetBoxModelForm):
     )
 
     class Meta:
-        model = DeviceTypeProfile
+        model = DeviceMountProfile
         fields = (
             'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
@@ -48,8 +48,8 @@ class DeviceTypeProfileForm(NetBoxModelForm):
         )
 
 
-class DeviceTypeProfileFilterForm(NetBoxModelFilterSetForm):
-    model = DeviceTypeProfile
+class DeviceMountProfileFilterForm(NetBoxModelFilterSetForm):
+    model = DeviceMountProfile
 
     hosts_mounts = forms.NullBooleanField(required=False, label='Hosts mounts')
     mountable_on = forms.MultipleChoiceField(
@@ -59,6 +59,47 @@ class DeviceTypeProfileFilterForm(NetBoxModelFilterSetForm):
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', name=_('Search')),
         FieldSet('hosts_mounts', 'mountable_on', name=_('Attributes')),
+    )
+
+
+# ---------------------------------------------------------------------------
+# ModuleMountProfile (new in v0.4.0)
+# ---------------------------------------------------------------------------
+
+class ModuleMountProfileForm(NetBoxModelForm):
+    module_type = DynamicModelChoiceField(
+        queryset=ModuleType.objects.all(),
+        label='Module Type',
+    )
+
+    fieldsets = (
+        FieldSet('module_type', name=_('Module Type')),
+        FieldSet(
+            'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            name=_('Mountable on mounts'),
+        ),
+        FieldSet('tags', name=_('Details')),
+    )
+
+    class Meta:
+        model = ModuleMountProfile
+        fields = (
+            'module_type',
+            'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'tags',
+        )
+
+
+class ModuleMountProfileFilterForm(NetBoxModelFilterSetForm):
+    model = ModuleMountProfile
+
+    mountable_on = forms.MultipleChoiceField(
+        choices=MountTypeChoices, required=False, label='Mountable on',
+    )
+
+    fieldsets = (
+        FieldSet('q', 'filter_id', 'tag', name=_('Search')),
+        FieldSet('mountable_on', name=_('Attributes')),
     )
 
 

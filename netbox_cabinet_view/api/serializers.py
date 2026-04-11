@@ -5,20 +5,34 @@ REST API in v1.
 """
 from rest_framework import serializers
 
-from ..models import DeviceTypeProfile, Mount, Placement
+from ..models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
 
 
-class DeviceTypeProfileSerializer(serializers.ModelSerializer):
+class DeviceMountProfileSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='plugins-api:netbox_cabinet_view-api:devicetypeprofile-detail'
+        view_name='plugins-api:netbox_cabinet_view-api:devicemountprofile-detail'
     )
     display = serializers.CharField(read_only=True, source='__str__')
 
     class Meta:
-        model = DeviceTypeProfile
+        model = DeviceMountProfile
         fields = (
             'id', 'url', 'display', 'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
+            'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+        )
+
+
+class ModuleMountProfileSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='plugins-api:netbox_cabinet_view-api:modulemountprofile-detail'
+    )
+    display = serializers.CharField(read_only=True, source='__str__')
+
+    class Meta:
+        model = ModuleMountProfile
+        fields = (
+            'id', 'url', 'display', 'module_type',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
         )
 

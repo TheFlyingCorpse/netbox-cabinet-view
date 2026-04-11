@@ -19,12 +19,12 @@ from .choices import (
 
 
 # ---------------------------------------------------------------------------
-# DeviceTypeProfile
+# DeviceMountProfile (formerly DeviceTypeProfile)
 # ---------------------------------------------------------------------------
 
-class DeviceTypeProfile(NetBoxModel):
+class DeviceMountProfile(NetBoxModel):
     """
-    Per-DeviceType declaration of cabinet-view behaviour.
+    Per-DeviceType declaration of cabinet-view mounting behaviour.
 
     A single profile on a DeviceType can cover two roles:
 
@@ -38,6 +38,11 @@ class DeviceTypeProfile(NetBoxModel):
 
     A DeviceType can be both (a subrack that is itself mounted on a plate), or
     either, or neither. One profile per DeviceType.
+
+    Named ``DeviceMountProfile`` (renamed from ``DeviceTypeProfile`` in v0.4.0)
+    for symmetry with ``ModuleMountProfile`` and to avoid implying kinship with
+    NetBox 4.5's core ``dcim.ModuleTypeProfile`` which is an unrelated concept
+    (reusable attribute schema, not mount geometry).
     """
 
     device_type = models.OneToOneField(
@@ -88,14 +93,101 @@ class DeviceTypeProfile(NetBoxModel):
 
     class Meta:
         ordering = ('device_type',)
-        verbose_name = 'Device Type Profile'
-        verbose_name_plural = 'Device Type Profiles'
+        verbose_name = 'Device Mount Profile'
+        verbose_name_plural = 'Device Mount Profiles'
 
     def __str__(self):
-        return f'{self.device_type} — cabinet profile'
+        return f'{self.device_type} — mount profile'
 
     def get_absolute_url(self):
-        return reverse('plugins:netbox_cabinet_view:devicetypeprofile', args=[self.pk])
+        return reverse('plugins:netbox_cabinet_view:devicemountprofile', args=[self.pk])
+
+    def clean(self):
+        super().clean()
+        if self.mountable_on and not self.footprint_primary:
+            raise ValidationError({
+                'footprint_primary': 'Required when a mountable mount type is set.',
+            })
+        if self.mountable_subtype and not self.mountable_on:
+            raise ValidationError({
+                'mountable_on': 'Must be set when a mountable subtype is chosen.',
+            })
+        if (
+            self.mountable_on
+            and self.mountable_subtype
+            and self.mountable_subtype not in MOUNT_TYPE_SUBTYPES.get(self.mountable_on, set())
+        ):
+            raise ValidationError({
+                'mountable_subtype': (
+                    f'Subtype "{self.mountable_subtype}" is not valid for mount type '
+                    f'"{self.mountable_on}".'
+                ),
+            })
+
+
+# ---------------------------------------------------------------------------
+# ModuleMountProfile (new in v0.4.0)
+# ---------------------------------------------------------------------------
+
+class ModuleMountProfile(NetBoxModel):
+    """
+    Per-ModuleType declaration of cabinet-view mounting behaviour for
+    plug-in modules.
+
+    Mirror of ``DeviceMountProfile``'s "mountable" role, scoped to
+    ``dcim.ModuleType``. When a Placement is created with
+    ``module_bay=X`` and the bay's ``installed_module.module_type``
+    has a profile, the Placement's ``size`` (1D/grid) or
+    ``size_x``/``size_y`` (2D) auto-fill from this profile's
+    ``footprint_primary`` / ``footprint_secondary``.
+
+    ModuleTypes don't host mounts (no ``hosts_mounts`` field here)
+    and don't have interior dimensions — modules are always themselves
+    mounted on some containing device's mount. This model captures
+    only the "where does this module fit" side of the story.
+
+    Not to be confused with NetBox 4.5's core ``dcim.ModuleTypeProfile``
+    which is an unrelated concept — a reusable attribute schema
+    (key/value definitions) inheritable by ModuleTypes.
+    """
+
+    module_type = models.OneToOneField(
+        to='dcim.ModuleType',
+        on_delete=models.CASCADE,
+        related_name='cabinet_profile',
+    )
+
+    mountable_on = models.CharField(
+        max_length=30,
+        blank=True,
+        choices=MountTypeChoices,
+        help_text='Mount type this module fits on. Leave blank to accept any mount type.',
+    )
+    mountable_subtype = models.CharField(
+        max_length=30,
+        blank=True,
+        choices=MountSubtypeChoices,
+        help_text='Specific mount subtype (HP-3U, TS35, …). Leave blank to accept any subtype.',
+    )
+    footprint_primary = models.PositiveSmallIntegerField(
+        null=True, blank=True,
+        help_text='Width in mount units (HP, DIN modules, or mm — matches the mount\'s unit).',
+    )
+    footprint_secondary = models.PositiveSmallIntegerField(
+        null=True, blank=True,
+        help_text='Height in mount units. 2D mounts (mounting plate) only.',
+    )
+
+    class Meta:
+        ordering = ('module_type',)
+        verbose_name = 'Module Mount Profile'
+        verbose_name_plural = 'Module Mount Profiles'
+
+    def __str__(self):
+        return f'{self.module_type} — mount profile'
+
+    def get_absolute_url(self):
+        return reverse('plugins:netbox_cabinet_view:modulemountprofile', args=[self.pk])
 
     def clean(self):
         super().clean()
@@ -373,7 +465,7 @@ class Placement(NetBoxModel):
         null=True, blank=True,
         help_text=(
             'Width in mount units. Leave blank to default to the mounted '
-            "device's DeviceTypeProfile.footprint_primary (slots are fixed-width)."
+            "device's DeviceMountProfile.footprint_primary (slots are fixed-width)."
         ),
     )
 
@@ -400,14 +492,14 @@ class Placement(NetBoxModel):
         null=True, blank=True,
         help_text=(
             'Width in mm (mounting plates only). Leave blank to default to '
-            "the mounted device's DeviceTypeProfile.footprint_primary."
+            "the mounted device's DeviceMountProfile.footprint_primary."
         ),
     )
     size_y = models.PositiveIntegerField(
         null=True, blank=True,
         help_text=(
             'Height in mm (mounting plates only). Leave blank to default to '
-            "the mounted device's DeviceTypeProfile.footprint_secondary."
+            "the mounted device's DeviceMountProfile.footprint_secondary."
         ),
     )
 
@@ -483,22 +575,27 @@ class Placement(NetBoxModel):
     @property
     def effective_profile(self):
         """
-        DeviceTypeProfile of the placed device, if any.
+        DeviceMountProfile or ModuleMountProfile for the placed entity, if any.
 
         Slot sizes (``size``, ``size_x``, ``size_y``) default to this
-        profile's ``footprint_primary`` / ``footprint_secondary`` when the
-        user leaves them blank on the form. ModuleBay-backed placements
-        don't get a profile default in this stage (a ModuleTypeProfile
-        model is added in a later stage).
+        profile's ``footprint_primary`` / ``footprint_secondary`` when
+        the user leaves them blank on the form. Resolution order:
+
+        * ``device`` → the device's DeviceType.cabinet_profile
+        * ``device_bay`` → the installed child device's DeviceType.cabinet_profile
+        * ``module_bay`` with installed_module → that ModuleType.cabinet_profile
+          (introduced in v0.4.0; modules finally get per-type footprints)
+        * anything else → None (empty bay, unresolved placement)
         """
-        dev = None
         if self.device_id:
-            dev = self.device
-        elif self.device_bay_id and self.device_bay.installed_device_id:
-            dev = self.device_bay.installed_device
-        if dev is None:
-            return None
-        return getattr(dev.device_type, 'cabinet_profile', None)
+            return getattr(self.device.device_type, 'cabinet_profile', None)
+        if self.device_bay_id and self.device_bay.installed_device_id:
+            return getattr(self.device_bay.installed_device.device_type, 'cabinet_profile', None)
+        if self.module_bay_id:
+            mod = getattr(self.module_bay, 'installed_module', None)
+            if mod is not None:
+                return getattr(mod.module_type, 'cabinet_profile', None)
+        return None
 
     # ------------------------------------------------------------------
     # Validation
@@ -543,7 +640,7 @@ class Placement(NetBoxModel):
                 raise ValidationError({
                     'size': (
                         'Required for 1D mounts. Either set a value or '
-                        "configure the placed device's DeviceTypeProfile.footprint_primary."
+                        "configure the placed device's DeviceMountProfile.footprint_primary."
                     ),
                 })
             if any(v is not None for v in (self.position_x, self.position_y, self.size_x, self.size_y)):
@@ -625,7 +722,7 @@ class Placement(NetBoxModel):
                 raise ValidationError({
                     'size': (
                         'Required for grid mounts. Either set a value or '
-                        "configure the placed device's DeviceTypeProfile.footprint_primary."
+                        "configure the placed device's DeviceMountProfile.footprint_primary."
                     ),
                 })
             if any(v is not None for v in (self.position_x, self.position_y, self.size_x, self.size_y)):
@@ -682,30 +779,30 @@ class Placement(NetBoxModel):
                 'module_bay': 'ModuleBay must belong to the mount\'s host device.',
             })
 
-        # 4. Compatibility: placed device's profile must agree with the mount.
-        eff = None
-        if self.device_id:
-            eff = self.device
-        elif self.device_bay_id:
-            eff = self.device_bay.installed_device  # may be None if bay is empty
-        if eff is not None:
-            profile = getattr(eff.device_type, 'cabinet_profile', None)
-            if profile and profile.mountable_on:
-                if profile.mountable_on != mount.mount_type:
-                    raise ValidationError({
-                        'device': (
-                            f'Device type declares mountable_on="{profile.mountable_on}" '
-                            f'but mount type is "{mount.mount_type}".'
-                        ),
-                    })
-                if (
-                    profile.mountable_subtype
-                    and mount.subtype
-                    and profile.mountable_subtype != mount.subtype
-                ):
-                    raise ValidationError({
-                        'device': (
-                            f'Device type declares mountable_subtype="{profile.mountable_subtype}" '
-                            f'but mount subtype is "{mount.subtype}".'
-                        ),
-                    })
+        # 4. Compatibility: the placed entity's profile must agree with
+        #    the mount. Applies to device-backed placements (via
+        #    DeviceMountProfile) AND module-backed placements (via
+        #    ModuleTypeProfile, new in v0.4.0).
+        profile = self.effective_profile
+        field_for_error = (
+            'device' if (self.device_id or self.device_bay_id) else 'module_bay'
+        )
+        if profile and profile.mountable_on:
+            if profile.mountable_on != mount.mount_type:
+                raise ValidationError({
+                    field_for_error: (
+                        f'Profile declares mountable_on="{profile.mountable_on}" '
+                        f'but mount type is "{mount.mount_type}".'
+                    ),
+                })
+            if (
+                profile.mountable_subtype
+                and mount.subtype
+                and profile.mountable_subtype != mount.subtype
+            ):
+                raise ValidationError({
+                    field_for_error: (
+                        f'Profile declares mountable_subtype="{profile.mountable_subtype}" '
+                        f'but mount subtype is "{mount.subtype}".'
+                    ),
+                })

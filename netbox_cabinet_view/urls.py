@@ -5,20 +5,34 @@ from utilities.urls import get_model_urls
 from . import views
 
 urlpatterns = [
-    # DeviceTypeProfile
-    path('device-type-profiles/',
-         views.DeviceTypeProfileListView.as_view(), name='devicetypeprofile_list'),
-    path('device-type-profiles/add/',
-         views.DeviceTypeProfileEditView.as_view(), name='devicetypeprofile_add'),
-    path('device-type-profiles/<int:pk>/',
-         views.DeviceTypeProfileView.as_view(), name='devicetypeprofile'),
-    path('device-type-profiles/<int:pk>/edit/',
-         views.DeviceTypeProfileEditView.as_view(), name='devicetypeprofile_edit'),
-    path('device-type-profiles/<int:pk>/delete/',
-         views.DeviceTypeProfileDeleteView.as_view(), name='devicetypeprofile_delete'),
+    # DeviceMountProfile
+    path('device-mount-profiles/',
+         views.DeviceMountProfileListView.as_view(), name='devicemountprofile_list'),
+    path('device-mount-profiles/add/',
+         views.DeviceMountProfileEditView.as_view(), name='devicemountprofile_add'),
+    path('device-mount-profiles/<int:pk>/',
+         views.DeviceMountProfileView.as_view(), name='devicemountprofile'),
+    path('device-mount-profiles/<int:pk>/edit/',
+         views.DeviceMountProfileEditView.as_view(), name='devicemountprofile_edit'),
+    path('device-mount-profiles/<int:pk>/delete/',
+         views.DeviceMountProfileDeleteView.as_view(), name='devicemountprofile_delete'),
     # Auto-registered feature views (changelog, journal, …)
-    path('device-type-profiles/<int:pk>/',
-         include(get_model_urls('netbox_cabinet_view', 'devicetypeprofile'))),
+    path('device-mount-profiles/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'devicemountprofile'))),
+
+    # ModuleMountProfile
+    path('module-mount-profiles/',
+         views.ModuleMountProfileListView.as_view(), name='modulemountprofile_list'),
+    path('module-mount-profiles/add/',
+         views.ModuleMountProfileEditView.as_view(), name='modulemountprofile_add'),
+    path('module-mount-profiles/<int:pk>/',
+         views.ModuleMountProfileView.as_view(), name='modulemountprofile'),
+    path('module-mount-profiles/<int:pk>/edit/',
+         views.ModuleMountProfileEditView.as_view(), name='modulemountprofile_edit'),
+    path('module-mount-profiles/<int:pk>/delete/',
+         views.ModuleMountProfileDeleteView.as_view(), name='modulemountprofile_delete'),
+    path('module-mount-profiles/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'modulemountprofile'))),
 
     # Mount
     path('mounts/',
