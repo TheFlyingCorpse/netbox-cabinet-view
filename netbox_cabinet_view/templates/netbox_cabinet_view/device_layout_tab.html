@@ -1,44 +1,153 @@
 {% extends 'dcim/device/base.html' %}
 
 {% block content %}
+{% if ledger_enabled and has_mounts %}
+  {% include 'netbox_cabinet_view/inc/slot_ledger.html' %}
+{% endif %}
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">
       <h5 class="card-header d-flex justify-content-between align-items-center">
         <span>Cabinet Layout</span>
-        <a href="{% url 'plugins:netbox_cabinet_view:carrier_add' %}?host_device={{ object.pk }}"
+        <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
            class="btn btn-sm btn-primary">
-          <i class="mdi mdi-plus-thick"></i> Add Carrier
+          <i class="mdi mdi-plus-thick"></i> Add Mount
         </a>
       </h5>
-      <div class="card-body text-center">
-        {% if carriers %}
+      <div class="card-body text-center p-0">
+        {% if has_mounts %}
           <object type="image/svg+xml"
+                  id="cabinet-layout-svg-embed"
                   data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
                   style="max-width: 100%; height: auto;">
             Cabinet layout for {{ object }}
           </object>
         {% else %}
-          <div class="text-muted py-4">
-            No carriers defined for this device.
-            <div class="mt-2">
-              <a href="{% url 'plugins:netbox_cabinet_view:carrier_add' %}?host_device={{ object.pk }}"
-                 class="btn btn-sm btn-outline-primary">
-                Add the first carrier
+          {# ========================================================== #}
+          {# Finding B (v0.4.0): empty-state scale-reference canvas.     #}
+          {#                                                             #}
+          {# When the device has a profile but no mounts yet, render a   #}
+          {# dashed rectangle sized to the internal_width/height_mm so   #}
+          {# users see the cabinet's actual scale before they pick a    #}
+          {# mount type. Centered CTA button offers the "+ first mount"  #}
+          {# flow. If the profile has no internal dims, degrade to a     #}
+          {# plain card with just the CTA.                               #}
+          {# ========================================================== #}
+          {% if internal_width_mm and internal_height_mm %}
+            {# 2 px per mm, matches CabinetLayoutSVG.DEFAULT_MM_TO_PX   #}
+            {% widthratio internal_width_mm 1 2 as canvas_w %}
+            {% widthratio internal_height_mm 1 2 as canvas_h %}
+            <div style="padding: 24px;">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 {{ canvas_w }} {{ canvas_h }}"
+                   style="max-width: 100%; max-height: 420px; height: auto;">
+                <rect x="2" y="2"
+                      width="{{ canvas_w|add:'-4' }}"
+                      height="{{ canvas_h|add:'-4' }}"
+                      fill="none"
+                      stroke="#6c7078"
+                      stroke-width="2"
+                      stroke-dasharray="6 4"
+                      rx="4" />
+                <foreignObject x="0" y="0" width="{{ canvas_w }}" height="{{ canvas_h }}">
+                  <div xmlns="http://www.w3.org/1999/xhtml"
+                       style="display: flex; flex-direction: column;
+                              align-items: center; justify-content: center;
+                              width: 100%; height: 100%;
+                              font-family: -apple-system, 'Segoe UI', sans-serif;">
+                    <div style="font-size: 14px; color: #9aa2ad; margin-bottom: 4px;">
+                      No mounts defined
+                    </div>
+                    <div style="font-size: 11px; color: #6c7078; margin-bottom: 12px;">
+                      Interior: {{ internal_width_mm }} × {{ internal_height_mm }} mm
+                    </div>
+                    <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
+                       class="btn btn-sm btn-primary">
+                      <i class="mdi mdi-plus-thick"></i> Add the first mount
+                    </a>
+                  </div>
+                </foreignObject>
+              </svg>
+            </div>
+          {% else %}
+            <div class="text-muted py-5">
+              <div class="mb-2">No mounts defined for this device.</div>
+              <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
+                 class="btn btn-sm btn-primary">
+                <i class="mdi mdi-plus-thick"></i> Add the first mount
               </a>
             </div>
-          </div>
+          {% endif %}
         {% endif %}
       </div>
     </div>
   </div>
 </div>
 
-{% if carriers %}
+{% if has_mounts %}
+{# =================================================================== #}
+{# Finding C (v0.4.0): 2D click-anywhere handler for mounting plates.  #}
+{#                                                                      #}
+{# The SVG renderer emits one transparent `.slot.empty-slot.mount-2d`   #}
+{# rect per 2D mount, tagged with data-mount-pk + data-mm-per-px +      #}
+{# data-origin-x/y. On click, we read the pointer's offset inside that  #}
+{# rect, convert to mm relative to the mount's origin, round to the    #}
+{# nearest mm, and navigate to the PlacementForm with mount, position_x #}
+{# and position_y pre-filled. 1D and grid mounts already have per-slot  #}
+{# <a> hyperlinks; they don't need this JS.                             #}
+{# =================================================================== #}
+<script>
+(function() {
+  const obj = document.getElementById('cabinet-layout-svg-embed');
+  if (!obj) return;
+  const placementAddUrl = "{% url 'plugins:netbox_cabinet_view:placement_add' %}";
+
+  function wireUp2DClicks() {
+    const doc = obj.contentDocument;
+    if (!doc) return;
+    const rects = doc.querySelectorAll('.slot.empty-slot.mount-2d');
+    rects.forEach(function(rect) {
+      if (rect.dataset.wired) return;
+      rect.dataset.wired = '1';
+      rect.addEventListener('click', function(evt) {
+        const mountPk = rect.getAttribute('data-mount-pk');
+        const mmPerPx = parseFloat(rect.getAttribute('data-mm-per-px') || '0.5');
+        const originX = parseFloat(rect.getAttribute('data-origin-x') || '0');
+        const originY = parseFloat(rect.getAttribute('data-origin-y') || '0');
+        // svgwrite rects with fill_opacity=0 still receive pointer
+        // events; offsetX/offsetY on the SVGGraphicsElement map to
+        // the viewBox's user space, same coordinate system as
+        // originX/originY.
+        const pt = rect.ownerSVGElement.createSVGPoint();
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        const ctm = rect.getScreenCTM();
+        if (!ctm) return;
+        const local = pt.matrixTransform(ctm.inverse());
+        const mmX = Math.max(0, Math.round((local.x - originX) * mmPerPx));
+        const mmY = Math.max(0, Math.round((local.y - originY) * mmPerPx));
+        const href = placementAddUrl
+          + '?mount=' + encodeURIComponent(mountPk)
+          + '&position_x=' + mmX
+          + '&position_y=' + mmY;
+        // Navigate the parent window (same behaviour as the <a>
+        // hyperlinks on 1D/grid empty slots).
+        window.location.href = href;
+      });
+    });
+  }
+
+  if (obj.contentDocument && obj.contentDocument.readyState === 'complete') {
+    wireUp2DClicks();
+  } else {
+    obj.addEventListener('load', wireUp2DClicks);
+  }
+})();
+</script>
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">
-      <h5 class="card-header">Carriers</h5>
+      <h5 class="card-header">Mounts</h5>
       <div class="card-body table-responsive">
         <table class="table table-hover">
           <thead>
@@ -48,29 +157,29 @@
               <th>Subtype</th>
               <th>Unit</th>
               <th>Size</th>
-              <th>Mounts</th>
+              <th>Placements</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {% for carrier in carriers %}
+            {% for mount in mounts %}
             <tr>
-              <td><a href="{{ carrier.get_absolute_url }}">{{ carrier.name }}</a></td>
-              <td>{{ carrier.get_carrier_type_display }}</td>
-              <td>{{ carrier.get_subtype_display|default:"—" }}</td>
-              <td>{{ carrier.get_unit_display }}</td>
+              <td><a href="{{ mount.get_absolute_url }}">{{ mount.name }}</a></td>
+              <td>{{ mount.get_mount_type_display }}</td>
+              <td>{{ mount.get_subtype_display|default:"—" }}</td>
+              <td>{{ mount.get_unit_display }}</td>
               <td>
-                {% if carrier.length_mm %}
-                  {{ carrier.length_mm }} mm ({{ carrier.capacity_units }} units)
+                {% if mount.length_mm %}
+                  {{ mount.length_mm }} mm ({{ mount.capacity_units }} units)
                 {% else %}
-                  {{ carrier.width_mm }} × {{ carrier.height_mm }} mm
+                  {{ mount.width_mm }} × {{ mount.height_mm }} mm
                 {% endif %}
               </td>
-              <td>{{ carrier.mounts.count }}</td>
+              <td>{{ mount.placements.count }}</td>
               <td class="text-end">
-                <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?carrier={{ carrier.pk }}"
+                <a href="{% url 'plugins:netbox_cabinet_view:placement_add' %}?mount={{ mount.pk }}"
                    class="btn btn-sm btn-outline-primary">
-                  <i class="mdi mdi-plus-thick"></i> Mount
+                  <i class="mdi mdi-plus-thick"></i> Placement
                 </a>
               </td>
             </tr>

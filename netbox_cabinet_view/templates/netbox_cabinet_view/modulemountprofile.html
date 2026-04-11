@@ -5,12 +5,16 @@
 
   <div class="col-md-6">
     <div class="card">
-      <h5 class="card-header">Device Type</h5>
+      <h5 class="card-header">Module Type</h5>
       <div class="card-body">
         <table class="table table-hover attr-table">
           <tr>
-            <th scope="row">Device Type</th>
-            <td><a href="{{ object.device_type.get_absolute_url }}">{{ object.device_type }}</a></td>
+            <th scope="row">Module Type</th>
+            <td><a href="{{ object.module_type.get_absolute_url }}">{{ object.module_type }}</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Manufacturer</th>
+            <td>{{ object.module_type.manufacturer }}</td>
           </tr>
         </table>
       </div>
@@ -22,31 +26,7 @@
 
   <div class="col-md-6">
     <div class="card">
-      <h5 class="card-header">Host / Enclosure</h5>
-      <div class="card-body">
-        <table class="table table-hover attr-table">
-          <tr>
-            <th scope="row">Hosts Carriers</th>
-            <td>{{ object.hosts_carriers|yesno:"Yes,No" }}</td>
-          </tr>
-          <tr>
-            <th scope="row">Internal Width</th>
-            <td>{% if object.internal_width_mm %}{{ object.internal_width_mm }} mm{% else %}&mdash;{% endif %}</td>
-          </tr>
-          <tr>
-            <th scope="row">Internal Height</th>
-            <td>{% if object.internal_height_mm %}{{ object.internal_height_mm }} mm{% else %}&mdash;{% endif %}</td>
-          </tr>
-          <tr>
-            <th scope="row">Internal Depth</th>
-            <td>{% if object.internal_depth_mm %}{{ object.internal_depth_mm }} mm{% else %}&mdash;{% endif %}</td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="card mt-3">
-      <h5 class="card-header">Mountable on Carriers</h5>
+      <h5 class="card-header">Mountable on Mounts</h5>
       <div class="card-body">
         <table class="table table-hover attr-table">
           <tr>

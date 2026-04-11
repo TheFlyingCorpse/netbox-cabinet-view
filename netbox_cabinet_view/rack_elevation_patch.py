@@ -62,19 +62,19 @@ class _URLOnlyImage:
 
 def _content_hash(device) -> str:
     """
-    Return a short stable hash of a device's carriers and mounts, used as
-    a cache-busting token in the embedded SVG URL. Cheap — a single query
-    returning the (carrier_id, last_updated) for each carrier and the
-    (mount_id, last_updated) for each mount.
+    Return a short stable hash of a device's mounts and placements, used
+    as a cache-busting token in the embedded SVG URL. Cheap — a single
+    query returning the (mount_id, last_updated) for each mount and the
+    (placement_id, last_updated) for each placement.
 
     Uses SHA-256 truncated to 10 hex chars, which is more than enough for
     cache-busting collisions on any realistic device.
     """
     hasher = hashlib.sha256()
-    for carrier in device.cabinet_carriers.all().order_by('pk'):
-        hasher.update(f'{carrier.pk}:{carrier.last_updated}'.encode())
-        for mount in carrier.mounts.all().order_by('pk'):
-            hasher.update(f'{mount.pk}:{mount.last_updated}'.encode())
+    for mount in device.cabinet_mounts.all().order_by('pk'):
+        hasher.update(f'{mount.pk}:{mount.last_updated}'.encode())
+        for placement in mount.placements.all().order_by('pk'):
+            hasher.update(f'{placement.pk}:{placement.last_updated}'.encode())
     return hasher.hexdigest()[:10]
 
 
@@ -93,9 +93,9 @@ def _make_face_patch(original, face_name: str):
             if (
                 self.include_images
                 and profile is not None
-                and profile.hosts_carriers
+                and profile.hosts_mounts
                 and u_height >= _MIN_U_FOR_LAYOUT
-                and device.cabinet_carriers.exists()
+                and device.cabinet_mounts.exists()
             ):
                 slot_w = max(1, int(size[0]))
                 slot_h = max(1, int(size[1]))
@@ -104,7 +104,14 @@ def _make_face_patch(original, face_name: str):
                     kwargs={'pk': device.pk},
                 )
                 version = _content_hash(device)
-                href = f'{url}?w={slot_w}&h={slot_h}&v={version}'
+                # Finding E (v0.4.0): request the SVG in thumbnail mode
+                # so the embedded rendering reads as "preview, zoom in
+                # to interact" instead of pretending the placements are
+                # clickable from inside the rack elevation <image>
+                # wrapper (they aren't — clicking lands on the HOST
+                # device via the core rack-elevation hyperlink, which
+                # is a click-target lie without the diminishment).
+                href = f'{url}?w={slot_w}&h={slot_h}&v={version}&thumb=1'
                 color = device.role.color if device.role_id else None
                 self._draw_device(
                     device, coords, size,

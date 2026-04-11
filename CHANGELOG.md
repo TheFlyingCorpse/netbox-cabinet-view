@@ -7,7 +7,73 @@ All notable changes to this project will be documented in this file. The format 
 ### Planned
 - Multi-depth / swing-frame rack support.
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
-- Auto-provisioning of Carriers from existing DeviceBay / ModuleBay templates on a DeviceType.
+- Auto-provisioning of Mounts from existing DeviceBay / ModuleBay templates on a DeviceType.
+- Nested SVG recursion (a hosted device's own interior rendered inline inside its rectangle on the parent Mount — e.g. click into an MCC bucket from the cabinet view and see the DIN rail inside).
+- Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
+
+## [0.4.0] — 2026-04-12
+
+**v0.4.0 is a large consolidated release** addressing eight concrete UX findings from a v0.3.0 review plus an architectural naming rename. Eleven focused commits on the `v0.4.0-rename-and-ux` branch. All changes verified end-to-end against NetBox 4.5.7-Docker-4.0.2 with the plugin's 20 demo scenarios.
+
+### BREAKING
+
+- **Models renamed** for symmetry and to match how users actually talk about the domain:
+  - `Carrier` → **`Mount`**
+  - `Mount` → **`Placement`**
+  - `DeviceTypeProfile` → **`DeviceMountProfile`** (also dodges a naming clash with NetBox 4.5's core `dcim.ModuleTypeProfile`)
+- **Field renamed:** `Carrier.carrier_type` → `Mount.mount_type`; `DeviceTypeProfile.hosts_carriers` → `DeviceMountProfile.hosts_mounts`.
+- **Choice classes renamed:** `CarrierTypeChoices` → `MountTypeChoices`; `CarrierSubtypeChoices` → `MountSubtypeChoices`; constants `*_CARRIER_TYPES` → `*_MOUNT_TYPES`.
+- **URL paths moved:**
+  - `/plugins/cabinet-view/carriers/` → `/plugins/cabinet-view/mounts/`
+  - `/plugins/cabinet-view/mounts/` → `/plugins/cabinet-view/placements/`
+  - `/plugins/cabinet-view/device-type-profiles/` → `/plugins/cabinet-view/device-mount-profiles/`
+  - New: `/plugins/cabinet-view/module-mount-profiles/`
+  - **No redirect shims.** Update your bookmarks.
+- **API endpoints moved:** `carriers/` → `mounts/`, `mounts/` → `placements/`, `device-type-profiles/` → `device-mount-profiles/`; new `module-mount-profiles/`. API client libraries must be updated.
+- **SVG CSS classes** inside the embedded stylesheet: `.carrier*` → `.mount*`, `.carrier-label` → `.mount-label`. Downstream tools that parse the SVG for style must update.
+
+The migrations (`0003_rename_carrier_to_mount` + `0004_mount_profiles`) are hand-written and data-safe — zero rows are rewritten, every FK stays pointing at the same row, and both forward and rollback were verified against a seeded database (26 Mounts, 114 Placements, 39 DeviceMountProfiles preserved through the full round-trip). Users upgrade with a single `./manage.py migrate netbox_cabinet_view`.
+
+### Added
+
+- **`ModuleMountProfile`** — new model mirroring `DeviceMountProfile`'s mountable role for `dcim.ModuleType`. Modules placed via `Placement.module_bay` now render at their real width instead of defaulting to 1 unit. A single RTU/IED chassis with mixed I/O cards shows correct geometry. Nine seed ModuleMountProfile rows cover the PLC backplane + IED chassis + ODF cassette scenarios. Not to be confused with NetBox 4.5's unrelated core `dcim.ModuleTypeProfile` (attribute schema).
+- **Empty-state CTA on the Layout tab** (Finding B): the tab is now visible whenever the DeviceMountProfile has `hosts_mounts=True`, *even when there are zero mounts yet*. The empty state renders a dashed scale-reference canvas sized to the device's internal `width_mm × height_mm` with a centered "+ Add the first mount" CTA. Users see the cabinet's proportions before picking a mount type. Replaces v0.3.0's `hide_if_empty=True` which actively hid the plugin from new users.
+- **Inline click-to-add placement affordance** (Finding C): every unoccupied slot range on a 1D or grid mount becomes a click target with a pre-filled placement form URL (`?mount=N&position=M`). 2D mounting plates accept click-anywhere coordinates via a small JavaScript handler that converts pointer clicks to mm. Green hover outline so the affordance is discoverable.
+- **Carrier-driven dynamic Placement form** (Finding G): HTMX-powered form that reshapes when the user picks a Mount. 1D mounts show only `position` + `size`; grid mounts add `row` + `row_span`; 2D plates switch to `position_x/y` + `size_x/y`. Uses NetBox's native `hx-get='.' / hx-include='#form_fields' / hx-target='#form_fields'` convention — no custom view, no fragment endpoint. Target dropdowns (`device`/`device_bay`/`module_bay`) are compatibility-filtered to valid unoccupied options based on the mount's type + subtype. Numeric fields get computed "Range: 1 – N" help text.
+- **Discovery hint card** (Finding H): a `PluginTemplateExtension.right_page()` that injects a soft CTA on Device detail pages whose DeviceType is cabinet-shaped (`u_height == 0`) but has no `DeviceMountProfile` yet. Green-bordered card with a "Set up cabinet layout" primary CTA + dismiss link. Per-user dismissal stored in `UserConfig`. Heuristic: `u_height == 0 AND no profile AND user has add_devicemountprofile perm AND not dismissed`. The hint vanishes the moment the user creates a profile.
+- **`@media (prefers-contrast: more)` high-contrast mode** (Finding F): automatic high-contrast rendering for OT/ICS field tablets in bright substation sunlight. Triggers via macOS "Increase Contrast", Windows 11 "Contrast themes", or iOS/iPadOS "Increase Contrast". Pure-black background, 2 – 3 px white strokes, saturated role colors ≥ 8.5:1 contrast. CSS-only, no user-preference plumbing.
+- **Thumbnail mode for rack elevation embeds** (Finding E): the cabinet-layout SVG embedded inside the rack elevation `<image>` now renders in a diminished form (55% opacity, no labels, desaturated role colors) via a new `CabinetLayoutSVG(thumbnail=True)` kwarg and `svg.thumbnail` CSS block. Reads as "preview — zoom in to interact" instead of pretending each placement rectangle is a live click target. Full-fidelity rendering is preserved on the Layout tab and the Rack detail "Cabinet Layouts" panel below.
+- **Opt-in slot ledger table** (Finding D): spreadsheet-style view of every slot on every mount, rendered above the SVG on the Layout tab when `PLUGINS_CONFIG['netbox_cabinet_view']['SLOT_LEDGER_ENABLED'] = True`. Sortable per-mount sections with occupancy mini-bar + percentage, populated rows with linked device/module names, empty slot rows with "+ mount" actions, and **indented β-ledger sub-rows under hosted devices** for their populated `ModuleBay`s. Natural-sort on `ModuleBay.position` so "Slot 2" sorts before "Slot 10". Bay-empty rows are informational (muted italic), not warnings. Standalone `ledger.py` module with no svgwrite dependency.
+
+### Fixed
+
+- **Marshalling cabinet rendered as 2-pixel hairlines** (Finding A, root cause). `Placement.save()` now calls `full_clean()` unconditionally so the profile-driven size auto-fill fires on every code path — not just form submits. The seed command's `ensure_placement()` was also rewritten away from Django's `update_or_create()` (which silently drops fields touched by `clean()` via its `update_fields=set(defaults)` optimization, causing the auto-filled `size` to never reach the DB). Every v0.3.0 marshalling-cabinet placement that had `size=NULL` now auto-fills to the terminal block's profile footprint.
+- **"Terminal rail" label hidden behind placements** (also Finding A). The SVG renderer now does a three-pass render: (1) mount geometry + all placements, (2) empty-slot click targets, (3) mount name labels. Labels are painted on top of everything else so they stay legible on dense 1D mounts like the 48-slot marshalling cabinet.
+- **MCB-on-DIN-rail compatibility bug** in the 4U DIN shelf seed scenario. Clip-on MCBs had `mountable_on=busbar` but the seed placed them on a `din_rail` mount. v0.3.0 never noticed because `full_clean()` wasn't running. Fixed by adding a separate `din-mount-mcb-1p` DeviceType with `mountable_on=din_rail` and pointing the 4U shelf seed at it.
+- **Null-guards on sibling overlap checks** in `Placement.clean()`. Pre-v0.4.0 placements with `NULL` size fields tripped a `TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'` when the overlap loop tried to compute `other.size_x + other.position_x`. Legacy siblings with incomplete geometry are now skipped (they'll fail their own validation on the next save).
+
+### Changed
+
+- **Layout tab visibility** uses a `visible=` callable on `ViewTab` instead of `hide_if_empty=True`. The tab appears whenever the DeviceMountProfile declares `hosts_mounts=True`, regardless of whether mounts exist yet.
+- **`PlacementForm`** is now dynamic per Section G above — irrelevant placement fields are removed from the form entirely based on the selected mount's type.
+- **README** rewritten for the new model names, new Mermaid ER diagram, v0.4.0 feature additions, and a "Not in v0.4" section that replaces "Not in v0.3".
+
+### Migration
+
+- **Migration 0003** (`0003_rename_carrier_to_mount`) — hand-written mutual rename. Operation order matters: `RenameField('carrier', 'carrier_type', 'mount_type')` first, then `RenameModel('Mount' → 'Placement')` (to free the name), then `RenameModel('Carrier' → 'Mount')`, then `RenameField('placement', 'carrier', 'mount')`, then `AlterField` for every FK to update `related_name`, then `RemoveConstraint` + `AddConstraint` for the three unique constraints whose names embedded `mount_`, finally `AlterModelOptions` for the new `verbose_name`.
+- **Migration 0004** (`0004_mount_profiles`) — `RenameModel('DeviceTypeProfile' → 'DeviceMountProfile')` + `CreateModel('ModuleMountProfile')`.
+
+Both migrations are metadata-only (zero rows rewritten). Data preservation verified: 26 → 26 Mounts, 114 → 114 Placements, 39 → 39 DeviceMountProfiles round-trip through forward + rollback with zero loss.
+
+### Upgrade instructions
+
+```bash
+git pull
+./manage.py migrate netbox_cabinet_view
+./manage.py cabinetview_seed  # optional, idempotent, re-seeds demo data with new names
+```
+
+Then update any custom code / scripts that reference the renamed Python classes, DB fields, URL paths, or API endpoints. No redirects are provided for old URLs — they 404 cleanly.
 
 ## [0.3.0] — 2026-04-11
 
@@ -93,7 +159,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...v0.1.2

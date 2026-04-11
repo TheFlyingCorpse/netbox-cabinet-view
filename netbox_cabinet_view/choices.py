@@ -1,8 +1,8 @@
 from utilities.choices import ChoiceSet
 
 
-class CarrierTypeChoices(ChoiceSet):
-    key = 'Carrier.carrier_type'
+class MountTypeChoices(ChoiceSet):
+    key = 'Mount.mount_type'
 
     TYPE_DIN_RAIL       = 'din_rail'
     TYPE_SUBRACK        = 'subrack'
@@ -19,26 +19,26 @@ class CarrierTypeChoices(ChoiceSet):
     ]
 
 
-# Carrier types that are one-dimensional (position along a single axis).
-ONE_D_CARRIER_TYPES = frozenset((
-    CarrierTypeChoices.TYPE_DIN_RAIL,
-    CarrierTypeChoices.TYPE_SUBRACK,
-    CarrierTypeChoices.TYPE_BUSBAR,
+# Mount types that are one-dimensional (position along a single axis).
+ONE_D_MOUNT_TYPES = frozenset((
+    MountTypeChoices.TYPE_DIN_RAIL,
+    MountTypeChoices.TYPE_SUBRACK,
+    MountTypeChoices.TYPE_BUSBAR,
 ))
 
-# Carrier types that are two-dimensional (x, y placement on an area).
-TWO_D_CARRIER_TYPES = frozenset((
-    CarrierTypeChoices.TYPE_MOUNTING_PLATE,
+# Mount types that are two-dimensional (x, y placement on an area).
+TWO_D_MOUNT_TYPES = frozenset((
+    MountTypeChoices.TYPE_MOUNTING_PLATE,
 ))
 
-# Carrier types that are multi-row grids (row + position within row).
-GRID_CARRIER_TYPES = frozenset((
-    CarrierTypeChoices.TYPE_GRID,
+# Mount types that are multi-row grids (row + position within row).
+GRID_MOUNT_TYPES = frozenset((
+    MountTypeChoices.TYPE_GRID,
 ))
 
 
-class CarrierSubtypeChoices(ChoiceSet):
-    key = 'Carrier.subtype'
+class MountSubtypeChoices(ChoiceSet):
+    key = 'Mount.subtype'
 
     # DIN rail variants
     TS35   = 'ts35'
@@ -66,9 +66,9 @@ class CarrierSubtypeChoices(ChoiceSet):
         (TS32,             'DIN TS32',                  'cyan'),
         (TS15,             'DIN TS15 (EN 50035)',       'indigo'),
         (G_RAIL,           'G-rail',                    'green'),
-        (HP_3U,            'Eurocard 3U (5.08 mm HP)',  'teal'),
-        (HP_6U,            'Eurocard 6U',               'teal'),
-        (HP_9U,            'Eurocard 9U',               'teal'),
+        (HP_3U,             'Eurocard 3U (5.08 mm HP)',  'teal'),
+        (HP_6U,             'Eurocard 6U',               'teal'),
+        (HP_9U,             'Eurocard 9U',               'teal'),
         (PLATE_GENERIC,    'Generic back plate',        'purple'),
         (BB_60MM_PITCH,    '60 mm pitch busbar system', 'orange'),
         (BB_40MM_PITCH,    '40 mm pitch busbar system', 'orange'),
@@ -77,37 +77,37 @@ class CarrierSubtypeChoices(ChoiceSet):
     ]
 
 
-# Which subtypes are valid for a given carrier_type. Used by validation.
-CARRIER_TYPE_SUBTYPES = {
-    CarrierTypeChoices.TYPE_DIN_RAIL: frozenset((
-        CarrierSubtypeChoices.TS35,
-        CarrierSubtypeChoices.TS32,
-        CarrierSubtypeChoices.TS15,
-        CarrierSubtypeChoices.G_RAIL,
+# Which subtypes are valid for a given mount_type. Used by validation.
+MOUNT_TYPE_SUBTYPES = {
+    MountTypeChoices.TYPE_DIN_RAIL: frozenset((
+        MountSubtypeChoices.TS35,
+        MountSubtypeChoices.TS32,
+        MountSubtypeChoices.TS15,
+        MountSubtypeChoices.G_RAIL,
     )),
-    CarrierTypeChoices.TYPE_SUBRACK: frozenset((
-        CarrierSubtypeChoices.HP_3U,
-        CarrierSubtypeChoices.HP_6U,
-        CarrierSubtypeChoices.HP_9U,
+    MountTypeChoices.TYPE_SUBRACK: frozenset((
+        MountSubtypeChoices.HP_3U,
+        MountSubtypeChoices.HP_6U,
+        MountSubtypeChoices.HP_9U,
     )),
-    CarrierTypeChoices.TYPE_MOUNTING_PLATE: frozenset((
-        CarrierSubtypeChoices.PLATE_GENERIC,
+    MountTypeChoices.TYPE_MOUNTING_PLATE: frozenset((
+        MountSubtypeChoices.PLATE_GENERIC,
     )),
-    CarrierTypeChoices.TYPE_BUSBAR: frozenset((
-        CarrierSubtypeChoices.BB_60MM_PITCH,
-        CarrierSubtypeChoices.BB_40MM_PITCH,
-        CarrierSubtypeChoices.BB_CLIP_ON,
-        CarrierSubtypeChoices.BB_GENERIC_CU,
+    MountTypeChoices.TYPE_BUSBAR: frozenset((
+        MountSubtypeChoices.BB_60MM_PITCH,
+        MountSubtypeChoices.BB_40MM_PITCH,
+        MountSubtypeChoices.BB_CLIP_ON,
+        MountSubtypeChoices.BB_GENERIC_CU,
     )),
-    # Grid carriers don't have subtypes in v0.3.0 — they're driven entirely
-    # by the `rows` / `row_height_mm` / `unit` / `length_mm` fields. Leaving
-    # this empty means no subtype is accepted.
-    CarrierTypeChoices.TYPE_GRID: frozenset(),
+    # Grid mounts don't have subtypes — they're driven entirely by the
+    # `rows` / `row_height_mm` / `unit` / `length_mm` fields. An empty
+    # frozenset means no subtype is accepted.
+    MountTypeChoices.TYPE_GRID: frozenset(),
 }
 
 
 class OrientationChoices(ChoiceSet):
-    key = 'Carrier.orientation'
+    key = 'Mount.orientation'
 
     HORIZONTAL = 'horizontal'
     VERTICAL   = 'vertical'
@@ -119,7 +119,7 @@ class OrientationChoices(ChoiceSet):
 
 
 class UnitChoices(ChoiceSet):
-    key = 'Carrier.unit'
+    key = 'Mount.unit'
 
     MM         = 'mm'
     MODULE_175 = 'module_17_5'   # DIN module — 17.5 mm

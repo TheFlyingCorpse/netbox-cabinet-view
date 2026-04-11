@@ -5,34 +5,34 @@ from utilities.urls import get_model_urls
 from . import views
 
 urlpatterns = [
-    # DeviceTypeProfile
-    path('device-type-profiles/',
-         views.DeviceTypeProfileListView.as_view(), name='devicetypeprofile_list'),
-    path('device-type-profiles/add/',
-         views.DeviceTypeProfileEditView.as_view(), name='devicetypeprofile_add'),
-    path('device-type-profiles/<int:pk>/',
-         views.DeviceTypeProfileView.as_view(), name='devicetypeprofile'),
-    path('device-type-profiles/<int:pk>/edit/',
-         views.DeviceTypeProfileEditView.as_view(), name='devicetypeprofile_edit'),
-    path('device-type-profiles/<int:pk>/delete/',
-         views.DeviceTypeProfileDeleteView.as_view(), name='devicetypeprofile_delete'),
+    # DeviceMountProfile
+    path('device-mount-profiles/',
+         views.DeviceMountProfileListView.as_view(), name='devicemountprofile_list'),
+    path('device-mount-profiles/add/',
+         views.DeviceMountProfileEditView.as_view(), name='devicemountprofile_add'),
+    path('device-mount-profiles/<int:pk>/',
+         views.DeviceMountProfileView.as_view(), name='devicemountprofile'),
+    path('device-mount-profiles/<int:pk>/edit/',
+         views.DeviceMountProfileEditView.as_view(), name='devicemountprofile_edit'),
+    path('device-mount-profiles/<int:pk>/delete/',
+         views.DeviceMountProfileDeleteView.as_view(), name='devicemountprofile_delete'),
     # Auto-registered feature views (changelog, journal, …)
-    path('device-type-profiles/<int:pk>/',
-         include(get_model_urls('netbox_cabinet_view', 'devicetypeprofile'))),
+    path('device-mount-profiles/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'devicemountprofile'))),
 
-    # Carrier
-    path('carriers/',
-         views.CarrierListView.as_view(), name='carrier_list'),
-    path('carriers/add/',
-         views.CarrierEditView.as_view(), name='carrier_add'),
-    path('carriers/<int:pk>/',
-         views.CarrierView.as_view(), name='carrier'),
-    path('carriers/<int:pk>/edit/',
-         views.CarrierEditView.as_view(), name='carrier_edit'),
-    path('carriers/<int:pk>/delete/',
-         views.CarrierDeleteView.as_view(), name='carrier_delete'),
-    path('carriers/<int:pk>/',
-         include(get_model_urls('netbox_cabinet_view', 'carrier'))),
+    # ModuleMountProfile
+    path('module-mount-profiles/',
+         views.ModuleMountProfileListView.as_view(), name='modulemountprofile_list'),
+    path('module-mount-profiles/add/',
+         views.ModuleMountProfileEditView.as_view(), name='modulemountprofile_add'),
+    path('module-mount-profiles/<int:pk>/',
+         views.ModuleMountProfileView.as_view(), name='modulemountprofile'),
+    path('module-mount-profiles/<int:pk>/edit/',
+         views.ModuleMountProfileEditView.as_view(), name='modulemountprofile_edit'),
+    path('module-mount-profiles/<int:pk>/delete/',
+         views.ModuleMountProfileDeleteView.as_view(), name='modulemountprofile_delete'),
+    path('module-mount-profiles/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'modulemountprofile'))),
 
     # Mount
     path('mounts/',
@@ -47,4 +47,22 @@ urlpatterns = [
          views.MountDeleteView.as_view(), name='mount_delete'),
     path('mounts/<int:pk>/',
          include(get_model_urls('netbox_cabinet_view', 'mount'))),
+
+    # Discovery hint dismissal — Finding H (v0.4.0).
+    path('hints/dismiss/<int:device_pk>/',
+         views.DiscoveryHintDismissView.as_view(), name='hint_dismiss'),
+
+    # Placement
+    path('placements/',
+         views.PlacementListView.as_view(), name='placement_list'),
+    path('placements/add/',
+         views.PlacementEditView.as_view(), name='placement_add'),
+    path('placements/<int:pk>/',
+         views.PlacementView.as_view(), name='placement'),
+    path('placements/<int:pk>/edit/',
+         views.PlacementEditView.as_view(), name='placement_edit'),
+    path('placements/<int:pk>/delete/',
+         views.PlacementDeleteView.as_view(), name='placement_delete'),
+    path('placements/<int:pk>/',
+         include(get_model_urls('netbox_cabinet_view', 'placement'))),
 ]

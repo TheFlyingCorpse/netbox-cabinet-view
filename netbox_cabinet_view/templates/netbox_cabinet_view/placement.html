@@ -1,0 +1,71 @@
+{% extends 'generic/object.html' %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+
+  <div class="col-md-6">
+    <div class="card">
+      <h5 class="card-header">Placement</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">Mount</th>
+            <td><a href="{{ object.mount.get_absolute_url }}">{{ object.mount }}</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Host Device</th>
+            <td><a href="{{ object.mount.host_device.get_absolute_url }}">{{ object.mount.host_device }}</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Device</th>
+            <td>
+              {% if object.device %}
+                <a href="{{ object.device.get_absolute_url }}">{{ object.device }}</a>
+              {% else %}<span class="text-muted">&mdash;</span>{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Device Bay</th>
+            <td>
+              {% if object.device_bay %}
+                <a href="{{ object.device_bay.get_absolute_url }}">{{ object.device_bay }}</a>
+              {% else %}<span class="text-muted">&mdash;</span>{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Module Bay</th>
+            <td>
+              {% if object.module_bay %}
+                <a href="{{ object.module_bay.get_absolute_url }}">{{ object.module_bay }}</a>
+              {% else %}<span class="text-muted">&mdash;</span>{% endif %}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    {% include 'inc/panels/tags.html' %}
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <h5 class="card-header">Position</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table">
+          {% if object.mount.is_two_d %}
+            <tr><th scope="row">Position X</th><td>{{ object.position_x }} mm</td></tr>
+            <tr><th scope="row">Position Y</th><td>{{ object.position_y }} mm</td></tr>
+            <tr><th scope="row">Size X</th><td>{{ object.size_x }} mm</td></tr>
+            <tr><th scope="row">Size Y</th><td>{{ object.size_y }} mm</td></tr>
+          {% else %}
+            <tr><th scope="row">Position</th><td>{{ object.position }}</td></tr>
+            <tr><th scope="row">Size</th><td>{{ object.size }}</td></tr>
+            <tr><th scope="row">Unit</th><td>{{ object.mount.get_unit_display }}</td></tr>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

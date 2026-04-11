@@ -22,24 +22,26 @@ Python 3.10+ required (matches NetBox 4.4 / 4.5's own Python support).
 
 ## What it adds
 
-Three models:
+Four models (v0.4.0 renamed `Carrier → Mount` / `Mount → Placement` / `DeviceTypeProfile → DeviceMountProfile` to match how OT engineers actually talk about DIN rails and back plates; also added `ModuleMountProfile`):
 
-- **DeviceTypeProfile** — per-DeviceType declaration of whether the device hosts carriers (i.e. it's a cabinet or enclosure) and/or mounts on carriers (it's a DIN-mounted relay, a 4-HP Eurocard, a clip-on MCB). Internal dimensions and footprints live here.
-- **Carrier** — a geometric mounting structure attached to a host `Device`. Five types: `din_rail`, `subrack`, `mounting_plate`, `busbar`, `grid`. Each has offset, orientation (horizontal **or vertical** — all 1D types since v0.3.0), length (1D) or width/height (2D) or rows/row_height_mm (grid), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm). Grid carriers are 1-to-N stacked rows ("bars") for modular IED / multi-row backplanes where a mount can span multiple rows via `row_span`.
-- **Mount** — a placement on a carrier. Points at exactly one of:
-  - a standalone `dcim.Device` (bare DIN rail mounts)
+- **DeviceMountProfile** — per-DeviceType declaration of whether the device hosts mounts (i.e. it's a cabinet or enclosure) and/or mounts on other mounts (it's a DIN-mounted relay, a 4-HP Eurocard, a clip-on MCB). Internal dimensions and footprints live here.
+- **ModuleMountProfile** — per-ModuleType declaration of mount compatibility + footprint. Mirror of `DeviceMountProfile`'s "mountable" role for `dcim.ModuleType`. Unlocks correct widths for modular I/O cards, line cards, fibre cassettes, and other plug-in modules. **New in v0.4.0.**
+- **Mount** — a geometric mounting structure attached to a host `Device`. Five types: `din_rail`, `subrack`, `mounting_plate`, `busbar`, `grid`. Each has offset, orientation (horizontal **or vertical** for any 1D type), length (1D) or width/height (2D) or rows/row_height_mm (grid), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm). Grid mounts are 1-to-N stacked rows ("bars") for modular IED / multi-row backplanes where a placement can span multiple rows via `row_span`.
+- **Placement** — a device placement on a Mount. Points at exactly one of:
+  - a standalone `dcim.Device` (bare DIN rail placements)
   - a `dcim.DeviceBay` (chassis with child devices — e.g. a WDM shelf with two filter modules)
   - a `dcim.ModuleBay` (modular PLC / line-card chassis)
 
-And three views:
+And four views:
 
-- A **Layout** tab on every `dcim.Device` detail page. Renders the host's carriers and their mounts as an SVG via `svgwrite`, reusing `DeviceType.front_image` and `ModuleType.front_image` from core NetBox. Falls back to colored rectangles with labels when no image is available.
-- A **Cabinet Layouts** panel on every `dcim.Rack` detail page, listing all carrier-host devices in the rack and embedding each one's layout SVG inline.
-- **Rack elevation integration** (v0.2.0+): the plugin monkey-patches `dcim.svg.racks.RackElevationSVG.draw_device_front` at startup so that ≥2U devices with `hosts_carriers=True` render their cabinet layout **inside the rack elevation at their U slot**, instead of the stock `DeviceType.front_image`. Letterboxed with `xMidYMid meet` so the layout keeps its natural aspect ratio. Falls back to the stock front image for 1U devices (a 230×22 px slot is too narrow for a useful layout). Cache-busted by a content hash of the host's carriers and mounts, so edits invalidate the browser cache. Opt out with `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION'] = False`.
+- A **Layout** tab on every `dcim.Device` detail page whose DeviceType declares `hosts_mounts=True`. Renders the host's mounts and their placements as an SVG via `svgwrite`, reusing `DeviceType.front_image` from core NetBox. Falls back to colored rectangles with labels when no image is available. **v0.4.0:** the tab is visible even when the device has zero mounts yet (empty-state scale-reference canvas with "+ Add the first mount" CTA). Empty slot ranges are click-to-add targets that pre-fill the Placement form. An **opt-in spreadsheet-style slot ledger** renders above the SVG when `PLUGINS_CONFIG['netbox_cabinet_view']['SLOT_LEDGER_ENABLED'] = True`, with ModuleBay sub-rows for hosted devices.
+- A **Cabinet Layouts** panel on every `dcim.Rack` detail page, listing all mount-host devices in the rack and embedding each one's layout SVG inline.
+- **Rack elevation integration** (v0.2.0+): the plugin monkey-patches `dcim.svg.racks.RackElevationSVG.draw_device_{front,rear}` at startup so that ≥2U devices with `hosts_mounts=True` render their cabinet layout **inside the rack elevation at their U slot**, instead of the stock front/rear image. **v0.4.0 renders these embeds in thumbnail mode** (55% opacity, no labels, desaturated role colors) so they read as "preview — zoom in to interact" rather than pretending each placement rectangle is a click target. Letterboxed with `xMidYMid meet` so the layout keeps its natural aspect ratio. Falls back to the stock front/rear image for 1U devices. Cache-busted by a content hash of the host's mounts and placements. Opt out with `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION'] = False`.
+- **Discovery hint card** (v0.4.0): a `PluginTemplateExtension` that injects a soft CTA on Device detail pages whose DeviceType looks cabinet-shaped (`u_height == 0`) but has no `DeviceMountProfile` yet. One-click path to creating the profile. Dismissable per-user via `UserConfig`.
 
 ## Schema
 
-Plugin models are in bold, core NetBox models are shown as context. The three dashed relationships from `Mount` form an **XOR constraint** — exactly one of them must be populated on any given mount, enforced in `Mount.clean()`.
+Plugin models are in bold, core NetBox models are shown as context. The three dashed relationships from `Placement` form an **XOR constraint** — exactly one of them must be populated on any given placement, enforced in `Placement.clean()`.
 
 ```mermaid
 erDiagram
@@ -51,49 +53,57 @@ erDiagram
     ModuleBay          }o--|| Device       : "parent device"
     ModuleBay          |o--o| Module       : "installed_module"
 
-    DeviceType         ||--o| DeviceTypeProfile : "cabinet_profile (1:1)"
-    Device             ||--o{ Carrier           : "cabinet_carriers (host)"
-    Carrier            ||--o{ Mount             : "mounts"
+    DeviceType         ||--o| DeviceMountProfile : "cabinet_profile (1:1)"
+    ModuleType         ||--o| ModuleMountProfile : "cabinet_profile (1:1)"
+    Device             ||--o{ Mount              : "cabinet_mounts (host)"
+    Mount              ||--o{ Placement          : "placements"
 
-    Device             |o..o{ Mount             : "device (XOR)"
-    DeviceBay          |o..o{ Mount             : "device_bay (XOR)"
-    ModuleBay          |o..o{ Mount             : "module_bay (XOR)"
+    Device             |o..o{ Placement          : "device (XOR)"
+    DeviceBay          |o..o{ Placement          : "device_bay (XOR)"
+    ModuleBay          |o..o{ Placement          : "module_bay (XOR)"
 
-    DeviceTypeProfile {
+    DeviceMountProfile {
         int     device_type_id              "OneToOne to dcim.DeviceType"
-        bool    hosts_carriers
+        bool    hosts_mounts
         int     internal_width_mm           "nullable"
         int     internal_height_mm          "nullable"
         int     internal_depth_mm           "nullable"
         string  mountable_on                "ChoiceSet, blank allowed"
         string  mountable_subtype           "ChoiceSet, blank allowed"
-        int     footprint_primary           "nullable, carrier units"
-        int     footprint_secondary         "nullable, carrier units"
+        int     footprint_primary           "nullable, mount units"
+        int     footprint_secondary         "nullable, mount units"
     }
-    Carrier {
+    ModuleMountProfile {
+        int     module_type_id              "OneToOne to dcim.ModuleType"
+        string  mountable_on                "ChoiceSet, blank allowed"
+        string  mountable_subtype           "ChoiceSet, blank allowed"
+        int     footprint_primary           "nullable, mount units"
+        int     footprint_secondary         "nullable, mount units"
+    }
+    Mount {
         int     host_device_id              "FK to dcim.Device"
         string  name
-        string  carrier_type                "din_rail subrack plate busbar grid"
+        string  mount_type                  "din_rail subrack mounting_plate busbar grid"
         string  subtype                     "ChoiceSet, blank allowed"
         string  orientation                 "horizontal or vertical (all 1D types)"
         string  unit                        "mm module_17_5 hp_5_08"
         int     offset_x_mm
         int     offset_y_mm
         int     length_mm                   "1D and grid (row length)"
-        int     width_mm                    "2D carriers"
-        int     height_mm                   "2D carriers"
-        int     rows                        "grid carriers"
-        int     row_height_mm               "grid carriers"
+        int     width_mm                    "2D mounts"
+        int     height_mm                   "2D mounts"
+        int     rows                        "grid mounts"
+        int     row_height_mm               "grid mounts"
     }
-    Mount {
-        int     carrier_id                  "FK to Carrier"
+    Placement {
+        int     mount_id                    "FK to Mount"
         int     device_id                   "XOR target, nullable"
         int     device_bay_id               "XOR target, nullable"
         int     module_bay_id               "XOR target, nullable"
         int     position                    "1D and grid (within row)"
         int     size                        "1D and grid, defaults from profile"
-        int     row                         "grid carriers"
-        int     row_span                    "grid carriers, default 1"
+        int     row                         "grid mounts"
+        int     row_span                    "grid mounts, default 1"
         int     position_x                  "2D"
         int     position_y                  "2D"
         int     size_x                      "2D"
@@ -101,20 +111,20 @@ erDiagram
     }
 ```
 
-**Why a Mount can target three different things:** NetBox already represents three different parent/child relationships — direct device placement, `DeviceBay`-backed child devices (WDM shelves, blade chassis), and `ModuleBay`-backed modules (modular PLCs, line cards). The cabinet-view model treats each as a valid "thing that occupies a carrier position", so its geometry layer works uniformly across all three.
+**Why a Placement can target three different things:** NetBox already represents three different parent/child relationships — direct device placement, `DeviceBay`-backed child devices (WDM shelves, blade chassis), and `ModuleBay`-backed modules (modular PLCs, line cards). The cabinet-view model treats each as a valid "thing that occupies a mount position", so its geometry layer works uniformly across all three.
 
 ## OT/ICS coverage
 
-v1 covers the common OT/ICS cabinet types:
+The plugin covers the common OT/ICS cabinet types:
 
-| Cabinet kind | Carrier type used |
+| Cabinet kind | Mount type used |
 |---|---|
 | PLC cabinets, marshalling/junction boxes, field I/O, IS cabinets, relay panels, small LV distribution | `din_rail` |
 | Rittal/Hoffman enclosures with back-mounted VSDs, UPS, contactors, IPCs | `mounting_plate` |
 | VME/cPCI/MTCA measurement and controller racks, 3U/6U industrial computing | `subrack` |
 | MCCs, LV panelboards, withdrawable switchgear spines (RiLine, 8US, SMISSLINE) | `busbar` |
-| Modular PLCs, OLT/WDM line cards, modular router/switch chassis | `subrack` + `ModuleBay` mounts |
-| MCC withdrawable buckets, switchgear compartments | nested Device-in-Device-on-Carrier (no new model) |
+| Modular PLCs, OLT/WDM line cards, modular router/switch chassis | `subrack` + `ModuleBay` placements (with `ModuleMountProfile` for per-module footprint) |
+| MCC withdrawable buckets, switchgear compartments | nested Device-in-Device-on-Mount (no new model) |
 
 ## Install
 
@@ -136,16 +146,19 @@ python manage.py migrate netbox_cabinet_view
 python manage.py collectstatic --no-input
 ```
 
-Restart NetBox. A **Cabinet View** entry appears in the sidebar, and every `dcim.Device` detail page grows a **Layout** tab (hidden when the device has no carriers).
+Restart NetBox. A **Cabinet View** entry appears in the sidebar, and every `dcim.Device` detail page whose DeviceType has `hosts_mounts=True` grows a **Layout** tab. Unprofiled `u_height=0` devices show a soft discovery hint card in the right column pointing users at profile creation.
 
 ## Using it
 
-1. Create a `DeviceTypeProfile` for any DeviceType that hosts carriers (set `hosts_carriers=True` and the internal dimensions in mm).
-2. Create a `DeviceTypeProfile` for any DeviceType that mounts on carriers (set `mountable_on`, `mountable_subtype`, and `footprint_primary` in carrier units). Mount `size` is optional — if left blank it defaults to the profile's `footprint_primary` (slots are fixed-width; only carriers stretch).
-3. Create a `Device` of the host type, place it in a Location or a Rack as normal.
-4. Add one or more `Carrier` records to the host device — DIN rail at offset (x, y) with a length, or a mounting plate with width×height, etc.
-5. Add `Mount` records to place devices (or device bays, or module bays) on the carriers at specific positions.
-6. Visit the host device's detail page → **Layout** tab.
+1. Create a `DeviceMountProfile` for any DeviceType that hosts mounts (set `hosts_mounts=True` and the internal dimensions in mm). *Or click the discovery hint card on the Device detail page and follow the guided flow.*
+2. Create a `DeviceMountProfile` for any DeviceType that mounts on other mounts (set `mountable_on`, `mountable_subtype`, and `footprint_primary` in mount units). Placement `size` is optional — if left blank it defaults to the profile's `footprint_primary` (slots are fixed-width; only mounts stretch).
+3. *Optional:* create a `ModuleMountProfile` for any `dcim.ModuleType` that you want rendered at its real width inside a modular chassis. Without a `ModuleMountProfile`, modules default to 1 unit wide — fine for the ODF cassette case, wrong for mixed-width IED/PLC cards.
+4. Create a `Device` of the host type, place it in a Location or a Rack as normal.
+5. Add one or more `Mount` records to the host device — DIN rail at offset (x, y) with a length, or a mounting plate with width×height, etc.
+6. Add `Placement` records to place devices (or device bays, or module bays) on the mounts at specific positions. The form adapts to the selected mount's type: 1D mounts get just `position`/`size`, grid mounts add `row`/`row_span`, 2D mounts switch to `position_x/y` + `size_x/y`. Target dropdowns are compatibility-filtered to valid unoccupied devices and bays.
+7. Visit the host device's detail page → **Layout** tab.
+
+**Faster add-placement shortcut:** click any empty slot on the rendered layout. 1D and grid mounts turn every unoccupied slot range into a click target; 2D mounting plates accept click-anywhere coordinates. The placement form opens pre-filled with the mount and position.
 
 ## Demo data
 
@@ -155,22 +168,22 @@ The plugin ships a management command that creates a realistic OT/ICS demo datas
 python manage.py cabinetview_seed
 ```
 
-The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 30 `DeviceType`s with matching `DeviceTypeProfile`s, one `Rack` (`Test Rack A`, 24U), and **20 scenarios** across four groups.
+The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 30 `DeviceType`s with matching `DeviceMountProfile`s, nine `ModuleType`s with matching `ModuleMountProfile`s (v0.4.0+), one `Rack` (`Test Rack A`, 24U), and **20 scenarios** across four groups.
 
 Device type and model names in the seed are deliberately generic by category (no real vendor part numbers) as an operational-security hygiene measure — the plugin's repo should not help adversaries fingerprint which specific equipment lives at which site.
 
 ### Core scenarios (9) — the basic model
 
-| # | Scenario | Host device | Carrier(s) | Demonstrates |
+| # | Scenario | Host device | Mount(s) | Demonstrates |
 |---|---|---|---|---|
 | 1 | Standalone DIN rail | `DIN Rail #1` | 1× DIN rail (480 mm) | Bare rail with no enclosing cabinet |
 | 2 | 2D mounting plate | `Floor Enclosure #1` | 1× mounting plate (760×1960 mm) | Back-plate with `(x, y)` mm placement |
-| 3 | Chassis with child devices | `WDM Shelf #1` | 1× subrack (HP 3U, 406 mm) | `DeviceBay`-backed mounts, parent/child |
-| 4 | Small chassis, wider carrier | `WDM Shelf 2-slot #1` | 1× subrack (HP 3U, 440 mm) | Fixed-width slots in a wider carrier |
+| 3 | Chassis with child devices | `WDM Shelf #1` | 1× subrack (HP 3U, 406 mm) | `DeviceBay`-backed placements, parent/child |
+| 4 | Small chassis, wider mount | `WDM Shelf 2-slot #1` | 1× subrack (HP 3U, 440 mm) | Fixed-width slots in a wider mount |
 | 5 | LV panelboard | `LV Distribution Busbar` | 1× busbar (1000 mm) | Copper busbar with clip-on modules |
-| 6 | Modular PLC | `PLC Backplane #1` | 1× subrack (HP 3U, 400 mm) | `ModuleBay`-backed mounts |
+| 6 | Modular PLC | `PLC Backplane #1` | 1× subrack (HP 3U, 400 mm) | `ModuleBay`-backed placements |
 | 7 | Rack-mounted DIN shelf (2U) | `DIN Shelf 2U #1` | 1× DIN rail (420 mm, centered) | Realistic 2U rack-mounted DIN |
-| 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails | Multi-carrier host, stacked rails |
+| 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails | Multi-mount host, stacked rails |
 | 9 | ISP-style 4U DIN shelf (single rail) | `DIN Shelf 4U ISP #1` | 1× DIN rail (centered vertically) | Single rail with wire-management headroom |
 
 ### Classic OT/ICS scenarios (A–G)
@@ -185,13 +198,13 @@ Device type and model names in the seed are deliberately generic by category (no
 | F | **Safety relay panel** | `Safety Panel #1` | Four fixed-size safety relays on a 2D plate |
 | G | **Substation protection panel** | `Protection Panel #1` | Two overcurrent IEDs + one line-distance IED on a plate, plus a nested test-block rail device carrying four test blocks |
 
-### v0.3.0 scenarios (H–K) — grid carriers, vertical, and ISP
+### v0.3.0 scenarios (H–K) — grid mounts, vertical, and ISP
 
 | # | Scenario | Host device | Demonstrates |
 |---|---|---|---|
 | H | **Vertical DIN rail wall box** | `Vertical DIN Wall Box #1` | Vertical-orientation DIN rail with 6 relays stacked top-to-bottom |
-| I | **Vertical Eurocard subrack** | `Vertical Subrack #1` | Vertical-orientation subrack with 4 cards — proves all 1D carrier types support `orientation='vertical'` |
-| J | **Grid-mounted protection IED** | `Protection IED L01` | **Grid carrier** with 2 rows × 12 slots, ModuleBay-backed mounts including a comms module that **spans both rows** via `row_span=2` — the "one device, many carrier positions depending on its ModuleBays" story |
+| I | **Vertical Eurocard subrack** | `Vertical Subrack #1` | Vertical-orientation subrack with 4 cards — proves all 1D mount types support `orientation='vertical'` |
+| J | **Grid-mounted protection IED** | `Protection IED L01` | **Grid mount** with 2 rows × 12 slots, ModuleBay-backed placements including a comms module that **spans both rows** via `row_span=2` — the "one device, many mount positions depending on its ModuleBays" story |
 | K | **ISP ODF (fibre patch frame)** | `ODF Frame #1` (1U rack) | 12 fibre splice cassettes in a 2×6 grid. The interesting face of an ODF is the **rear**, so this also proves the v0.3.0 rear-face `RackElevationSVG` patch — the ODF layout appears inside the rack elevation at U21 on both front and rear columns |
 
 `Test Rack A` (24U) holds the 1U / 2U / 4U rack-mounted scenarios (3, 4, 7, 8, 9, A, D, E, K) at consecutive U positions. The standalone scenarios (1, 2, 5, 6, B, C, F, G, H, I, J) live in `OT Test Site` / `Control Room` without a rack.
@@ -237,14 +250,14 @@ Opt out with `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION'] = Fa
 
 Yes. The plugin covers the main physical-mounting patterns ISPs encounter:
 
-- **Modular OLT / WDM / ROADM shelves** with line cards — `subrack` carriers with `ModuleBay`-backed mounts (scenarios 3, 4, 6)
-- **ODF / fibre patch chassis** — `grid` carriers with cassette positions, visible on the rack rear face (scenario K, v0.3.0+)
-- **DIN-mounted NIDs, media converters, surge protectors, small fieldbus switches** — `din_rail` carriers (scenarios 1, D, E, H)
-- **Telco DC power distribution** — `busbar` carriers + nested DIN for MCBs (scenario 5)
-- **Vertical DIN rails in street cabinets / OSP pedestals** — `orientation='vertical'` on any 1D carrier (scenario H, v0.3.0+)
-- **Rack elevation showing what's inside each shelf on both faces** — v0.3.0 rear-face rack patch
+- **Modular OLT / WDM / ROADM shelves** with line cards — `subrack` mounts with `ModuleBay`-backed placements (scenarios 3, 4, 6)
+- **ODF / fibre patch chassis** — `grid` mounts with cassette positions, visible on the rack rear face (scenario K, v0.3.0+)
+- **DIN-mounted NIDs, media converters, surge protectors, small fieldbus switches** — `din_rail` mounts (scenarios 1, D, E, H)
+- **Telco DC power distribution** — `busbar` mounts + nested DIN for MCBs (scenario 5)
+- **Vertical DIN rails in street cabinets / OSP pedestals** — `orientation='vertical'` on any 1D mount (scenario H, v0.3.0+)
+- **Rack elevation showing what's inside each shelf on both faces** — v0.3.0 rear-face rack patch, now rendered in thumbnail mode (v0.4.0) so users understand the embed is a preview, not a live click target
 
-Gaps for ISPs, called out explicitly: Krone LSA / 110-block copper frames are deferred (see "Not in v0.3"). Standard 19″ patch panel cabling (front/rear port tracking) is already handled by NetBox core — the plugin doesn't need to duplicate it.
+Gaps for ISPs, called out explicitly: Krone LSA / 110-block copper frames are deferred (see "Not in v0.4"). Standard 19″ patch panel cabling (front/rear port tracking) is already handled by NetBox core — the plugin doesn't need to duplicate it.
 
 ## Environmental / certification ratings — use NetBox custom fields
 
@@ -303,8 +316,12 @@ Both files are regenerated on every tagged release. See [`security/README.md`](s
 
 **Reporting a vulnerability:** please open a private [Security Advisory](https://github.com/TheFlyingCorpse/netbox-cabinet-view/security/advisories) on GitHub rather than a public issue.
 
-## Not in v0.3
+## Not in v0.4
 
-Strut channel, keystone frames, Krone LSA / 110-block terminal frames, HMI panel cutouts, pneumatic manifolds, auto-provisioning carriers from existing bay templates, drag-to-place UI, REST API (v0.3 ships minimal read-only serializers; full CRUD deferred), GraphQL.
+Strut channel, keystone frames, Krone LSA / 110-block terminal frames, HMI panel cutouts, pneumatic manifolds, auto-provisioning mounts from existing bay templates, drag-to-place UI, GraphQL.
+
+**Nested SVG recursion** (a hosted device's own interior rendered inline inside its rectangle on the parent mount — think "click into an MCC bucket from the cabinet view and see the DIN rail inside") is deferred to a future release. The visual equivalent of the existing rack-elevation monkey-patch but pointed inward. Beautiful feature, wants its own release cycle.
+
+**Okabe-Ito colorblind-safe palette** and a monochrome/pattern fallback for print are both deferred. The v0.4.0 high-contrast mode (`@media (prefers-contrast: more)`) handles the substation-sunlight case but not colorblindness explicitly. If a user speaks up, we'll revisit.
 
 Environmental / certification metadata (IP, NEMA, Ex, temperature, RF shielding, EMP/HEMP, SIL, seismic, fire, impact, etc.) is handled via **NetBox custom fields** on `dcim.rack` and `dcim.devicetype` — see the "Environmental / certification ratings" section above. The plugin will not grow first-class fields for these.

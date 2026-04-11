@@ -12,7 +12,7 @@ back to the canonical seed values.
 
 Creates:
   * a Site + Location + Manufacturer + several DeviceRoles
-  * 11 DeviceType + DeviceTypeProfile rows covering all four carrier types
+  * 11 DeviceType + DeviceMountProfile rows covering all five mount types
     and both host + mountable roles
   * Devices wired up into six scenarios (DIN rail, mounting plate, WDM 8-slot
     shelf, WDM 2-slot shelf, LV panel busbar, modular PLC backplane)
@@ -37,7 +37,12 @@ from dcim.models import (
     Rack,
     Site,
 )
-from netbox_cabinet_view.models import Carrier, DeviceTypeProfile, Mount
+from netbox_cabinet_view.models import (
+    DeviceMountProfile,
+    ModuleMountProfile,
+    Mount,
+    Placement,
+)
 
 
 def goc(_model_cls, defaults=None, **lookup):
@@ -64,14 +69,21 @@ def ensure_device_type(mfr, slug, model, **extras):
 
 
 def ensure_profile(dt, **fields):
-    obj, _ = DeviceTypeProfile.objects.update_or_create(
+    obj, _ = DeviceMountProfile.objects.update_or_create(
         device_type=dt, defaults=fields,
     )
     return obj
 
 
-def ensure_carrier(host, name, **fields):
-    obj, created = Carrier.objects.get_or_create(
+def ensure_module_profile(mt, **fields):
+    obj, _ = ModuleMountProfile.objects.update_or_create(
+        module_type=mt, defaults=fields,
+    )
+    return obj
+
+
+def ensure_mount_obj(host, name, **fields):
+    obj, created = Mount.objects.get_or_create(
         host_device=host, name=name, defaults=fields,
     )
     if not created:
@@ -81,24 +93,37 @@ def ensure_carrier(host, name, **fields):
     return obj
 
 
-def ensure_mount(carrier, **fields):
+def ensure_placement(mount, **fields):
     """
-    Upsert a Mount keyed on the target (device / device_bay / module_bay)
-    alone — NOT on the carrier — because the Mount model has a
-    per-target uniqueness constraint. Keying on (carrier, target) would
-    cause `get_or_create` to miss a stale mount that points to the same
-    target but a different (old) carrier, and the subsequent INSERT
-    would trip `unique_mount_device` / `unique_mount_device_bay` /
-    `unique_mount_module_bay`. Using `update_or_create` by target lets
-    us re-home an existing mount onto a new carrier on re-run.
+    Upsert a Placement keyed on the target (device / device_bay /
+    module_bay) alone — NOT on the mount — because the Placement model
+    has a per-target uniqueness constraint. Keying on (mount, target)
+    would cause ``get_or_create`` to miss a stale placement that points
+    to the same target but a different (old) mount, and the subsequent
+    INSERT would trip ``unique_placement_device`` /
+    ``unique_placement_device_bay`` / ``unique_placement_module_bay``.
+
+    Why this is hand-rolled instead of ``update_or_create``: Django's
+    ``update_or_create`` restricts ``save()`` to ``update_fields=set(defaults)``,
+    which silently drops any fields that ``Placement.clean()`` auto-fills
+    from the device's DeviceMountProfile footprint (``size``, ``size_x``,
+    ``size_y``). That masked Finding A in v0.3.0. Explicit get-and-save
+    below calls ``obj.save()`` without ``update_fields``, so the full
+    ``full_clean()`` pass runs and every field it touched gets written.
     """
     key = {}
     for k in ('device', 'device_bay', 'module_bay'):
         if fields.get(k) is not None:
             key[k] = fields[k]
             break
-    defaults = {'carrier': carrier, **fields}
-    obj, _ = Mount.objects.update_or_create(**key, defaults=defaults)
+    try:
+        obj = Placement.objects.get(**key)
+    except Placement.DoesNotExist:
+        obj = Placement(**key)
+    obj.mount = mount
+    for k, v in fields.items():
+        setattr(obj, k, v)
+    obj.save()  # full_clean() runs via Placement.save() override (Finding A)
     return obj
 
 
@@ -173,6 +198,13 @@ class Command(BaseCommand):
         dt_mcb = ensure_device_type(mfr, 'clip-on-mcb-1p',
                                     'Clip-on MCB 1P',
                                     u_height=0)
+        # Separate DIN-mount MCB type — same conceptual device (1P
+        # circuit breaker) but a different clip system. Real installs
+        # carry both variants because different cabinets standardise on
+        # different mounting platforms.
+        dt_mcb_din = ensure_device_type(mfr, 'din-mount-mcb-1p',
+                                        'DIN-mount MCB 1P',
+                                        u_height=0)
         # Rack-mounted DIN shelves
         dt_din_shelf_2u = ensure_device_type(mfr, 'rack-din-shelf-2u-single-rail',
                                              'Rack DIN shelf 2U (single rail)',
@@ -335,61 +367,82 @@ class Command(BaseCommand):
         mt_io = goc(ModuleType, manufacturer=mfr, model='DI 16x24VDC')
 
         # ------------------------------------------------------------------
-        # DeviceTypeProfiles
+        # ModuleMountProfiles (new in v0.4.0)
+        #
+        # Modules need per-type footprints just like devices do, otherwise
+        # every module renders at size=1 on its host mount. These are the
+        # profiles for the module types used in scenarios K (ODF cassettes)
+        # and J (IED chassis modules); the sizes here are in mm since all
+        # scenarios that use ModuleBay-backed placements drive the mount's
+        # unit=mm.
         # ------------------------------------------------------------------
-        ensure_profile(dt_din_rail,      hosts_carriers=True, internal_width_mm=480, internal_height_mm=80)
+        ensure_module_profile(mt_io, mountable_on='subrack', footprint_primary=10)
+        ensure_module_profile(mt_splice_cassette, mountable_on='grid', footprint_primary=70)
+        ensure_module_profile(mt_psu_module,    mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_cpu_module,    mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_bin_io_module, mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_ana_io_module, mountable_on='grid', footprint_primary=30)
+        ensure_module_profile(mt_hs_io_module,  mountable_on='grid', footprint_primary=60)
+        ensure_module_profile(mt_eth_module,    mountable_on='grid', footprint_primary=60)
+        ensure_module_profile(mt_fibre_module,  mountable_on='grid', footprint_primary=60)
+
+        # ------------------------------------------------------------------
+        # DeviceMountProfiles
+        # ------------------------------------------------------------------
+        ensure_profile(dt_din_rail,      hosts_mounts=True, internal_width_mm=480, internal_height_mm=80)
         ensure_profile(dt_relay,         mountable_on='din_rail', mountable_subtype='ts35', footprint_primary=1)
-        ensure_profile(dt_plate,         hosts_carriers=True, internal_width_mm=760, internal_height_mm=1960)
+        ensure_profile(dt_plate,         hosts_mounts=True, internal_width_mm=760, internal_height_mm=1960)
         ensure_profile(dt_ipc,           mountable_on='mounting_plate', footprint_primary=220, footprint_secondary=90)
-        ensure_profile(dt_plc_backplane, hosts_carriers=True, internal_width_mm=400, internal_height_mm=160)
-        ensure_profile(dt_wdm_shelf,     hosts_carriers=True, internal_width_mm=440, internal_height_mm=44)
-        ensure_profile(dt_wdm_shelf2,    hosts_carriers=True, internal_width_mm=440, internal_height_mm=44)
+        ensure_profile(dt_plc_backplane, hosts_mounts=True, internal_width_mm=400, internal_height_mm=160)
+        ensure_profile(dt_wdm_shelf,     hosts_mounts=True, internal_width_mm=440, internal_height_mm=44)
+        ensure_profile(dt_wdm_shelf2,    hosts_mounts=True, internal_width_mm=440, internal_height_mm=44)
         ensure_profile(dt_wdm_filter,    mountable_on='subrack', mountable_subtype='hp_3u', footprint_primary=20)
-        ensure_profile(dt_busbar,        hosts_carriers=True, internal_width_mm=1000, internal_height_mm=60)
+        ensure_profile(dt_busbar,        hosts_mounts=True, internal_width_mm=1000, internal_height_mm=60)
         ensure_profile(dt_mcb,           mountable_on='busbar', mountable_subtype='bb_60mm_pitch', footprint_primary=18)
+        ensure_profile(dt_mcb_din,       mountable_on='din_rail', mountable_subtype='ts35', footprint_primary=18)
         # 2U shelf: 2U inner ≈ 88 mm, real depth 200 mm for cable clearance
-        ensure_profile(dt_din_shelf_2u,  hosts_carriers=True, internal_width_mm=440,
+        ensure_profile(dt_din_shelf_2u,  hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=88, internal_depth_mm=200)
         # 4U shelf: 4U inner ≈ 175 mm, room for two stacked DIN rails + wire management
-        ensure_profile(dt_din_shelf_4u,  hosts_carriers=True, internal_width_mm=440,
+        ensure_profile(dt_din_shelf_4u,  hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
         # 4U shelf, single rail (ISP marshalling style) — one rail centered with
         # generous wire-management space above and below.
-        ensure_profile(dt_din_shelf_4u_isp, hosts_carriers=True, internal_width_mm=440,
+        ensure_profile(dt_din_shelf_4u_isp, hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
 
         # Scenarios A-G profiles
-        ensure_profile(dt_marshalling_shelf, hosts_carriers=True, internal_width_mm=440,
+        ensure_profile(dt_marshalling_shelf, hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
         ensure_profile(dt_terminal_block, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=6)  # 5.2 mm wide, rounded to 6 mm
 
-        ensure_profile(dt_mcc_cabinet, hosts_carriers=True, internal_width_mm=760,
+        ensure_profile(dt_mcc_cabinet, hosts_mounts=True, internal_width_mm=760,
                        internal_height_mm=2160, internal_depth_mm=600)
         # Bucket is BOTH a host (holds its own DIN rail with contactors) AND
         # mountable on the cabinet's vertical busbar.
-        ensure_profile(dt_mcc_bucket, hosts_carriers=True, internal_width_mm=300,
+        ensure_profile(dt_mcc_bucket, hosts_mounts=True, internal_width_mm=300,
                        internal_height_mm=250,
                        mountable_on='busbar', mountable_subtype='bb_60mm_pitch',
                        footprint_primary=300, footprint_secondary=250)
         ensure_profile(dt_contactor, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=45)
 
-        ensure_profile(dt_vfd_cabinet, hosts_carriers=True, internal_width_mm=560,
+        ensure_profile(dt_vfd_cabinet, hosts_mounts=True, internal_width_mm=560,
                        internal_height_mm=1760, internal_depth_mm=400)
         ensure_profile(dt_vfd_drive, mountable_on='mounting_plate',
                        mountable_subtype='plate_generic',
                        footprint_primary=250, footprint_secondary=400)
         # Aux DIN strip is BOTH a host (has its own DIN rail inside) AND mountable
         # on the VFD cabinet's back plate. Classic "rail on plate" nesting.
-        ensure_profile(dt_aux_din_strip, hosts_carriers=True, internal_width_mm=400,
+        ensure_profile(dt_aux_din_strip, hosts_mounts=True, internal_width_mm=400,
                        internal_height_mm=80,
                        mountable_on='mounting_plate', mountable_subtype='plate_generic',
                        footprint_primary=400, footprint_secondary=80)
         ensure_profile(dt_24v_psu, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=80)
 
-        ensure_profile(dt_fieldbus_shelf, hosts_carriers=True, internal_width_mm=440,
+        ensure_profile(dt_fieldbus_shelf, hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=88, internal_depth_mm=250)
         ensure_profile(dt_fb_coupler, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=100)
@@ -401,18 +454,18 @@ class Command(BaseCommand):
         ensure_profile(dt_ethernet_switch, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=90)
 
-        ensure_profile(dt_safety_panel, hosts_carriers=True, internal_width_mm=600,
+        ensure_profile(dt_safety_panel, hosts_mounts=True, internal_width_mm=600,
                        internal_height_mm=800, internal_depth_mm=250)
         ensure_profile(dt_safety_relay, mountable_on='mounting_plate', mountable_subtype='plate_generic',
                        footprint_primary=45, footprint_secondary=100)
 
-        ensure_profile(dt_protection_cabinet, hosts_carriers=True, internal_width_mm=760,
+        ensure_profile(dt_protection_cabinet, hosts_mounts=True, internal_width_mm=760,
                        internal_height_mm=2160, internal_depth_mm=600)
         ensure_profile(dt_overcurrent_ied, mountable_on='mounting_plate', mountable_subtype='plate_generic',
                        footprint_primary=215, footprint_secondary=270)
         ensure_profile(dt_line_distance_ied, mountable_on='mounting_plate', mountable_subtype='plate_generic',
                        footprint_primary=483, footprint_secondary=270)
-        ensure_profile(dt_test_block_rail, hosts_carriers=True, internal_width_mm=600,
+        ensure_profile(dt_test_block_rail, hosts_mounts=True, internal_width_mm=600,
                        internal_height_mm=60,
                        mountable_on='mounting_plate', mountable_subtype='plate_generic',
                        footprint_primary=600, footprint_secondary=60)
@@ -420,20 +473,20 @@ class Command(BaseCommand):
                        footprint_primary=80)
 
         # H/I/J profiles
-        ensure_profile(dt_wall_box_vert, hosts_carriers=True,
+        ensure_profile(dt_wall_box_vert, hosts_mounts=True,
                        internal_width_mm=200, internal_height_mm=600, internal_depth_mm=150)
-        ensure_profile(dt_subrack_vert, hosts_carriers=True,
+        ensure_profile(dt_subrack_vert, hosts_mounts=True,
                        internal_width_mm=260, internal_height_mm=500, internal_depth_mm=220)
         ensure_profile(dt_eurocard_card, mountable_on='subrack', mountable_subtype='hp_6u',
                        footprint_primary=8)  # 8 HP wide
         # Generic IED chassis: host; 2 bars of 12 slots at 30 mm slot width.
         # Slot addressing is in mm along each row so a physical "slot N" lives
         # at position = 1 + (N-1) * 30 with size = 30 per slot.
-        ensure_profile(dt_ied_chassis, hosts_carriers=True,
+        ensure_profile(dt_ied_chassis, hosts_mounts=True,
                        internal_width_mm=440, internal_height_mm=260, internal_depth_mm=250)
 
         # K: ODF chassis — 1U fibre patch frame with a 2x6 cassette grid.
-        ensure_profile(dt_odf_chassis, hosts_carriers=True,
+        ensure_profile(dt_odf_chassis, hosts_mounts=True,
                        internal_width_mm=440, internal_height_mm=44, internal_depth_mm=250)
 
         # ------------------------------------------------------------------
@@ -516,9 +569,9 @@ class Command(BaseCommand):
         din_shelf_4u = ensure_device('DIN Shelf 4U #1', dt_din_shelf_4u, 'shelf')
         relay_4u_a = ensure_device('Relay 4U-A', dt_relay, 'relay')
         relay_4u_b = ensure_device('Relay 4U-B', dt_relay, 'relay')
-        mcb_4u_a = ensure_device('MCB 4U-A', dt_mcb, 'mcb')
-        mcb_4u_b = ensure_device('MCB 4U-B', dt_mcb, 'mcb')
-        mcb_4u_c = ensure_device('MCB 4U-C', dt_mcb, 'mcb')
+        mcb_4u_a = ensure_device('MCB 4U-A', dt_mcb_din, 'mcb')
+        mcb_4u_b = ensure_device('MCB 4U-B', dt_mcb_din, 'mcb')
+        mcb_4u_c = ensure_device('MCB 4U-C', dt_mcb_din, 'mcb')
 
         # Scenario 9: ISP-style 4U DIN rail shelf with a single centered rail
         din_shelf_4u_isp = ensure_device('DIN Shelf 4U ISP #1', dt_din_shelf_4u_isp, 'shelf')
@@ -694,163 +747,163 @@ class Command(BaseCommand):
             dev.save()
 
         # ------------------------------------------------------------------
-        # Carriers
+        # Mounts
         # ------------------------------------------------------------------
-        c_din = ensure_carrier(
+        c_din = ensure_mount_obj(
             din_device, 'Main rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=480, offset_x_mm=0, offset_y_mm=20,
         )
-        c_plate = ensure_carrier(
+        c_plate = ensure_mount_obj(
             plate_device, 'Back plate',
-            carrier_type='mounting_plate', subtype='plate_generic',
+            mount_type='mounting_plate', subtype='plate_generic',
             unit='mm', width_mm=760, height_mm=1960, offset_x_mm=0, offset_y_mm=0,
         )
-        c_wdm = ensure_carrier(
+        c_wdm = ensure_mount_obj(
             wdm_shelf, 'Slot carrier',
-            carrier_type='subrack', subtype='hp_3u', orientation='horizontal',
+            mount_type='subrack', subtype='hp_3u', orientation='horizontal',
             unit='hp_5_08', length_mm=406, offset_x_mm=15, offset_y_mm=5,
         )
-        c_wdm2 = ensure_carrier(
+        c_wdm2 = ensure_mount_obj(
             wdm_shelf2, 'Slot carrier',
-            carrier_type='subrack', subtype='hp_3u', orientation='horizontal',
+            mount_type='subrack', subtype='hp_3u', orientation='horizontal',
             unit='hp_5_08', length_mm=440, offset_x_mm=0, offset_y_mm=4,
         )
-        c_busbar = ensure_carrier(
+        c_busbar = ensure_mount_obj(
             busbar_device, 'L1/L2/L3 bar',
-            carrier_type='busbar', subtype='bb_60mm_pitch', orientation='horizontal',
+            mount_type='busbar', subtype='bb_60mm_pitch', orientation='horizontal',
             unit='mm', length_mm=1000, offset_x_mm=0, offset_y_mm=20,
         )
-        c_plc = ensure_carrier(
+        c_plc = ensure_mount_obj(
             plc_backplane, 'Backplane',
-            carrier_type='subrack', subtype='hp_3u', orientation='horizontal',
+            mount_type='subrack', subtype='hp_3u', orientation='horizontal',
             unit='hp_5_08', length_mm=400, offset_x_mm=0, offset_y_mm=10,
         )
 
         # 2U DIN shelf — single rail centered vertically
-        c_din_2u = ensure_carrier(
+        c_din_2u = ensure_mount_obj(
             din_shelf_2u, 'Main rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=40,
         )
 
         # 4U DIN shelf — two stacked rails
-        c_din_4u_upper = ensure_carrier(
+        c_din_4u_upper = ensure_mount_obj(
             din_shelf_4u, 'Upper rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=45,
         )
-        c_din_4u_lower = ensure_carrier(
+        c_din_4u_lower = ensure_mount_obj(
             din_shelf_4u, 'Lower rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=130,
         )
 
         # ISP 4U DIN shelf — one rail centered vertically, wire room above/below
-        c_din_4u_isp = ensure_carrier(
+        c_din_4u_isp = ensure_mount_obj(
             din_shelf_4u_isp, 'Main rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=88,
         )
 
         # --- Scenarios A-G carriers ---
 
         # A: Marshalling shelf — one DIN rail in mm units (terminal blocks are 5-6 mm)
-        c_marshalling = ensure_carrier(
+        c_marshalling = ensure_mount_obj(
             marshalling_shelf, 'Terminal rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=88,
         )
 
         # B: MCC cabinet — vertical busbar, plus one DIN rail inside each bucket
-        c_mcc_busbar = ensure_carrier(
+        c_mcc_busbar = ensure_mount_obj(
             mcc_cabinet, 'Vertical busbar',
-            carrier_type='busbar', subtype='bb_60mm_pitch', orientation='vertical',
+            mount_type='busbar', subtype='bb_60mm_pitch', orientation='vertical',
             unit='mm', length_mm=1800, offset_x_mm=250, offset_y_mm=200,
         )
         c_bucket_rails = []
         for i, bucket in enumerate(buckets):
-            c_bucket_rails.append(ensure_carrier(
+            c_bucket_rails.append(ensure_mount_obj(
                 bucket, 'Bucket rail',
-                carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+                mount_type='din_rail', subtype='ts35', orientation='horizontal',
                 unit='mm', length_mm=280, offset_x_mm=10, offset_y_mm=80,
             ))
 
         # C: VFD cabinet — back plate, plus a nested DIN strip device with its own rail
-        c_vfd_plate = ensure_carrier(
+        c_vfd_plate = ensure_mount_obj(
             vfd_cabinet, 'Back plate',
-            carrier_type='mounting_plate', subtype='plate_generic',
+            mount_type='mounting_plate', subtype='plate_generic',
             unit='mm', width_mm=560, height_mm=1760, offset_x_mm=0, offset_y_mm=0,
         )
-        c_aux_rail = ensure_carrier(
+        c_aux_rail = ensure_mount_obj(
             aux_rail_device, 'Aux rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=380, offset_x_mm=10, offset_y_mm=30,
         )
 
         # D: Fieldbus remote I/O — DIN rail with coupler + I/O modules
-        c_fieldbus = ensure_carrier(
+        c_fieldbus = ensure_mount_obj(
             fieldbus_shelf, 'Main rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
         )
 
         # E: Industrial switch — DIN rail with a single 90 mm switch
-        c_switch = ensure_carrier(
+        c_switch = ensure_mount_obj(
             switch_shelf, 'Main rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
         )
 
         # F: Safety relay panel — back plate with 4 safety relays
-        c_safety_plate = ensure_carrier(
+        c_safety_plate = ensure_mount_obj(
             safety_cabinet, 'Back plate',
-            carrier_type='mounting_plate', subtype='plate_generic',
+            mount_type='mounting_plate', subtype='plate_generic',
             unit='mm', width_mm=600, height_mm=800, offset_x_mm=0, offset_y_mm=0,
         )
 
         # G: Protection panel — back plate with IEDs + nested test block rail
-        c_protection_plate = ensure_carrier(
+        c_protection_plate = ensure_mount_obj(
             protection_cabinet, 'Back plate',
-            carrier_type='mounting_plate', subtype='plate_generic',
+            mount_type='mounting_plate', subtype='plate_generic',
             unit='mm', width_mm=760, height_mm=2160, offset_x_mm=0, offset_y_mm=0,
         )
-        c_test_rail = ensure_carrier(
+        c_test_rail = ensure_mount_obj(
             test_rail_device, 'Test rail',
-            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=580, offset_x_mm=10, offset_y_mm=20,
         )
 
         # --- Scenarios H / I / J carriers ---
 
         # H: Vertical DIN rail wall box — one vertical TS35 rail
-        c_wall_v = ensure_carrier(
+        c_wall_v = ensure_mount_obj(
             wall_box_v, 'Vertical rail',
-            carrier_type='din_rail', subtype='ts35', orientation='vertical',
+            mount_type='din_rail', subtype='ts35', orientation='vertical',
             unit='mm', length_mm=560, offset_x_mm=80, offset_y_mm=20,
         )
 
         # I: Vertical 6U subrack — one vertical subrack carrier holding cards
-        c_vsubrack = ensure_carrier(
+        c_vsubrack = ensure_mount_obj(
             vsubrack, 'Card cage',
-            carrier_type='subrack', subtype='hp_6u', orientation='vertical',
+            mount_type='subrack', subtype='hp_6u', orientation='vertical',
             unit='hp_5_08', length_mm=460, offset_x_mm=20, offset_y_mm=20,
         )
 
         # K: ODF — 1U chassis with a 2x6 grid of 70 mm fibre splice cassettes.
         # Row height is half the 44 mm 1U internal space = 22 mm per row.
-        c_odf_grid = ensure_carrier(
+        c_odf_grid = ensure_mount_obj(
             odf, 'Cassette grid',
-            carrier_type='grid', orientation='horizontal',
+            mount_type='grid', orientation='horizontal',
             unit='mm', length_mm=420, rows=2, row_height_mm=22,
             offset_x_mm=10, offset_y_mm=0,
         )
 
         # J: IED grid — 2 rows ("bars") of 12 slots at 30 mm slot width.
         # Row length = 12 * 30 mm. Row spacing = 100 mm so labels breathe.
-        c_ied_grid = ensure_carrier(
+        c_ied_grid = ensure_mount_obj(
             ied, 'Module bars',
-            carrier_type='grid', orientation='horizontal',
+            mount_type='grid', orientation='horizontal',
             unit='mm', length_mm=360, rows=2, row_height_mm=100,
             offset_x_mm=40, offset_y_mm=40,
         )
@@ -858,90 +911,90 @@ class Command(BaseCommand):
         # ------------------------------------------------------------------
         # Mounts (sizes left implicit where the profile provides a footprint)
         # ------------------------------------------------------------------
-        ensure_mount(c_din, device=relay1, position=1, size=1)
-        ensure_mount(c_din, device=relay2, position=5, size=1)
+        ensure_placement(c_din, device=relay1, position=1, size=1)
+        ensure_placement(c_din, device=relay2, position=5, size=1)
 
-        ensure_mount(c_plate, device=ipc, position_x=100, position_y=200, size_x=220, size_y=90)
+        ensure_placement(c_plate, device=ipc, position_x=100, position_y=200, size_x=220, size_y=90)
 
-        ensure_mount(c_wdm, device_bay=bay1, position=1, size=4)
-        ensure_mount(c_wdm, device_bay=bay5, position=41, size=4)
+        ensure_placement(c_wdm, device_bay=bay1, position=1, size=4)
+        ensure_placement(c_wdm, device_bay=bay5, position=41, size=4)
 
         # WDM 2-slot: fixed 20-HP slots centered in each half of the 86-HP carrier
-        ensure_mount(c_wdm2, device_bay=bay2_1, position=12, size=20)
-        ensure_mount(c_wdm2, device_bay=bay2_2, position=55, size=20)
+        ensure_placement(c_wdm2, device_bay=bay2_1, position=12, size=20)
+        ensure_placement(c_wdm2, device_bay=bay2_2, position=55, size=20)
 
-        ensure_mount(c_busbar, device=mcb1, position=20, size=18)
-        ensure_mount(c_busbar, device=mcb2, position=60, size=18)
-        ensure_mount(c_busbar, device=mcb3, position=100, size=18)
+        ensure_placement(c_busbar, device=mcb1, position=20, size=18)
+        ensure_placement(c_busbar, device=mcb2, position=60, size=18)
+        ensure_placement(c_busbar, device=mcb3, position=100, size=18)
 
-        ensure_mount(c_plc, module_bay=mb2, position=11, size=10)
-        ensure_mount(c_plc, module_bay=mb4, position=31, size=10)
+        ensure_placement(c_plc, module_bay=mb2, position=11, size=10)
+        ensure_placement(c_plc, module_bay=mb4, position=31, size=10)
 
         # 2U DIN shelf: three relays spread across the rail
-        ensure_mount(c_din_2u, device=relay_2u_a, position=1,  size=1)
-        ensure_mount(c_din_2u, device=relay_2u_b, position=5,  size=1)
-        ensure_mount(c_din_2u, device=relay_2u_c, position=9,  size=1)
+        ensure_placement(c_din_2u, device=relay_2u_a, position=1,  size=1)
+        ensure_placement(c_din_2u, device=relay_2u_b, position=5,  size=1)
+        ensure_placement(c_din_2u, device=relay_2u_c, position=9,  size=1)
 
         # 4U DIN shelf: 2 relays on upper rail, 3 MCBs on lower rail
-        ensure_mount(c_din_4u_upper, device=relay_4u_a, position=1, size=1)
-        ensure_mount(c_din_4u_upper, device=relay_4u_b, position=5, size=1)
-        ensure_mount(c_din_4u_lower, device=mcb_4u_a, position=1,  size=1)
-        ensure_mount(c_din_4u_lower, device=mcb_4u_b, position=3,  size=1)
-        ensure_mount(c_din_4u_lower, device=mcb_4u_c, position=5,  size=1)
+        ensure_placement(c_din_4u_upper, device=relay_4u_a, position=1, size=1)
+        ensure_placement(c_din_4u_upper, device=relay_4u_b, position=5, size=1)
+        ensure_placement(c_din_4u_lower, device=mcb_4u_a, position=1,  size=1)
+        ensure_placement(c_din_4u_lower, device=mcb_4u_b, position=3,  size=1)
+        ensure_placement(c_din_4u_lower, device=mcb_4u_c, position=5,  size=1)
 
         # ISP 4U DIN shelf: 5 relays along the single rail
         for i, r in enumerate((relay_isp_a, relay_isp_b, relay_isp_c, relay_isp_d, relay_isp_e)):
-            ensure_mount(c_din_4u_isp, device=r, position=1 + i * 4, size=1)
+            ensure_placement(c_din_4u_isp, device=r, position=1 + i * 4, size=1)
 
         # --- Scenarios A-G mounts (sizes mostly default from device profile footprint) ---
 
         # A: Marshalling — 20 terminal blocks at 6 mm spacing, starting 10 mm in
         for i, tb in enumerate(terminal_blocks):
-            ensure_mount(c_marshalling, device=tb, position=10 + i * 6)
+            ensure_placement(c_marshalling, device=tb, position=10 + i * 6)
 
         # B: MCC — 3 withdrawable buckets on the vertical busbar
-        ensure_mount(c_mcc_busbar, device=buckets[0], position=100)
-        ensure_mount(c_mcc_busbar, device=buckets[1], position=500)
-        ensure_mount(c_mcc_busbar, device=buckets[2], position=900)
+        ensure_placement(c_mcc_busbar, device=buckets[0], position=100)
+        ensure_placement(c_mcc_busbar, device=buckets[1], position=500)
+        ensure_placement(c_mcc_busbar, device=buckets[2], position=900)
         # Each bucket has its own DIN rail with one contactor and one relay
         for rail, contactor, aux in zip(c_bucket_rails, bucket_contactors, bucket_relays):
-            ensure_mount(rail, device=contactor, position=30)
-            ensure_mount(rail, device=aux, position=100)
+            ensure_placement(rail, device=contactor, position=30)
+            ensure_placement(rail, device=aux, position=100)
 
         # C: VFD cabinet plate — VFD drive at top, aux DIN strip below
-        ensure_mount(c_vfd_plate, device=vfd_drive, position_x=150, position_y=100)
-        ensure_mount(c_vfd_plate, device=aux_rail_device, position_x=80, position_y=600)
+        ensure_placement(c_vfd_plate, device=vfd_drive, position_x=150, position_y=100)
+        ensure_placement(c_vfd_plate, device=aux_rail_device, position_x=80, position_y=600)
         # Aux DIN strip carries a PSU and two VFD contactors
-        ensure_mount(c_aux_rail, device=psu_device, position=20)
-        ensure_mount(c_aux_rail, device=vfd_contactor_a, position=120)
-        ensure_mount(c_aux_rail, device=vfd_contactor_b, position=180)
+        ensure_placement(c_aux_rail, device=psu_device, position=20)
+        ensure_placement(c_aux_rail, device=vfd_contactor_a, position=120)
+        ensure_placement(c_aux_rail, device=vfd_contactor_b, position=180)
 
         # D: Fieldbus remote I/O — coupler at left, then alternating DI/DO modules
-        ensure_mount(c_fieldbus, device=fb_coupler, position=10)
+        ensure_placement(c_fieldbus, device=fb_coupler, position=10)
         x = 115  # left edge of the first I/O module, just right of the coupler
         for di in fb_di_modules:
-            ensure_mount(c_fieldbus, device=di, position=x)
+            ensure_placement(c_fieldbus, device=di, position=x)
             x += 14
         for do in fb_do_modules:
-            ensure_mount(c_fieldbus, device=do, position=x)
+            ensure_placement(c_fieldbus, device=do, position=x)
             x += 14
 
         # E: Industrial switch — single switch centered on the rail
-        ensure_mount(c_switch, device=industrial_switch, position=160)
+        ensure_placement(c_switch, device=industrial_switch, position=160)
 
         # F: Safety relay panel — 4 safety relays spaced along the plate top
         for i, sr in enumerate(safety_relays):
-            ensure_mount(c_safety_plate, device=sr, position_x=60 + i * 130, position_y=150)
+            ensure_placement(c_safety_plate, device=sr, position_x=60 + i * 130, position_y=150)
 
         # G: Protection panel — 2 overcurrent IEDs, 1 line-distance IED, test block rail below
-        ensure_mount(c_protection_plate, device=oc_ied_1, position_x=270, position_y=200)
-        ensure_mount(c_protection_plate, device=oc_ied_2, position_x=270, position_y=550)
-        ensure_mount(c_protection_plate, device=ld_ied,    position_x=140, position_y=900)
-        ensure_mount(c_protection_plate, device=test_rail_device,
+        ensure_placement(c_protection_plate, device=oc_ied_1, position_x=270, position_y=200)
+        ensure_placement(c_protection_plate, device=oc_ied_2, position_x=270, position_y=550)
+        ensure_placement(c_protection_plate, device=ld_ied,    position_x=140, position_y=900)
+        ensure_placement(c_protection_plate, device=test_rail_device,
                      position_x=80, position_y=1300)
         # The test block rail carries 4 test blocks
         for i, tb in enumerate(test_blocks):
-            ensure_mount(c_test_rail, device=tb, position=20 + i * 130)
+            ensure_placement(c_test_rail, device=tb, position=20 + i * 130)
 
         # --- Scenarios H / I / J mounts ---
 
@@ -949,11 +1002,11 @@ class Command(BaseCommand):
         for i, r in enumerate(wall_box_relays):
             # Each relay is 1 module (17.5 mm) but we're in mm units here for
             # the vertical rail, so space them ~30 mm apart.
-            ensure_mount(c_wall_v, device=r, position=10 + i * 30, size=25)
+            ensure_placement(c_wall_v, device=r, position=10 + i * 30, size=25)
 
         # I: 4 Eurocard 8HP cards stacked along the vertical subrack
         for i, card in enumerate(eurocards):
-            ensure_mount(c_vsubrack, device=card, position=1 + i * 10)  # 10 HP per card
+            ensure_placement(c_vsubrack, device=card, position=1 + i * 10)  # 10 HP per card
 
         # K: ODF cassette mounts — each ModuleBay holds a fibre splice
         # cassette, placed at its position on the 2x6 grid carrier.
@@ -961,7 +1014,7 @@ class Command(BaseCommand):
         for row in (1, 2):
             for slot in range(1, 7):
                 bay = ModuleBay.objects.get(device=odf, name=f'C{row}-{slot}')
-                ensure_mount(
+                ensure_placement(
                     c_odf_grid, module_bay=bay,
                     row=row, row_span=1,
                     position=1 + (slot - 1) * CASSETTE_MM,
@@ -984,7 +1037,7 @@ class Command(BaseCommand):
         # Helper to look up a ModuleBay by "R{row}S{slot}" name and mount it.
         def mount_slot(row, slot, size_slots=1, row_span=1):
             bay = ModuleBay.objects.get(device=ied, name=f'R{row}S{slot}')
-            ensure_mount(
+            ensure_placement(
                 c_ied_grid, module_bay=bay,
                 row=row, row_span=row_span,
                 position=slot_pos(slot),

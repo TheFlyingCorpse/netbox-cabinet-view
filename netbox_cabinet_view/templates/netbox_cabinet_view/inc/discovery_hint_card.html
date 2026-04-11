@@ -1,0 +1,43 @@
+{# ==================================================================== #}
+{# Finding H (v0.4.0): discovery hint card.                             #}
+{#                                                                      #}
+{# Rendered into the right column of Device detail pages whose          #}
+{# DeviceType has no DeviceMountProfile yet and is cabinet-shaped       #}
+{# (u_height == 0). The CabinetViewHintExtension does the gating —     #}
+{# by the time this template runs, we know the hint SHOULD be shown.   #}
+{#                                                                      #}
+{# Context:                                                             #}
+{#   device: dcim.Device — the current device being viewed              #}
+{# ==================================================================== #}
+<div class="card mb-3" style="border-left: 4px solid #81c784;">
+  <div class="card-header d-flex justify-content-between align-items-center"
+       style="background-color: rgba(129, 199, 132, 0.08);">
+    <span style="font-weight: 700; color: #81c784;">
+      <i class="mdi mdi-cabinet"></i>
+      Does this device host a cabinet layout?
+    </span>
+    <a href="{% url 'plugins:netbox_cabinet_view:hint_dismiss' device_pk=device.pk %}"
+       class="text-muted small text-decoration-none"
+       title="Dismiss this hint for this device">✕ dismiss</a>
+  </div>
+  <div class="card-body">
+    <p class="small mb-3">
+      This looks like an enclosure — no rack U height, no cabinet profile
+      yet. Set up a Cabinet View profile to add DIN rails, subracks,
+      mounting plates, busbars, or grids, then drop devices onto them
+      visually.
+    </p>
+    <div class="d-flex gap-2">
+      <a href="{% url 'plugins:netbox_cabinet_view:devicemountprofile_add' %}?device_type={{ device.device_type.pk }}"
+         class="btn btn-sm btn-success">
+        <i class="mdi mdi-plus-thick"></i> Set up cabinet layout
+      </a>
+      <a href="https://github.com/TheFlyingCorpse/netbox-cabinet-view#readme"
+         target="_blank"
+         rel="noopener"
+         class="btn btn-sm btn-outline-secondary">
+        Learn more
+      </a>
+    </div>
+  </div>
+</div>

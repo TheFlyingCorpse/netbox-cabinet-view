@@ -1,0 +1,126 @@
+{# ==================================================================== #}
+{# Finding D (v0.4.0): slot ledger table.                               #}
+{#                                                                      #}
+{# Renders above the SVG on the Device Layout tab when the              #}
+{# SLOT_LEDGER_ENABLED plugin setting is True. Receives one context     #}
+{# variable:                                                            #}
+{#                                                                      #}
+{#   ledger_sections: list[MountSection]  (from ledger.enumerate_ledger)#}
+{#                                                                      #}
+{# Per the v0.4.0 UX decisions (no collapse, bay-empty is informational #}
+{# not yellow, β-ledger sub-rows under hosted devices).                 #}
+{# ==================================================================== #}
+{% if ledger_sections %}
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header">
+        Slot ledger
+        <small class="text-muted ms-2" style="font-weight: normal;">
+          opt-in; toggle off via <code>SLOT_LEDGER_ENABLED=False</code>
+        </small>
+      </h5>
+      <div class="card-body p-0">
+        {% for section in ledger_sections %}
+        <div class="p-3 {% if not forloop.last %}border-bottom{% endif %}">
+          {# -------- section header: mount name + occupancy bar -------- #}
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">
+              <a href="{{ section.mount.get_absolute_url }}">{{ section.mount.name }}</a>
+              <span class="text-muted small ms-2">
+                {{ section.mount.get_mount_type_display }}{% if section.mount.subtype %},
+                {{ section.mount.get_subtype_display }}{% endif %}
+              </span>
+            </h6>
+            <div class="d-flex align-items-center">
+              {% if section.capacity %}
+              <div class="progress me-2" style="width: 120px; height: 10px;">
+                <div class="progress-bar bg-success"
+                     role="progressbar"
+                     style="width: {{ section.occupancy_pct }}%"
+                     aria-valuenow="{{ section.occupancy_pct }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
+              </div>
+              <small class="text-muted">
+                {{ section.populated_count }} / {{ section.capacity }}
+                · {{ section.occupancy_pct }}%
+              </small>
+              {% else %}
+              <small class="text-muted">2D plate</small>
+              {% endif %}
+              <a href="{% url 'plugins:netbox_cabinet_view:placement_add' %}?mount={{ section.mount.pk }}"
+                 class="btn btn-sm btn-outline-primary ms-3">
+                <i class="mdi mdi-plus-thick"></i> Placement
+              </a>
+            </div>
+          </div>
+
+          {# -------- rows table -------- #}
+          <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Slot</th>
+                  <th>Size</th>
+                  <th>Device</th>
+                  <th>Role</th>
+                  <th>Type</th>
+                  <th>Bay</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in section.rows %}
+                <tr class="{% if row.state != 'populated' %}text-muted{% endif %}">
+                  <td>{{ row.slot_label }}</td>
+                  <td>{{ row.size_label }}</td>
+                  <td>
+                    {% if row.device_url %}
+                      <a href="{{ row.device_url }}">{{ row.device_name }}</a>
+                    {% elif row.state == 'empty' %}
+                      <span class="fst-italic">(empty)</span>
+                    {% elif row.state == 'bay_empty' or row.state == 'module_empty' %}
+                      <span class="fst-italic">(bay empty)</span>
+                    {% elif row.state == 'dangling' %}
+                      <span class="text-danger">{{ row.device_name }}</span>
+                    {% else %}
+                      {{ row.device_name }}
+                    {% endif %}
+                  </td>
+                  <td>{{ row.role|default:"—" }}</td>
+                  <td>{{ row.type_name }}</td>
+                  <td>{{ row.bay_label }}</td>
+                  <td class="text-end">
+                    {% if row.action_url %}
+                      <a href="{{ row.action_url }}" class="text-decoration-none">
+                        {{ row.action_label }}
+                      </a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {# -------- β-ledger sub-rows: populated ModuleBays -------- #}
+                {% for sub in row.sub_rows %}
+                <tr class="small">
+                  <td class="ps-4 text-muted">
+                    <span style="opacity: 0.6;">↳</span> {{ sub.slot_label }}
+                  </td>
+                  <td class="text-muted">—</td>
+                  <td>{{ sub.module_name }}</td>
+                  <td class="text-muted">{{ sub.role|default:"—" }}</td>
+                  <td class="text-muted">{{ sub.module_type }}</td>
+                  <td class="text-muted">—</td>
+                  <td></td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
