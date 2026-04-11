@@ -227,7 +227,7 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 | **A. Marshalling cabinet (20 terminal blocks)** | ![](docs/screenshots/A-marshalling.svg) |
 | **B. MCC with withdrawable buckets** | ![](docs/screenshots/B-mcc-cabinet.svg) |
 | **C. VFD control cabinet** | ![](docs/screenshots/C-vfd-cabinet.svg) |
-| **D. Fieldbus remote I/O station** | ![](docs/screenshots/D-wago-remote-io.svg) |
+| **D. Fieldbus remote I/O station** | ![](docs/screenshots/D-fieldbus-remote-io.svg) |
 | **E. Industrial Ethernet switch** | ![](docs/screenshots/E-industrial-switch.svg) |
 | **F. Safety relay panel** | ![](docs/screenshots/F-safety-panel.svg) |
 | **G. Substation protection panel** | ![](docs/screenshots/G-protection-panel.svg) |

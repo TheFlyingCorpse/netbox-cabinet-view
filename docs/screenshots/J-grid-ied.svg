@@ -4,19 +4,40 @@
 .cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
 .cabinet-label   { font: 600 13px sans-serif; fill: #555; }
 
-.carrier { stroke: #333; stroke-width: 1; }
-.carrier.din-rail       { fill: #c0c7d1; }
-.carrier.subrack        { fill: #e3ebf1; stroke: #456; }
-.carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
-.carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
-.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
-.carrier-label          { font: 500 11px sans-serif; fill: #444; }
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
 .slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
 .label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover > .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
 
 /* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
  * which the embedding page propagates to <object> documents. */
@@ -25,17 +46,95 @@
   .cabinet-outline { stroke: #6c7078; }
   .cabinet-label   { fill: #c8ccd4; }
 
-  .carrier                { stroke: #9aa2ad; }
-  .carrier.din-rail       { fill: #4b5460; }
-  .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .carrier-label          { fill: #c8ccd4; }
+  .mount                { stroke: #9aa2ad; }
+  .mount.din-rail       { fill: #4b5460; }
+  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .mount-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }
   .slot.empty  { fill: none; stroke: #5a6070; }
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover > .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
 }
-]]></style><clipPath id="clip-mount-219"><rect height="56" width="60.0" x="100.0" y="79.0" /></clipPath><clipPath id="clip-mount-227"><rect height="56" width="60.0" x="100.0" y="279.0" /></clipPath><clipPath id="clip-mount-220"><rect height="56" width="60.0" x="160.0" y="79.0" /></clipPath><clipPath id="clip-mount-228"><rect height="56" width="60.0" x="220.0" y="279.0" /></clipPath><clipPath id="clip-mount-221"><rect height="56" width="60.0" x="220.0" y="79.0" /></clipPath><clipPath id="clip-mount-222"><rect height="56" width="60.0" x="280.0" y="79.0" /></clipPath><clipPath id="clip-mount-223"><rect height="56" width="60.0" x="340.0" y="79.0" /></clipPath><clipPath id="clip-mount-229"><rect height="56" width="120.0" x="340.0" y="279.0" /></clipPath><clipPath id="clip-mount-224"><rect height="56" width="60.0" x="460.0" y="79.0" /></clipPath><clipPath id="clip-mount-230"><rect height="56" width="60.0" x="520.0" y="279.0" /></clipPath><clipPath id="clip-mount-225"><rect height="56" width="120.0" x="520.0" y="79.0" /></clipPath><clipPath id="clip-mount-226"><rect height="256.0" width="120.0" x="700.0" y="79.0" /></clipPath></defs><rect class="svg-bg" height="560.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="520.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Protection IED L01</text><text class="carrier-label" x="104.0" y="96.0">Module bars</text><rect class="carrier grid grid-row" height="14" width="720.0" x="100.0" y="100.0" /><rect class="carrier grid grid-row" height="14" width="720.0" x="100.0" y="300.0" /><a target="_parent" xlink:href="/dcim/modules/17/"><title>IED power supply module in R1S1</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="100.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-219)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="130.0" y="107.0">IED pow…</text></a><a target="_parent" xlink:href="/dcim/modules/25/"><title>IED binary I/O module in R2S1</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="100.0" y="279.0" /><text class="label" clip-path="url(#clip-mount-227)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="130.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/18/"><title>IED power supply module in R1S2</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="160.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-220)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="190.0" y="107.0">IED pow…</text></a><a target="_parent" xlink:href="/dcim/modules/26/"><title>IED binary I/O module in R2S3</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="220.0" y="279.0" /><text class="label" clip-path="url(#clip-mount-228)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="250.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/19/"><title>IED CPU module in R1S3</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="220.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-221)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="250.0" y="107.0">IED CPU…</text></a><a target="_parent" xlink:href="/dcim/modules/20/"><title>IED binary I/O module in R1S4</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="280.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-222)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="310.0" y="107.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/21/"><title>IED analog input module in R1S5</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="340.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-223)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="370.0" y="107.0">IED ana…</text></a><a target="_parent" xlink:href="/dcim/modules/27/"><title>IED high-speed I/O module in R2S5</title><rect class="slot" height="56" style="fill: #4caf50" width="120.0" x="340.0" y="279.0" /><text class="label" clip-path="url(#clip-mount-229)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="400.0" y="307.0">IED high-speed I…</text></a><a target="_parent" xlink:href="/dcim/modules/22/"><title>IED binary I/O module in R1S7</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="460.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-224)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="490.0" y="107.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/28/"><title>IED binary I/O module in R2S8</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="520.0" y="279.0" /><text class="label" clip-path="url(#clip-mount-230)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="550.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/23/"><title>IED Ethernet comms module in R1S8</title><rect class="slot" height="56" style="fill: #4caf50" width="120.0" x="520.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-225)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="580.0" y="107.0">IED Ethernet com…</text></a><a target="_parent" xlink:href="/dcim/modules/24/"><title>IED fibre comms module in R1S11</title><rect class="slot" height="256.0" style="fill: #4caf50" width="120.0" x="700.0" y="79.0" /><text class="label" clip-path="url(#clip-mount-226)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="760.0" y="207.0">IED fibre comms …</text></a></svg>
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * <svg> element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation <image> wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display & Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at >= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
+]]></style><clipPath id="clip-placement-219"><rect height="56" width="60.0" x="100.0" y="79.0" /></clipPath><clipPath id="clip-placement-227"><rect height="56" width="60.0" x="100.0" y="279.0" /></clipPath><clipPath id="clip-placement-220"><rect height="56" width="60.0" x="160.0" y="79.0" /></clipPath><clipPath id="clip-placement-228"><rect height="56" width="60.0" x="220.0" y="279.0" /></clipPath><clipPath id="clip-placement-221"><rect height="56" width="60.0" x="220.0" y="79.0" /></clipPath><clipPath id="clip-placement-222"><rect height="56" width="60.0" x="280.0" y="79.0" /></clipPath><clipPath id="clip-placement-223"><rect height="56" width="60.0" x="340.0" y="79.0" /></clipPath><clipPath id="clip-placement-229"><rect height="56" width="120.0" x="340.0" y="279.0" /></clipPath><clipPath id="clip-placement-224"><rect height="56" width="60.0" x="460.0" y="79.0" /></clipPath><clipPath id="clip-placement-230"><rect height="56" width="60.0" x="520.0" y="279.0" /></clipPath><clipPath id="clip-placement-225"><rect height="56" width="120.0" x="520.0" y="79.0" /></clipPath><clipPath id="clip-placement-226"><rect height="256.0" width="120.0" x="700.0" y="79.0" /></clipPath></defs><rect class="svg-bg" height="560.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="520.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Protection IED L01</text><rect class="mount grid grid-row" height="14" width="720.0" x="100.0" y="100.0" /><rect class="mount grid grid-row" height="14" width="720.0" x="100.0" y="300.0" /><a target="_parent" xlink:href="/dcim/modules/17/"><title>IED power supply module in R1S1</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="100.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-219)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="130.0" y="107.0">IED pow…</text></a><a target="_parent" xlink:href="/dcim/modules/25/"><title>IED binary I/O module in R2S1</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="100.0" y="279.0" /><text class="label" clip-path="url(#clip-placement-227)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="130.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/18/"><title>IED power supply module in R1S2</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="160.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-220)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="190.0" y="107.0">IED pow…</text></a><a target="_parent" xlink:href="/dcim/modules/26/"><title>IED binary I/O module in R2S3</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="220.0" y="279.0" /><text class="label" clip-path="url(#clip-placement-228)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="250.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/19/"><title>IED CPU module in R1S3</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="220.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-221)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="250.0" y="107.0">IED CPU…</text></a><a target="_parent" xlink:href="/dcim/modules/20/"><title>IED binary I/O module in R1S4</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="280.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-222)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="310.0" y="107.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/21/"><title>IED analog input module in R1S5</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="340.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-223)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="370.0" y="107.0">IED ana…</text></a><a target="_parent" xlink:href="/dcim/modules/27/"><title>IED high-speed I/O module in R2S5</title><rect class="slot" height="56" style="fill: #4caf50" width="120.0" x="340.0" y="279.0" /><text class="label" clip-path="url(#clip-placement-229)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="400.0" y="307.0">IED high-speed I…</text></a><a target="_parent" xlink:href="/dcim/modules/22/"><title>IED binary I/O module in R1S7</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="460.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-224)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="490.0" y="107.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/28/"><title>IED binary I/O module in R2S8</title><rect class="slot" height="56" style="fill: #4caf50" width="60.0" x="520.0" y="279.0" /><text class="label" clip-path="url(#clip-placement-230)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="550.0" y="307.0">IED bin…</text></a><a target="_parent" xlink:href="/dcim/modules/23/"><title>IED Ethernet comms module in R1S8</title><rect class="slot" height="56" style="fill: #4caf50" width="120.0" x="520.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-225)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="580.0" y="107.0">IED Ethernet com…</text></a><a target="_parent" xlink:href="/dcim/modules/24/"><title>IED fibre comms module in R1S11</title><rect class="slot" height="256.0" style="fill: #4caf50" width="120.0" x="700.0" y="79.0" /><text class="label" clip-path="url(#clip-placement-226)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="760.0" y="207.0">IED fibre comms …</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=151&amp;row=1"><title>Add placement at row 1, position 151</title><rect class="slot empty-slot" height="56" width="60.0" x="400.0" y="79.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=271&amp;row=1"><title>Add placement at row 1, position 271</title><rect class="slot empty-slot" height="56" width="60.0" x="640.0" y="79.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=31&amp;row=2"><title>Add placement at row 2, position 31</title><rect class="slot empty-slot" height="56" width="60.0" x="160.0" y="279.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=91&amp;row=2"><title>Add placement at row 2, position 91</title><rect class="slot empty-slot" height="56" width="60.0" x="280.0" y="279.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=181&amp;row=2"><title>Add placement at row 2, position 181</title><rect class="slot empty-slot" height="56" width="60.0" x="460.0" y="279.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=57&amp;position=241&amp;row=2"><title>Add placement at row 2, position 241</title><rect class="slot empty-slot" height="56" width="120.0" x="580.0" y="279.0" /></a><text class="mount-label" x="104.0" y="96.0">Module bars</text></svg>
