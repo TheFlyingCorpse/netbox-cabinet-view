@@ -14,6 +14,7 @@
       <div class="card-body text-center p-0">
         {% if has_mounts %}
           <object type="image/svg+xml"
+                  id="cabinet-layout-svg-embed"
                   data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
                   style="max-width: 100%; height: auto;">
             Cabinet layout for {{ object }}
@@ -81,6 +82,65 @@
 </div>
 
 {% if has_mounts %}
+{# =================================================================== #}
+{# Finding C (v0.4.0): 2D click-anywhere handler for mounting plates.  #}
+{#                                                                      #}
+{# The SVG renderer emits one transparent `.slot.empty-slot.mount-2d`   #}
+{# rect per 2D mount, tagged with data-mount-pk + data-mm-per-px +      #}
+{# data-origin-x/y. On click, we read the pointer's offset inside that  #}
+{# rect, convert to mm relative to the mount's origin, round to the    #}
+{# nearest mm, and navigate to the PlacementForm with mount, position_x #}
+{# and position_y pre-filled. 1D and grid mounts already have per-slot  #}
+{# <a> hyperlinks; they don't need this JS.                             #}
+{# =================================================================== #}
+<script>
+(function() {
+  const obj = document.getElementById('cabinet-layout-svg-embed');
+  if (!obj) return;
+  const placementAddUrl = "{% url 'plugins:netbox_cabinet_view:placement_add' %}";
+
+  function wireUp2DClicks() {
+    const doc = obj.contentDocument;
+    if (!doc) return;
+    const rects = doc.querySelectorAll('.slot.empty-slot.mount-2d');
+    rects.forEach(function(rect) {
+      if (rect.dataset.wired) return;
+      rect.dataset.wired = '1';
+      rect.addEventListener('click', function(evt) {
+        const mountPk = rect.getAttribute('data-mount-pk');
+        const mmPerPx = parseFloat(rect.getAttribute('data-mm-per-px') || '0.5');
+        const originX = parseFloat(rect.getAttribute('data-origin-x') || '0');
+        const originY = parseFloat(rect.getAttribute('data-origin-y') || '0');
+        // svgwrite rects with fill_opacity=0 still receive pointer
+        // events; offsetX/offsetY on the SVGGraphicsElement map to
+        // the viewBox's user space, same coordinate system as
+        // originX/originY.
+        const pt = rect.ownerSVGElement.createSVGPoint();
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        const ctm = rect.getScreenCTM();
+        if (!ctm) return;
+        const local = pt.matrixTransform(ctm.inverse());
+        const mmX = Math.max(0, Math.round((local.x - originX) * mmPerPx));
+        const mmY = Math.max(0, Math.round((local.y - originY) * mmPerPx));
+        const href = placementAddUrl
+          + '?mount=' + encodeURIComponent(mountPk)
+          + '&position_x=' + mmX
+          + '&position_y=' + mmY;
+        // Navigate the parent window (same behaviour as the <a>
+        // hyperlinks on 1D/grid empty slots).
+        window.location.href = href;
+      });
+    });
+  }
+
+  if (obj.contentDocument && obj.contentDocument.readyState === 'complete') {
+    wireUp2DClicks();
+  } else {
+    obj.addEventListener('load', wireUp2DClicks);
+  }
+})();
+</script>
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">

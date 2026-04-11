@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 import svgwrite
 from django.conf import settings
+from django.urls import NoReverseMatch, reverse
 from svgwrite.container import Hyperlink
 from svgwrite.image import Image
 from svgwrite.masking import ClipPath
@@ -75,6 +76,28 @@ class PlacementTarget:
     color: str           # hex color without leading '#', or ''
     description: str
     empty: bool = False  # True for unpopulated device/module bays
+
+
+@dataclass
+class _PlacementStub:
+    """
+    Duck-typed Placement used by ``_draw_empty_slots_*``.
+
+    ``_placement_box_px`` reads a small set of fields off its
+    placement argument; this dataclass exposes exactly those fields
+    without needing a DB row. Used to reuse the existing geometry
+    code when drawing click-to-add affordances over empty slot ranges
+    for Finding C (v0.4.0).
+    """
+    mount: object
+    position: object
+    size: object
+    row: object
+    row_span: object
+    position_x: object
+    position_y: object
+    size_x: object
+    size_y: object
 
 
 class CabinetLayoutSVG:
@@ -408,16 +431,22 @@ class CabinetLayoutSVG:
 
     def _setup_drawing(self):
         width, height = self._drawing_size()
+        # debug=False disables svgwrite's attribute allow-list, so we
+        # can emit HTML5 `data-*` attributes on the 2D click-anywhere
+        # rect without svgwrite throwing ValueError. svgwrite's
+        # validation doesn't know about data-* attrs because they're
+        # an HTML thing, not a core SVG thing, even though they're
+        # standards-compliant on any SVG element.
         if self.fit_width and self.fit_height:
             # Render at natural size internally (viewBox), but tell the
             # browser to display the SVG at the caller-supplied dimensions
             # with `xMidYMid meet` so the layout keeps its aspect ratio and
             # any spare space gets letterboxed with the theme background.
-            dwg = svgwrite.Drawing(size=(self.fit_width, self.fit_height))
+            dwg = svgwrite.Drawing(size=(self.fit_width, self.fit_height), debug=False)
             dwg.viewbox(width=width, height=height)
             dwg['preserveAspectRatio'] = 'xMidYMid meet'
         else:
-            dwg = svgwrite.Drawing(size=(width, height))
+            dwg = svgwrite.Drawing(size=(width, height), debug=False)
             dwg.viewbox(width=width, height=height)
 
         # Finding E (v0.4.0): expose self.thumbnail on the root <svg>
@@ -669,32 +698,193 @@ class CabinetLayoutSVG:
         dwg.add(link)
 
     # ------------------------------------------------------------------
+    # Finding C (v0.4.0): inline add-placement affordance.
+    #
+    # Every unoccupied range of slot positions on a 1D or grid mount
+    # gets wrapped in an <a> whose href opens the PlacementForm with
+    # `mount=<pk>&position=<start>` (and `&row=<row>` for grid rows)
+    # pre-filled. 2D mounting plates get a single transparent rect
+    # covering the plate area, tagged with data-mount-pk so the Layout
+    # tab template can attach a click handler that computes (pos_x,
+    # pos_y) in mm and navigates.
+    #
+    # Skipped entirely in thumbnail mode - the rack elevation embed
+    # does not participate in click-to-add because its hyperlinks
+    # aren't routable through the parent rack-elevation <image>
+    # wrapper.
+    # ------------------------------------------------------------------
+
+    def _placement_add_url(self, **params) -> str:
+        """
+        Return the URL for the PlacementForm with GET params pre-filled.
+        Falls back to '#' if the URL namespace is not yet registered
+        (e.g. during Django system checks before ready()).
+        """
+        try:
+            base = reverse('plugins:netbox_cabinet_view:placement_add')
+        except NoReverseMatch:
+            return '#'
+        if params:
+            qs = '&'.join(f'{k}={v}' for k, v in params.items() if v is not None)
+            return f'{base}?{qs}' if qs else base
+        return base
+
+    @staticmethod
+    def _empty_ranges_1d(occupied, capacity):
+        """
+        Return a list of ``(start, end)`` tuples (both inclusive,
+        1-indexed) for runs of empty slots in ``1..capacity`` given a
+        set of occupied positions. Example::
+
+            occupied = {1, 2, 3, 8, 9, 10}
+            capacity = 12
+            result   = [(4, 7), (11, 12)]
+        """
+        ranges = []
+        start = None
+        for pos in range(1, capacity + 1):
+            if pos not in occupied:
+                if start is None:
+                    start = pos
+            else:
+                if start is not None:
+                    ranges.append((start, pos - 1))
+                    start = None
+        if start is not None:
+            ranges.append((start, capacity))
+        return ranges
+
+    def _draw_empty_slots_1d(self, dwg, mount):
+        """
+        For a 1D mount (din_rail / subrack / busbar), wrap each empty
+        range of slot positions in an `<a>` with a dashed rect.
+        """
+        capacity = mount.capacity_units
+        if capacity <= 0:
+            return
+        occupied = set()
+        for p in mount.placements.all():
+            if p.position is None or p.size is None:
+                continue
+            occupied.update(range(p.position, p.position + p.size))
+
+        for start, end in self._empty_ranges_1d(occupied, capacity):
+            # Build a synthetic placement with the empty range's
+            # geometry so we can reuse _placement_box_px().
+            stub = _PlacementStub(
+                mount=mount, position=start, size=end - start + 1,
+                row=None, row_span=None,
+                position_x=None, position_y=None, size_x=None, size_y=None,
+            )
+            (x, y), (w, h) = self._placement_box_px(stub, mount)
+            href = self._placement_add_url(mount=mount.pk, position=start)
+            link = Hyperlink(href=href, target='_parent')
+            link.set_desc(f'Add placement at position {start}')
+            link.add(Rect(
+                insert=(x, y), size=(w, h),
+                class_='slot empty-slot',
+            ))
+            dwg.add(link)
+
+    def _draw_empty_slots_grid(self, dwg, mount):
+        """
+        For a grid mount, compute empty ranges row by row and wrap each
+        in an `<a>` — so users can drop a placement into "row 2, cols 5-8".
+        """
+        capacity = mount.capacity_units
+        rows = max(1, mount.rows or 1)
+        if capacity <= 0:
+            return
+
+        # Build per-row occupancy from every placement's (row, row_span,
+        # position, size) rectangle. row_span > 1 occupies multiple rows.
+        per_row = {r: set() for r in range(1, rows + 1)}
+        for p in mount.placements.all():
+            if p.row is None or p.position is None or p.size is None:
+                continue
+            span = max(1, p.row_span or 1)
+            for r in range(p.row, min(p.row + span, rows + 1)):
+                per_row[r].update(range(p.position, p.position + p.size))
+
+        for r, occupied in per_row.items():
+            for start, end in self._empty_ranges_1d(occupied, capacity):
+                stub = _PlacementStub(
+                    mount=mount, position=start, size=end - start + 1,
+                    row=r, row_span=1,
+                    position_x=None, position_y=None, size_x=None, size_y=None,
+                )
+                (x, y), (w, h) = self._placement_box_px(stub, mount)
+                href = self._placement_add_url(
+                    mount=mount.pk, position=start, row=r,
+                )
+                link = Hyperlink(href=href, target='_parent')
+                link.set_desc(f'Add placement at row {r}, position {start}')
+                link.add(Rect(
+                    insert=(x, y), size=(w, h),
+                    class_='slot empty-slot',
+                ))
+                dwg.add(link)
+
+    def _draw_empty_slots_2d(self, dwg, mount):
+        """
+        For a 2D mounting plate, emit a single transparent rect
+        covering the whole plate area, tagged with ``data-mount-pk`` so
+        the device_layout_tab.html template JS can attach a click
+        handler that converts pointer coordinates to mm and navigates
+        to the PlacementForm.
+        """
+        ox, oy = self._mount_origin_px(mount)
+        cw = self._mm(mount.width_mm or 0)
+        ch = self._mm(mount.height_mm or 0)
+        if cw <= 0 or ch <= 0:
+            return
+        # debug=False bypasses svgwrite's attribute allow-list so we
+        # can emit data-* attributes; they're HTML5 extensions and
+        # aren't in svgwrite's SVG spec whitelist.
+        rect = Rect(
+            insert=(ox, oy), size=(cw, ch),
+            class_='slot empty-slot mount-2d',
+            debug=False,
+        )
+        rect['fill-opacity'] = 0  # visible only on hover via CSS
+        rect['data-mount-pk'] = mount.pk
+        # Scale factor embedded so the JS can recover mm from px.
+        rect['data-mm-per-px'] = 1.0 / self.mm_to_px
+        rect['data-origin-x'] = ox
+        rect['data-origin-y'] = oy
+        dwg.add(rect)
+
+    # ------------------------------------------------------------------
     # Public
     # ------------------------------------------------------------------
 
     def render(self) -> str:
         """
-        Two-pass render (Finding A, v0.4.0):
+        Multi-pass render:
 
-        1. **Pass 1**: draw the mount geometry (rail/plate/grid) AND all
-           of each mount's placements (device rectangles + images +
-           per-placement labels) inside the mount's footprint.
-        2. **Pass 2**: draw the mount NAME label on top of everything
-           else. Previously the label was drawn inline inside
-           ``_draw_mount`` before any placements, so thick 1D rails
-           labeled inside the rail body (e.g. the 48-slot marshalling
-           cabinet) had their "Terminal rail" text painted over by the
-           terminal block placements. Splitting the passes lets the
-           label sit visibly on top of the placement rectangles.
+        1. **Pass 1**: draw the mount geometry (rail/plate/grid) AND
+           all of each mount's placements (device rectangles + images
+           + per-placement labels) inside the mount's footprint.
+        2. **Pass 2**: draw empty-slot click targets (Finding C,
+           v0.4.0) — unoccupied slot ranges on 1D/grid mounts, plus a
+           whole-plate transparent rect on 2D mounts for click-
+           anywhere handling. Skipped in thumbnail mode.
+        3. **Pass 3**: draw the mount NAME label on top of
+           everything else (Finding A, v0.4.0). Previously the label
+           was drawn inline inside ``_draw_mount`` before any
+           placements, so thick 1D rails labeled inside the rail body
+           (e.g. the 48-slot marshalling cabinet) had their "Terminal
+           rail" text painted over by the terminal block placements.
+           Splitting the passes lets the label sit visibly on top.
 
-        The ``label`` text still has ``pointer-events: none`` so it
-        never blocks clicks on the placements underneath it.
+        The ``label`` text has ``pointer-events: none`` so it never
+        blocks clicks on the placements or empty-slot links
+        underneath it.
         """
         dwg, width, height = self._setup_drawing()
         self._draw_host_outline(dwg, width, height)
 
-        # Pass 1: mount geometry + placements, collecting mount bounds
-        # for the label pass.
+        # Pass 1: mount geometry + placements.
         mount_bounds = []
         for mount in self.mounts:
             bounds = self._draw_mount(dwg, mount)
@@ -705,8 +895,21 @@ class CabinetLayoutSVG:
             for placement in placements:
                 self._draw_placement(dwg, mount, placement)
 
-        # Pass 2: mount labels, painted on top of every placement so the
-        # text is always legible regardless of how dense the mount is.
+        # Pass 2: empty-slot click targets (Finding C). Skipped in
+        # thumbnail mode because the rack elevation <image> wrapper
+        # swallows mount-level hyperlinks.
+        if not self.thumbnail:
+            for mount in self.mounts:
+                if mount.is_one_d:
+                    self._draw_empty_slots_1d(dwg, mount)
+                elif mount.is_grid:
+                    self._draw_empty_slots_grid(dwg, mount)
+                elif mount.is_two_d:
+                    self._draw_empty_slots_2d(dwg, mount)
+
+        # Pass 3: mount labels, painted on top of every placement so
+        # the text is always legible regardless of how dense the
+        # mount is.
         for mount, (ox, oy, cw, ch) in mount_bounds:
             self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
 
@@ -736,6 +939,27 @@ _EMBEDDED_CSS = """
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
 
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover > .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
 /* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
  * which the embedding page propagates to <object> documents. */
 @media (prefers-color-scheme: dark) {
@@ -755,6 +979,11 @@ _EMBEDDED_CSS = """
   .slot.empty  { fill: none; stroke: #5a6070; }
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover > .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -781,7 +1010,8 @@ svg.thumbnail .cabinet-outline,
 svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
-svg.thumbnail .device-image-label {
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
   display: none;
 }
 svg.thumbnail .mount,
