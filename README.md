@@ -59,40 +59,40 @@ erDiagram
     ModuleBay          |o..o{ Mount             : "module_bay (XOR)"
 
     DeviceTypeProfile {
-        OneToOne  device_type
-        bool      hosts_carriers
-        int       internal_width_mm
-        int       internal_height_mm
-        int       internal_depth_mm
-        enum      mountable_on
-        enum      mountable_subtype
-        int       footprint_primary
-        int       footprint_secondary
+        int     device_type_id              "OneToOne to dcim.DeviceType"
+        bool    hosts_carriers
+        int     internal_width_mm           "nullable"
+        int     internal_height_mm          "nullable"
+        int     internal_depth_mm           "nullable"
+        string  mountable_on                "ChoiceSet, blank allowed"
+        string  mountable_subtype           "ChoiceSet, blank allowed"
+        int     footprint_primary           "nullable, carrier units"
+        int     footprint_secondary         "nullable, carrier units"
     }
     Carrier {
-        FK    host_device
-        str   name
-        enum  carrier_type
-        enum  subtype
-        enum  orientation
-        enum  unit
-        int   offset_x_mm
-        int   offset_y_mm
-        int   length_mm
-        int   width_mm
-        int   height_mm
+        int     host_device_id              "FK to dcim.Device"
+        string  name
+        string  carrier_type                "din_rail subrack plate busbar"
+        string  subtype                     "ChoiceSet, blank allowed"
+        string  orientation                 "horizontal or vertical"
+        string  unit                        "mm module_17_5 hp_5_08"
+        int     offset_x_mm
+        int     offset_y_mm
+        int     length_mm                   "1D carriers"
+        int     width_mm                    "2D carriers"
+        int     height_mm                   "2D carriers"
     }
     Mount {
-        FK    carrier
-        FK    device         "nullable"
-        FK    device_bay     "nullable"
-        FK    module_bay     "nullable"
-        int   position       "1D"
-        int   size           "1D (auto from profile footprint_primary)"
-        int   position_x     "2D"
-        int   position_y     "2D"
-        int   size_x         "2D"
-        int   size_y         "2D"
+        int     carrier_id                  "FK to Carrier"
+        int     device_id                   "XOR target, nullable"
+        int     device_bay_id               "XOR target, nullable"
+        int     module_bay_id               "XOR target, nullable"
+        int     position                    "1D"
+        int     size                        "1D, defaults from profile"
+        int     position_x                  "2D"
+        int     position_y                  "2D"
+        int     size_x                      "2D"
+        int     size_y                      "2D"
     }
 ```
 
