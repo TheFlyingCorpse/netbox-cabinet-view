@@ -171,7 +171,7 @@ class DeviceCabinetLayoutSVGView(View):
     """
     Raw SVG payload for the Layout tab's <object> embed.
 
-    Accepts three optional query parameters:
+    Accepts four optional query parameters:
 
     * ``?w=<int>`` and ``?h=<int>`` — render the drawing letterboxed into
       this pixel box (used by the rack elevation patch to fit a cabinet
@@ -179,6 +179,10 @@ class DeviceCabinetLayoutSVGView(View):
     * ``?v=<str>`` — cache-buster token. Ignored by the view but varies
       the URL so the browser invalidates its cached copy whenever the
       host device's mounts or placements change.
+    * ``?thumb=1`` — render in thumbnail mode (lowered contrast, no
+      labels, desaturated role colours). Used by the rack elevation
+      patch so the embedded cabinet reads as a preview, not a live
+      click target. Finding E, v0.4.0.
     """
 
     def get(self, request, pk):
@@ -188,6 +192,7 @@ class DeviceCabinetLayoutSVGView(View):
             fit_h = int(request.GET['h']) if 'h' in request.GET else None
         except (ValueError, TypeError):
             fit_w = fit_h = None
+        thumbnail = request.GET.get('thumb') in ('1', 'true', 'yes')
         svg = CabinetLayoutSVG(
             host_device=device,
             user=request.user,
@@ -195,5 +200,6 @@ class DeviceCabinetLayoutSVGView(View):
             include_images=True,
             fit_width=fit_w,
             fit_height=fit_h,
+            thumbnail=thumbnail,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')

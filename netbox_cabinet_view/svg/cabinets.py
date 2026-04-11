@@ -94,7 +94,7 @@ class CabinetLayoutSVG:
     """
 
     def __init__(self, host_device, user=None, base_url='', include_images=True,
-                 fit_width=None, fit_height=None):
+                 fit_width=None, fit_height=None, thumbnail=False):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -106,6 +106,13 @@ class CabinetLayoutSVG:
         # elevation patch requests a "fit into this U slot" rendering.
         self.fit_width = fit_width
         self.fit_height = fit_height
+        # Finding E (v0.4.0): when True, the root <svg> element gets a
+        # `thumbnail` class so the embedded CSS can paint everything at
+        # reduced opacity, suppress labels, and desaturate role colours.
+        # Used by the rack elevation patch so the inline-embedded cabinet
+        # interior reads as "preview — zoom in to interact" instead of
+        # pretending each module is a live click target.
+        self.thumbnail = thumbnail
 
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
@@ -412,6 +419,13 @@ class CabinetLayoutSVG:
         else:
             dwg = svgwrite.Drawing(size=(width, height))
             dwg.viewbox(width=width, height=height)
+
+        # Finding E (v0.4.0): expose self.thumbnail on the root <svg>
+        # element so the embedded stylesheet's `svg.thumbnail` rules
+        # take effect.
+        if self.thumbnail:
+            dwg['class'] = 'thumbnail'
+
         dwg.defs.add(dwg.style(_EMBEDDED_CSS))
 
         # Theme-aware background rect. This is painted as the very first
@@ -741,6 +755,39 @@ _EMBEDDED_CSS = """
   .slot.empty  { fill: none; stroke: #5a6070; }
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
+}
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * <svg> element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation <image> wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
 }
 
 /* High-contrast mode — Finding F, v0.4.0.

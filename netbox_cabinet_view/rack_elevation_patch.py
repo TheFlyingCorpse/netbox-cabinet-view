@@ -104,7 +104,14 @@ def _make_face_patch(original, face_name: str):
                     kwargs={'pk': device.pk},
                 )
                 version = _content_hash(device)
-                href = f'{url}?w={slot_w}&h={slot_h}&v={version}'
+                # Finding E (v0.4.0): request the SVG in thumbnail mode
+                # so the embedded rendering reads as "preview, zoom in
+                # to interact" instead of pretending the placements are
+                # clickable from inside the rack elevation <image>
+                # wrapper (they aren't — clicking lands on the HOST
+                # device via the core rack-elevation hyperlink, which
+                # is a click-target lie without the diminishment).
+                href = f'{url}?w={slot_w}&h={slot_h}&v={version}&thumb=1'
                 color = device.role.color if device.role_id else None
                 self._draw_device(
                     device, coords, size,
