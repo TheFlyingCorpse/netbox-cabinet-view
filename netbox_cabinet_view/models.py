@@ -548,6 +548,26 @@ class Placement(NetBoxModel):
     def get_absolute_url(self):
         return reverse('plugins:netbox_cabinet_view:placement', args=[self.pk])
 
+    # ------------------------------------------------------------------
+    # Persistence — Finding A (v0.4.0): make full_clean() run on every
+    # save() code path, not just form submissions.
+    #
+    # The v0.3.0 seed command used update_or_create(), which bypasses
+    # full_clean(). That meant the profile-driven size auto-fill in
+    # clean() never ran, every Mount.size defaulted to None -> the
+    # renderer fell back to size=1, and the marshalling cabinet's 48
+    # terminal blocks all rendered as 2-pixel hairlines.
+    #
+    # Overriding save() to call full_clean() makes the auto-fill fire
+    # for forms, shell, admin, seeds, and API clients alike. Tiny
+    # perf cost on a plugin that creates ~50 placements per session
+    # is irrelevant; the consistency gain is the point.
+    # ------------------------------------------------------------------
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     @property
     def effective_device(self):
         """
@@ -662,8 +682,12 @@ class Placement(NetBoxModel):
                     ),
                 })
 
-            # Overlap with sibling placements (1D)
-            siblings = mount.placements.exclude(pk=self.pk).filter(position__isnull=False)
+            # Overlap with sibling placements (1D). Filter siblings with
+            # complete geometry — see 2D overlap check below for the
+            # Finding A / pre-v0.4.0 NULL-size caveat.
+            siblings = mount.placements.exclude(pk=self.pk).filter(
+                position__isnull=False, size__isnull=False,
+            )
             my_range = set(range(self.position, self.position + self.size))
             for other in siblings:
                 other_range = set(range(other.position, other.position + (other.size or 1)))
@@ -696,8 +720,18 @@ class Placement(NetBoxModel):
                     'size_y': f'Placement extends beyond mount height ({mount.height_mm} mm).',
                 })
 
-            # Overlap detection (2D bounding boxes)
-            siblings = mount.placements.exclude(pk=self.pk).filter(position_x__isnull=False)
+            # Overlap detection (2D bounding boxes).
+            # Filter siblings with complete geometry — Finding A (v0.4.0)
+            # forces full_clean() on every save, but pre-v0.4.0 DB rows
+            # may have NULL size_x/size_y because the auto-fill never
+            # ran. Such siblings just get skipped here (they will fail
+            # their own validation next time they are saved).
+            siblings = mount.placements.exclude(pk=self.pk).filter(
+                position_x__isnull=False,
+                size_x__isnull=False,
+                position_y__isnull=False,
+                size_y__isnull=False,
+            )
             for other in siblings:
                 if (
                     self.position_x < (other.position_x + other.size_x)
@@ -749,8 +783,11 @@ class Placement(NetBoxModel):
                 })
 
             # Overlap detection: any sibling whose (row, row+span, position, size)
-            # rectangle intersects ours is a conflict.
-            siblings = mount.placements.exclude(pk=self.pk).filter(row__isnull=False)
+            # rectangle intersects ours is a conflict. Filter siblings
+            # with complete geometry per the Finding A caveat.
+            siblings = mount.placements.exclude(pk=self.pk).filter(
+                row__isnull=False, position__isnull=False, size__isnull=False,
+            )
             my_row_lo, my_row_hi = self.row, self.row + span - 1
             my_col_lo, my_col_hi = self.position, end
             for other in siblings:

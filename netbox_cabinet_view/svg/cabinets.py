@@ -440,20 +440,27 @@ class CabinetLayoutSVG:
         dwg.add(label)
 
     def _draw_mount(self, dwg, mount):
+        """
+        Draw the mount's geometry (rail/plate/grid strips). The mount's
+        label is drawn separately in a second pass by `_label_mount()`
+        so it sits on top of the placement rectangles instead of hiding
+        behind them (Finding A, v0.4.0).
+
+        Returns ``(ox, oy, cw, ch)`` — the coordinates/extent the label
+        pass needs to compute where the label should sit.
+        """
         ox, oy = self._mount_origin_px(mount)
         ctype = mount.mount_type
 
         if ctype == MountTypeChoices.TYPE_MOUNTING_PLATE:
             cw = self._mm(mount.width_mm or 0)
             ch = self._mm(mount.height_mm or 0)
-            rect = Rect(
+            dwg.add(Rect(
                 insert=(ox, oy),
                 size=(cw, ch),
                 class_='mount mounting-plate',
-            )
-            dwg.add(rect)
-            self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
-            return
+            ))
+            return (ox, oy, cw, ch)
 
         # Grid: draw one strip per row. Each strip is a DIN-rail-style rect
         # anchored at that row's origin (see _row_origin_px).
@@ -468,24 +475,22 @@ class CabinetLayoutSVG:
                 grid_w_px, grid_h_px = full_perp_px, length_px
             else:
                 grid_w_px, grid_h_px = length_px, full_perp_px
-            self._draw_mount_label(dwg, mount, ox, oy, grid_w_px, grid_h_px)
 
             for r in range(1, rows + 1):
                 row_x, row_y = self._row_origin_px(mount, r)
                 if mount.orientation == OrientationChoices.VERTICAL:
-                    rect = Rect(
+                    dwg.add(Rect(
                         insert=(row_x, row_y),
                         size=(strip_thickness, length_px),
                         class_='mount grid grid-row',
-                    )
+                    ))
                 else:
-                    rect = Rect(
+                    dwg.add(Rect(
                         insert=(row_x, row_y),
                         size=(length_px, strip_thickness),
                         class_='mount grid grid-row',
-                    )
-                dwg.add(rect)
-            return
+                    ))
+            return (ox, oy, grid_w_px, grid_h_px)
 
         length_px = self._mm(mount.length_mm or 0)
         thickness_px = self._mount_visual_width_px(mount)
@@ -495,13 +500,12 @@ class CabinetLayoutSVG:
         else:
             cw, ch = length_px, thickness_px
 
-        rect = Rect(
+        dwg.add(Rect(
             insert=(ox, oy),
             size=(cw, ch),
             class_=f'mount {ctype.replace("_", "-")}',
-        )
-        dwg.add(rect)
-        self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
+        ))
+        return (ox, oy, cw, ch)
 
     def _draw_mount_label(self, dwg, mount, ox, oy, cw, ch):
         """
@@ -655,15 +659,43 @@ class CabinetLayoutSVG:
     # ------------------------------------------------------------------
 
     def render(self) -> str:
+        """
+        Two-pass render (Finding A, v0.4.0):
+
+        1. **Pass 1**: draw the mount geometry (rail/plate/grid) AND all
+           of each mount's placements (device rectangles + images +
+           per-placement labels) inside the mount's footprint.
+        2. **Pass 2**: draw the mount NAME label on top of everything
+           else. Previously the label was drawn inline inside
+           ``_draw_mount`` before any placements, so thick 1D rails
+           labeled inside the rail body (e.g. the 48-slot marshalling
+           cabinet) had their "Terminal rail" text painted over by the
+           terminal block placements. Splitting the passes lets the
+           label sit visibly on top of the placement rectangles.
+
+        The ``label`` text still has ``pointer-events: none`` so it
+        never blocks clicks on the placements underneath it.
+        """
         dwg, width, height = self._setup_drawing()
         self._draw_host_outline(dwg, width, height)
+
+        # Pass 1: mount geometry + placements, collecting mount bounds
+        # for the label pass.
+        mount_bounds = []
         for mount in self.mounts:
-            self._draw_mount(dwg, mount)
+            bounds = self._draw_mount(dwg, mount)
+            mount_bounds.append((mount, bounds))
             placements = mount.placements.all()
             if self.user is not None:
                 placements = placements.restrict(self.user, 'view')
             for placement in placements:
                 self._draw_placement(dwg, mount, placement)
+
+        # Pass 2: mount labels, painted on top of every placement so the
+        # text is always legible regardless of how dense the mount is.
+        for mount, (ox, oy, cw, ch) in mount_bounds:
+            self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
+
         return dwg.tostring()
 
 

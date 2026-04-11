@@ -98,20 +98,32 @@ def ensure_placement(mount, **fields):
     Upsert a Placement keyed on the target (device / device_bay /
     module_bay) alone — NOT on the mount — because the Placement model
     has a per-target uniqueness constraint. Keying on (mount, target)
-    would cause `get_or_create` to miss a stale placement that points
+    would cause ``get_or_create`` to miss a stale placement that points
     to the same target but a different (old) mount, and the subsequent
     INSERT would trip ``unique_placement_device`` /
     ``unique_placement_device_bay`` / ``unique_placement_module_bay``.
-    Using ``update_or_create`` by target lets us re-home an existing
-    placement onto a new mount on re-run.
+
+    Why this is hand-rolled instead of ``update_or_create``: Django's
+    ``update_or_create`` restricts ``save()`` to ``update_fields=set(defaults)``,
+    which silently drops any fields that ``Placement.clean()`` auto-fills
+    from the device's DeviceMountProfile footprint (``size``, ``size_x``,
+    ``size_y``). That masked Finding A in v0.3.0. Explicit get-and-save
+    below calls ``obj.save()`` without ``update_fields``, so the full
+    ``full_clean()`` pass runs and every field it touched gets written.
     """
     key = {}
     for k in ('device', 'device_bay', 'module_bay'):
         if fields.get(k) is not None:
             key[k] = fields[k]
             break
-    defaults = {'mount': mount, **fields}
-    obj, _ = Placement.objects.update_or_create(**key, defaults=defaults)
+    try:
+        obj = Placement.objects.get(**key)
+    except Placement.DoesNotExist:
+        obj = Placement(**key)
+    obj.mount = mount
+    for k, v in fields.items():
+        setattr(obj, k, v)
+    obj.save()  # full_clean() runs via Placement.save() override (Finding A)
     return obj
 
 
@@ -186,6 +198,13 @@ class Command(BaseCommand):
         dt_mcb = ensure_device_type(mfr, 'clip-on-mcb-1p',
                                     'Clip-on MCB 1P',
                                     u_height=0)
+        # Separate DIN-mount MCB type — same conceptual device (1P
+        # circuit breaker) but a different clip system. Real installs
+        # carry both variants because different cabinets standardise on
+        # different mounting platforms.
+        dt_mcb_din = ensure_device_type(mfr, 'din-mount-mcb-1p',
+                                        'DIN-mount MCB 1P',
+                                        u_height=0)
         # Rack-mounted DIN shelves
         dt_din_shelf_2u = ensure_device_type(mfr, 'rack-din-shelf-2u-single-rail',
                                              'Rack DIN shelf 2U (single rail)',
@@ -380,6 +399,7 @@ class Command(BaseCommand):
         ensure_profile(dt_wdm_filter,    mountable_on='subrack', mountable_subtype='hp_3u', footprint_primary=20)
         ensure_profile(dt_busbar,        hosts_mounts=True, internal_width_mm=1000, internal_height_mm=60)
         ensure_profile(dt_mcb,           mountable_on='busbar', mountable_subtype='bb_60mm_pitch', footprint_primary=18)
+        ensure_profile(dt_mcb_din,       mountable_on='din_rail', mountable_subtype='ts35', footprint_primary=18)
         # 2U shelf: 2U inner ≈ 88 mm, real depth 200 mm for cable clearance
         ensure_profile(dt_din_shelf_2u,  hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=88, internal_depth_mm=200)
@@ -549,9 +569,9 @@ class Command(BaseCommand):
         din_shelf_4u = ensure_device('DIN Shelf 4U #1', dt_din_shelf_4u, 'shelf')
         relay_4u_a = ensure_device('Relay 4U-A', dt_relay, 'relay')
         relay_4u_b = ensure_device('Relay 4U-B', dt_relay, 'relay')
-        mcb_4u_a = ensure_device('MCB 4U-A', dt_mcb, 'mcb')
-        mcb_4u_b = ensure_device('MCB 4U-B', dt_mcb, 'mcb')
-        mcb_4u_c = ensure_device('MCB 4U-C', dt_mcb, 'mcb')
+        mcb_4u_a = ensure_device('MCB 4U-A', dt_mcb_din, 'mcb')
+        mcb_4u_b = ensure_device('MCB 4U-B', dt_mcb_din, 'mcb')
+        mcb_4u_c = ensure_device('MCB 4U-C', dt_mcb_din, 'mcb')
 
         # Scenario 9: ISP-style 4U DIN rail shelf with a single centered rail
         din_shelf_4u_isp = ensure_device('DIN Shelf 4U ISP #1', dt_din_shelf_4u_isp, 'shelf')
