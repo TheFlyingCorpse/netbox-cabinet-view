@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netbox-cabinet-view"
-version = "0.1.1"
+version = "0.1.2"
 description = "NetBox plugin: DIN rails, subracks, mounting plates and busbars with SVG visualization of cabinet interiors, including chassis/parent-child devices and modular PLC chassis."
 readme = "README.md"
 requires-python = ">=3.10"

@@ -10,6 +10,16 @@ All notable changes to this project will be documented in this file. The format 
 - Grid-view carrier type (discrete-cell 2D matrix for panel-grid layouts).
 - Multi-depth / swing-frame rack support.
 
+## [0.1.2] — 2026-04-11
+
+### Added
+- **Schema diagram** in the README — a Mermaid ER diagram showing the three plugin models (`DeviceTypeProfile`, `Carrier`, `Mount`) and how they relate to the NetBox core models they attach to (`Device`, `DeviceType`, `DeviceBay`, `ModuleBay`). Documents the Mount three-way XOR constraint explicitly.
+- **Supply-chain documents** under `security/`:
+  - `security/sbom.cdx.json` — CycloneDX 1.6 Software Bill of Materials, generated reproducibly from a clean Python 3.12 venv containing just the built wheel. Includes purl identifiers for `grype` / `trivy` / `osv-scanner` / Dependency-Track / GitHub dependency-graph consumption.
+  - `security/openvex.json` — OpenVEX 0.2.0 Vulnerability Exploitability eXchange document declaring no known CVEs at release time, as a floor statement for downstream compliance scanning.
+  - `security/README.md` — regeneration commands and a summary of current contents.
+- **Security section** in the main README pointing at the above and explaining the reporting flow via GitHub Security Advisories.
+
 ## [0.1.1] — 2026-04-11
 
 ### Added
@@ -47,6 +57,7 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.1.0

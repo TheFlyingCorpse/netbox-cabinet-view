@@ -34,6 +34,68 @@ And one view:
 
 - A **Layout** tab on every `dcim.Device` detail page. Renders the host's carriers and their mounts as an SVG via `svgwrite`, reusing `DeviceType.front_image` and `ModuleType.front_image` from core NetBox. Falls back to colored rectangles with labels when no image is available.
 
+## Schema
+
+Plugin models are in bold, core NetBox models are shown as context. The three dashed relationships from `Mount` form an **XOR constraint** — exactly one of them must be populated on any given mount, enforced in `Mount.clean()`.
+
+```mermaid
+erDiagram
+    Device             }o--o| Rack         : "rack / position / face"
+    Device             }o--|| DeviceType   : "device_type"
+    Module             }o--|| ModuleType   : "module_type"
+    DeviceBay          }o--|| Device       : "parent device"
+    DeviceBay          |o--o| Device       : "installed_device (child)"
+    ModuleBay          }o--|| Device       : "parent device"
+    ModuleBay          |o--o| Module       : "installed_module"
+
+    DeviceType         ||--o| DeviceTypeProfile : "cabinet_profile (1:1)"
+    Device             ||--o{ Carrier           : "cabinet_carriers (host)"
+    Carrier            ||--o{ Mount             : "mounts"
+
+    Device             |o..o{ Mount             : "device (XOR)"
+    DeviceBay          |o..o{ Mount             : "device_bay (XOR)"
+    ModuleBay          |o..o{ Mount             : "module_bay (XOR)"
+
+    DeviceTypeProfile {
+        OneToOne  device_type
+        bool      hosts_carriers
+        int       internal_width_mm
+        int       internal_height_mm
+        int       internal_depth_mm
+        enum      mountable_on
+        enum      mountable_subtype
+        int       footprint_primary
+        int       footprint_secondary
+    }
+    Carrier {
+        FK    host_device
+        str   name
+        enum  carrier_type
+        enum  subtype
+        enum  orientation
+        enum  unit
+        int   offset_x_mm
+        int   offset_y_mm
+        int   length_mm
+        int   width_mm
+        int   height_mm
+    }
+    Mount {
+        FK    carrier
+        FK    device         "nullable"
+        FK    device_bay     "nullable"
+        FK    module_bay     "nullable"
+        int   position       "1D"
+        int   size           "1D (auto from profile footprint_primary)"
+        int   position_x     "2D"
+        int   position_y     "2D"
+        int   size_x         "2D"
+        int   size_y         "2D"
+    }
+```
+
+**Why a Mount can target three different things:** NetBox already represents three different parent/child relationships — direct device placement, `DeviceBay`-backed child devices (WDM shelves, blade chassis), and `ModuleBay`-backed modules (modular PLCs, line cards). The cabinet-view model treats each as a valid "thing that occupies a carrier position", so its geometry layer works uniformly across all three.
+
 ## OT/ICS coverage
 
 v1 covers the common OT/ICS cabinet types:
@@ -139,7 +201,16 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 | **F. Safety relay panel** | ![](docs/screenshots/F-safety-panel.svg) |
 | **G. Substation protection panel** | ![](docs/screenshots/G-protection-panel.svg) |
 
-## Not in v1
+## Security & supply chain
+
+Every release ships with machine-readable supply-chain documents under [`security/`](security/):
+
+- **[`security/sbom.cdx.json`](security/sbom.cdx.json)** — [CycloneDX 1.6](https://cyclonedx.org/docs/1.6/json/) Software Bill of Materials enumerating every direct and transitive runtime dependency, with purl identifiers so it drops straight into Dependency-Track, `grype`, `trivy`, `osv-scanner`, or GitHub's dependency graph.
+- **[`security/openvex.json`](security/openvex.json)** — [OpenVEX 0.2.0](https://openvex.dev/) Vulnerability Exploitability eXchange document telling downstream consumers which CVEs actually affect the running code. At v0.1.2 there are no known CVEs affecting the plugin or its sole runtime dependency `svgwrite`.
+
+Both files are regenerated on every tagged release. See [`security/README.md`](security/README.md) for regeneration commands and a summary of current contents.
+
+**Reporting a vulnerability:** please open a private [Security Advisory](https://github.com/TheFlyingCorpse/netbox-cabinet-view/security/advisories) on GitHub rather than a public issue.
 
 ## Not in v1
 

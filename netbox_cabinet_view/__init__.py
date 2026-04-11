@@ -9,7 +9,7 @@ class CabinetViewConfig(PluginConfig):
         'visualization of cabinet interiors, including chassis/parent-child devices '
         'and modular PLCs.'
     )
-    version = '0.1.1'
+    version = '0.1.2'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
