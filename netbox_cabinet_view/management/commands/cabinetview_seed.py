@@ -149,6 +149,106 @@ class Command(BaseCommand):
                                   slug='isp-4u-19in-din-rail-shelf-1-rail',
                                   defaults={'u_height': 4})
 
+        # --- Scenarios A-G ---
+
+        # A: Marshalling shelf + terminal block
+        dt_marshalling_shelf = goc(DeviceType, manufacturer=mfr,
+                                   model='Marshalling 4U 19" shelf',
+                                   slug='marshalling-4u-19in-shelf',
+                                   defaults={'u_height': 4})
+        dt_terminal_block = goc(DeviceType, manufacturer=mfr,
+                                model='Phoenix UT 2.5 terminal block',
+                                slug='phoenix-ut-25-terminal-block',
+                                defaults={'u_height': 0})
+
+        # B: MCC cabinet, withdrawable bucket, motor contactor
+        dt_mcc_cabinet = goc(DeviceType, manufacturer=mfr,
+                             model='MCC cabinet 800x2200',
+                             slug='mcc-cabinet-800x2200',
+                             defaults={'u_height': 0})
+        dt_mcc_bucket = goc(DeviceType, manufacturer=mfr,
+                            model='MCC withdrawable bucket',
+                            slug='mcc-withdrawable-bucket',
+                            defaults={'u_height': 0})
+        dt_contactor = goc(DeviceType, manufacturer=mfr,
+                           model='Schneider LC1D motor contactor',
+                           slug='schneider-lc1d-motor-contactor',
+                           defaults={'u_height': 0})
+
+        # C: VFD cabinet, VFD drive, aux DIN strip, 24V PSU
+        dt_vfd_cabinet = goc(DeviceType, manufacturer=mfr,
+                             model='VFD cabinet 600x1800',
+                             slug='vfd-cabinet-600x1800',
+                             defaults={'u_height': 0})
+        dt_vfd_drive = goc(DeviceType, manufacturer=mfr,
+                           model='Schneider ATV630 VFD',
+                           slug='schneider-atv630-vfd',
+                           defaults={'u_height': 0})
+        dt_aux_din_strip = goc(DeviceType, manufacturer=mfr,
+                               model='Auxiliary DIN rail strip 400mm',
+                               slug='auxiliary-din-rail-strip-400mm',
+                               defaults={'u_height': 0})
+        dt_24v_psu = goc(DeviceType, manufacturer=mfr,
+                         model='Mean Well 24V PSU',
+                         slug='mean-well-24v-psu',
+                         defaults={'u_height': 0})
+
+        # D: Wago remote I/O shelf + coupler + I/O modules
+        dt_fieldbus_shelf = goc(DeviceType, manufacturer=mfr,
+                                model='Fieldbus 2U 19" shelf',
+                                slug='fieldbus-2u-19in-shelf',
+                                defaults={'u_height': 2})
+        dt_wago_coupler = goc(DeviceType, manufacturer=mfr,
+                              model='Wago 750-362 ETHERNET coupler',
+                              slug='wago-750-362-ethernet-coupler',
+                              defaults={'u_height': 0})
+        dt_wago_di = goc(DeviceType, manufacturer=mfr,
+                         model='Wago 750-430 8DI module',
+                         slug='wago-750-430-8di-module',
+                         defaults={'u_height': 0})
+        dt_wago_do = goc(DeviceType, manufacturer=mfr,
+                         model='Wago 750-530 8DO module',
+                         slug='wago-750-530-8do-module',
+                         defaults={'u_height': 0})
+
+        # E: Industrial Ethernet switch
+        dt_ethernet_switch = goc(DeviceType, manufacturer=mfr,
+                                 model='Hirschmann MACH1000 switch',
+                                 slug='hirschmann-mach1000-switch',
+                                 defaults={'u_height': 0})
+
+        # F: Safety relay panel + PNOZ safety relay
+        dt_safety_panel = goc(DeviceType, manufacturer=mfr,
+                              model='Safety panel enclosure 600x800',
+                              slug='safety-panel-enclosure-600x800',
+                              defaults={'u_height': 0})
+        dt_pnoz = goc(DeviceType, manufacturer=mfr,
+                      model='Pilz PNOZ X3 safety relay',
+                      slug='pilz-pnoz-x3-safety-relay',
+                      defaults={'u_height': 0})
+
+        # G: Substation protection panel + IEDs + test block rail + test block
+        dt_protection_cabinet = goc(DeviceType, manufacturer=mfr,
+                                    model='Substation protection cabinet 800x2200',
+                                    slug='substation-protection-cabinet-800x2200',
+                                    defaults={'u_height': 0})
+        dt_siprotec = goc(DeviceType, manufacturer=mfr,
+                          model='Siemens SIPROTEC 7SJ82',
+                          slug='siemens-siprotec-7sj82',
+                          defaults={'u_height': 0})
+        dt_rel670 = goc(DeviceType, manufacturer=mfr,
+                        model='ABB REL670',
+                        slug='abb-rel670',
+                        defaults={'u_height': 0})
+        dt_test_block_rail = goc(DeviceType, manufacturer=mfr,
+                                 model='Test block DIN rail 600mm',
+                                 slug='test-block-din-rail-600mm',
+                                 defaults={'u_height': 0})
+        dt_rtxf_test = goc(DeviceType, manufacturer=mfr,
+                           model='ABB RTXF 8-pole test block',
+                           slug='abb-rtxf-8-pole-test-block',
+                           defaults={'u_height': 0})
+
         # DeviceBay templates for the WDM shelves
         for i in range(1, 9):
             goc(DeviceBayTemplate, device_type=dt_wdm_shelf, name=f'Slot {i}')
@@ -186,6 +286,67 @@ class Command(BaseCommand):
         # generous wire-management space above and below.
         ensure_profile(dt_din_shelf_4u_isp, hosts_carriers=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
+
+        # Scenarios A-G profiles
+        ensure_profile(dt_marshalling_shelf, hosts_carriers=True, internal_width_mm=440,
+                       internal_height_mm=175, internal_depth_mm=200)
+        ensure_profile(dt_terminal_block, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=6)  # 5.2 mm wide, rounded to 6 mm
+
+        ensure_profile(dt_mcc_cabinet, hosts_carriers=True, internal_width_mm=760,
+                       internal_height_mm=2160, internal_depth_mm=600)
+        # Bucket is BOTH a host (holds its own DIN rail with contactors) AND
+        # mountable on the cabinet's vertical busbar.
+        ensure_profile(dt_mcc_bucket, hosts_carriers=True, internal_width_mm=300,
+                       internal_height_mm=250,
+                       mountable_on='busbar', mountable_subtype='bb_riline_60',
+                       footprint_primary=300, footprint_secondary=250)
+        ensure_profile(dt_contactor, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=45)
+
+        ensure_profile(dt_vfd_cabinet, hosts_carriers=True, internal_width_mm=560,
+                       internal_height_mm=1760, internal_depth_mm=400)
+        ensure_profile(dt_vfd_drive, mountable_on='mounting_plate',
+                       mountable_subtype='plate_generic',
+                       footprint_primary=250, footprint_secondary=400)
+        # Aux DIN strip is BOTH a host (has its own DIN rail inside) AND mountable
+        # on the VFD cabinet's back plate. Classic "rail on plate" nesting.
+        ensure_profile(dt_aux_din_strip, hosts_carriers=True, internal_width_mm=400,
+                       internal_height_mm=80,
+                       mountable_on='mounting_plate', mountable_subtype='plate_generic',
+                       footprint_primary=400, footprint_secondary=80)
+        ensure_profile(dt_24v_psu, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=80)
+
+        ensure_profile(dt_fieldbus_shelf, hosts_carriers=True, internal_width_mm=440,
+                       internal_height_mm=88, internal_depth_mm=250)
+        ensure_profile(dt_wago_coupler, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=100)
+        ensure_profile(dt_wago_di, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=12)
+        ensure_profile(dt_wago_do, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=12)
+
+        ensure_profile(dt_ethernet_switch, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=90)
+
+        ensure_profile(dt_safety_panel, hosts_carriers=True, internal_width_mm=600,
+                       internal_height_mm=800, internal_depth_mm=250)
+        ensure_profile(dt_pnoz, mountable_on='mounting_plate', mountable_subtype='plate_generic',
+                       footprint_primary=45, footprint_secondary=100)
+
+        ensure_profile(dt_protection_cabinet, hosts_carriers=True, internal_width_mm=760,
+                       internal_height_mm=2160, internal_depth_mm=600)
+        ensure_profile(dt_siprotec, mountable_on='mounting_plate', mountable_subtype='plate_generic',
+                       footprint_primary=215, footprint_secondary=270)
+        ensure_profile(dt_rel670, mountable_on='mounting_plate', mountable_subtype='plate_generic',
+                       footprint_primary=483, footprint_secondary=270)
+        ensure_profile(dt_test_block_rail, hosts_carriers=True, internal_width_mm=600,
+                       internal_height_mm=60,
+                       mountable_on='mounting_plate', mountable_subtype='plate_generic',
+                       footprint_primary=600, footprint_secondary=60)
+        ensure_profile(dt_rtxf_test, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=80)
 
         # ------------------------------------------------------------------
         # Devices (standalone scenarios)
@@ -252,48 +413,126 @@ class Command(BaseCommand):
         # Rack + rack-mounted DIN shelves
         # ------------------------------------------------------------------
         rack = goc(Rack, name='Test Rack A', site=site,
-                   defaults={'u_height': 16, 'status': 'active'})
-        if rack.u_height < 16:
-            rack.u_height = 16
+                   defaults={'u_height': 24, 'status': 'active'})
+        if rack.u_height < 24:
+            rack.u_height = 24
             rack.save()
 
-        # Scenario 7: 2U DIN rail shelf at U6-7 with a single rail and 3 relays
-        din_shelf_2u = ensure_device('DIN Shelf 2U #1', dt_din_shelf_2u, 'shelf',
-                                     rack=rack, position=6, face='front')
+        # Scenario 7: 2U DIN rail shelf with a single rail and 3 relays
+        din_shelf_2u = ensure_device('DIN Shelf 2U #1', dt_din_shelf_2u, 'shelf')
         relay_2u_a = ensure_device('Relay 2U-A', dt_relay, 'relay')
         relay_2u_b = ensure_device('Relay 2U-B', dt_relay, 'relay')
         relay_2u_c = ensure_device('Relay 2U-C', dt_relay, 'relay')
 
-        # Scenario 8: 4U DIN rail shelf at U8-11 with two stacked rails and a mix of modules
-        din_shelf_4u = ensure_device('DIN Shelf 4U #1', dt_din_shelf_4u, 'shelf',
-                                     rack=rack, position=8, face='front')
+        # Scenario 8: 4U DIN rail shelf with two stacked rails and a mix of modules
+        din_shelf_4u = ensure_device('DIN Shelf 4U #1', dt_din_shelf_4u, 'shelf')
         relay_4u_a = ensure_device('Relay 4U-A', dt_relay, 'relay')
         relay_4u_b = ensure_device('Relay 4U-B', dt_relay, 'relay')
         mcb_4u_a = ensure_device('MCB 4U-A', dt_mcb, 'mcb')
         mcb_4u_b = ensure_device('MCB 4U-B', dt_mcb, 'mcb')
         mcb_4u_c = ensure_device('MCB 4U-C', dt_mcb, 'mcb')
 
-        # Scenario 9: ISP-style 4U DIN rail shelf at U12-15 with a single centered rail
-        din_shelf_4u_isp = ensure_device('DIN Shelf 4U ISP #1', dt_din_shelf_4u_isp, 'shelf',
-                                         rack=rack, position=12, face='front')
+        # Scenario 9: ISP-style 4U DIN rail shelf with a single centered rail
+        din_shelf_4u_isp = ensure_device('DIN Shelf 4U ISP #1', dt_din_shelf_4u_isp, 'shelf')
         relay_isp_a = ensure_device('Relay ISP-A', dt_relay, 'relay')
         relay_isp_b = ensure_device('Relay ISP-B', dt_relay, 'relay')
         relay_isp_c = ensure_device('Relay ISP-C', dt_relay, 'relay')
         relay_isp_d = ensure_device('Relay ISP-D', dt_relay, 'relay')
         relay_isp_e = ensure_device('Relay ISP-E', dt_relay, 'relay')
 
-        # Move existing WDM shelves into the rack at U4 and U5 (so we have the
-        # full variety 1U / 2U / 4U on one rack).
-        if wdm_shelf2.rack_id != rack.pk:
-            wdm_shelf2.rack = rack
-            wdm_shelf2.position = 4
-            wdm_shelf2.face = 'front'
-            wdm_shelf2.save()
-        if wdm_shelf.rack_id != rack.pk:
-            wdm_shelf.rack = rack
-            wdm_shelf.position = 5
-            wdm_shelf.face = 'front'
-            wdm_shelf.save()
+        # --- Scenario A: Marshalling cabinet (4U rack) ---
+        marshalling_shelf = ensure_device('Marshalling Cabinet #1', dt_marshalling_shelf, 'rail')
+        terminal_blocks = [
+            ensure_device(f'TB{i:02d}', dt_terminal_block, 'rail')
+            for i in range(1, 21)
+        ]
+
+        # --- Scenario B: MCC with withdrawable buckets (standalone) ---
+        mcc_cabinet = ensure_device('MCC Cabinet #1', dt_mcc_cabinet, 'busbar')
+        buckets = [
+            ensure_device(f'MCC Bucket #{i}', dt_mcc_bucket, 'shelf')
+            for i in (1, 2, 3)
+        ]
+        bucket_contactors = [
+            ensure_device(f'Contactor K{i:02d}', dt_contactor, 'relay')
+            for i in range(1, 4)
+        ]
+        bucket_relays = [
+            ensure_device(f'Aux relay BR{i:02d}', dt_relay, 'relay')
+            for i in range(1, 4)
+        ]
+
+        # --- Scenario C: VFD control cabinet (standalone) ---
+        vfd_cabinet = ensure_device('VFD Cabinet #1', dt_vfd_cabinet, 'enclosure')
+        vfd_drive = ensure_device('ATV630-M1', dt_vfd_drive, 'ipc')
+        aux_rail_device = ensure_device('VFD aux DIN strip', dt_aux_din_strip, 'rail')
+        psu_device = ensure_device('24V PSU #1', dt_24v_psu, 'relay')
+        vfd_contactor_a = ensure_device('VFD contactor KM1', dt_contactor, 'relay')
+        vfd_contactor_b = ensure_device('VFD contactor KM2', dt_contactor, 'relay')
+
+        # --- Scenario D: Wago remote I/O station (2U rack) ---
+        wago_shelf = ensure_device('Wago Remote I/O #1', dt_fieldbus_shelf, 'plc')
+        wago_coupler = ensure_device('Wago 750-362 #1', dt_wago_coupler, 'plc')
+        wago_di_modules = [
+            ensure_device(f'Wago DI #{i}', dt_wago_di, 'plc') for i in range(1, 5)
+        ]
+        wago_do_modules = [
+            ensure_device(f'Wago DO #{i}', dt_wago_do, 'plc') for i in range(1, 4)
+        ]
+
+        # --- Scenario E: Industrial Ethernet switch (2U rack) ---
+        switch_shelf = ensure_device('Industrial Switch Shelf #1', dt_fieldbus_shelf, 'plc')
+        industrial_switch = ensure_device('Hirschmann MACH1000 #1', dt_ethernet_switch, 'plc')
+
+        # --- Scenario F: Safety relay panel (standalone) ---
+        safety_cabinet = ensure_device('Safety Panel #1', dt_safety_panel, 'enclosure')
+        pnoz_relays = [
+            ensure_device(f'PNOZ {name}', dt_pnoz, 'relay')
+            for name in ('E-Stop 1', 'E-Stop 2', 'Guard', 'Light Curtain')
+        ]
+
+        # --- Scenario G: Substation protection panel (standalone) ---
+        protection_cabinet = ensure_device('Protection Panel #1', dt_protection_cabinet, 'plc')
+        siprotec_1 = ensure_device('7SJ82-F1', dt_siprotec, 'plc')
+        siprotec_2 = ensure_device('7SJ82-F2', dt_siprotec, 'plc')
+        rel670 = ensure_device('REL670-L1', dt_rel670, 'plc')
+        test_rail_device = ensure_device('Test block rail #1', dt_test_block_rail, 'rail')
+        test_blocks = [
+            ensure_device(f'Test block F{i:02d}', dt_rtxf_test, 'relay')
+            for i in range(1, 5)
+        ]
+
+        # ------------------------------------------------------------------
+        # Rack placement — done in two passes so re-runs never collide.
+        #
+        # Pass 1: clear any existing rack position for every device we manage.
+        # Pass 2: assign each device to its canonical (rack, U, face).
+        # ------------------------------------------------------------------
+        rack_layout = [
+            # (device, U position, face)
+            (wdm_shelf2,          1,  'front'),
+            (wdm_shelf,           2,  'front'),
+            (din_shelf_2u,        3,  'front'),
+            (din_shelf_4u,        5,  'front'),
+            (din_shelf_4u_isp,    9,  'front'),
+            (marshalling_shelf,  13,  'front'),
+            (wago_shelf,         17,  'front'),
+            (switch_shelf,       19,  'front'),
+        ]
+
+        managed_devices = [d for d, _, _ in rack_layout]
+        for dev in managed_devices:
+            if dev.rack_id is not None or dev.position is not None:
+                dev.rack = None
+                dev.position = None
+                dev.face = ''
+                dev.save()
+
+        for dev, u, face in rack_layout:
+            dev.rack = rack
+            dev.position = u
+            dev.face = face
+            dev.save()
 
         # ------------------------------------------------------------------
         # Carriers
@@ -355,6 +594,74 @@ class Command(BaseCommand):
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=88,
         )
 
+        # --- Scenarios A-G carriers ---
+
+        # A: Marshalling shelf — one DIN rail in mm units (terminal blocks are 5-6 mm)
+        c_marshalling = ensure_carrier(
+            marshalling_shelf, 'Terminal rail',
+            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=88,
+        )
+
+        # B: MCC cabinet — vertical busbar, plus one DIN rail inside each bucket
+        c_mcc_busbar = ensure_carrier(
+            mcc_cabinet, 'Vertical busbar',
+            carrier_type='busbar', subtype='bb_riline_60', orientation='vertical',
+            unit='mm', length_mm=1800, offset_x_mm=250, offset_y_mm=200,
+        )
+        c_bucket_rails = []
+        for i, bucket in enumerate(buckets):
+            c_bucket_rails.append(ensure_carrier(
+                bucket, 'Bucket rail',
+                carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+                unit='mm', length_mm=280, offset_x_mm=10, offset_y_mm=80,
+            ))
+
+        # C: VFD cabinet — back plate, plus a nested DIN strip device with its own rail
+        c_vfd_plate = ensure_carrier(
+            vfd_cabinet, 'Back plate',
+            carrier_type='mounting_plate', subtype='plate_generic',
+            unit='mm', width_mm=560, height_mm=1760, offset_x_mm=0, offset_y_mm=0,
+        )
+        c_aux_rail = ensure_carrier(
+            aux_rail_device, 'Aux rail',
+            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            unit='mm', length_mm=380, offset_x_mm=10, offset_y_mm=30,
+        )
+
+        # D: Wago remote I/O — DIN rail with coupler + I/O modules
+        c_wago = ensure_carrier(
+            wago_shelf, 'Main rail',
+            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
+        )
+
+        # E: Industrial switch — DIN rail with a single 90 mm switch
+        c_switch = ensure_carrier(
+            switch_shelf, 'Main rail',
+            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
+        )
+
+        # F: Safety relay panel — back plate with PNOZ relays
+        c_safety_plate = ensure_carrier(
+            safety_cabinet, 'Back plate',
+            carrier_type='mounting_plate', subtype='plate_generic',
+            unit='mm', width_mm=600, height_mm=800, offset_x_mm=0, offset_y_mm=0,
+        )
+
+        # G: Protection panel — back plate with IEDs + nested test block rail
+        c_protection_plate = ensure_carrier(
+            protection_cabinet, 'Back plate',
+            carrier_type='mounting_plate', subtype='plate_generic',
+            unit='mm', width_mm=760, height_mm=2160, offset_x_mm=0, offset_y_mm=0,
+        )
+        c_test_rail = ensure_carrier(
+            test_rail_device, 'Test rail',
+            carrier_type='din_rail', subtype='ts35', orientation='horizontal',
+            unit='mm', length_mm=580, offset_x_mm=10, offset_y_mm=20,
+        )
+
         # ------------------------------------------------------------------
         # Mounts (sizes left implicit where the profile provides a footprint)
         # ------------------------------------------------------------------
@@ -389,7 +696,62 @@ class Command(BaseCommand):
         ensure_mount(c_din_4u_lower, device=mcb_4u_b, position=3,  size=1)
         ensure_mount(c_din_4u_lower, device=mcb_4u_c, position=5,  size=1)
 
+        # ISP 4U DIN shelf: 5 relays along the single rail
+        for i, r in enumerate((relay_isp_a, relay_isp_b, relay_isp_c, relay_isp_d, relay_isp_e)):
+            ensure_mount(c_din_4u_isp, device=r, position=1 + i * 4, size=1)
+
+        # --- Scenarios A-G mounts (sizes mostly default from device profile footprint) ---
+
+        # A: Marshalling — 20 terminal blocks at 6 mm spacing, starting 10 mm in
+        for i, tb in enumerate(terminal_blocks):
+            ensure_mount(c_marshalling, device=tb, position=10 + i * 6)
+
+        # B: MCC — 3 withdrawable buckets on the vertical busbar
+        ensure_mount(c_mcc_busbar, device=buckets[0], position=100)
+        ensure_mount(c_mcc_busbar, device=buckets[1], position=500)
+        ensure_mount(c_mcc_busbar, device=buckets[2], position=900)
+        # Each bucket has its own DIN rail with one contactor and one relay
+        for rail, contactor, aux in zip(c_bucket_rails, bucket_contactors, bucket_relays):
+            ensure_mount(rail, device=contactor, position=30)
+            ensure_mount(rail, device=aux, position=100)
+
+        # C: VFD cabinet plate — VFD drive at top, aux DIN strip below
+        ensure_mount(c_vfd_plate, device=vfd_drive, position_x=150, position_y=100)
+        ensure_mount(c_vfd_plate, device=aux_rail_device, position_x=80, position_y=600)
+        # Aux DIN strip carries a PSU and two VFD contactors
+        ensure_mount(c_aux_rail, device=psu_device, position=20)
+        ensure_mount(c_aux_rail, device=vfd_contactor_a, position=120)
+        ensure_mount(c_aux_rail, device=vfd_contactor_b, position=180)
+
+        # D: Wago remote I/O — coupler at left, then alternating DI/DO modules
+        ensure_mount(c_wago, device=wago_coupler, position=10)
+        x = 115  # left edge of the first I/O module, just right of the coupler
+        for di in wago_di_modules:
+            ensure_mount(c_wago, device=di, position=x)
+            x += 14
+        for do in wago_do_modules:
+            ensure_mount(c_wago, device=do, position=x)
+            x += 14
+
+        # E: Industrial switch — single switch centered on the rail
+        ensure_mount(c_switch, device=industrial_switch, position=160)
+
+        # F: Safety relay panel — 4 PNOZ relays spaced along the plate top
+        for i, pnoz in enumerate(pnoz_relays):
+            ensure_mount(c_safety_plate, device=pnoz, position_x=60 + i * 130, position_y=150)
+
+        # G: Protection panel — 2 SIPROTEC IEDs, 1 REL670, test block rail below
+        ensure_mount(c_protection_plate, device=siprotec_1, position_x=270, position_y=200)
+        ensure_mount(c_protection_plate, device=siprotec_2, position_x=270, position_y=550)
+        ensure_mount(c_protection_plate, device=rel670,    position_x=140, position_y=900)
+        ensure_mount(c_protection_plate, device=test_rail_device,
+                     position_x=80, position_y=1300)
+        # The test block rail carries 4 test blocks
+        for i, tb in enumerate(test_blocks):
+            ensure_mount(c_test_rail, device=tb, position=20 + i * 130)
+
         self.stdout.write('  site:       OT Test Site')
-        self.stdout.write('  rack:       Test Rack A (12U)')
-        self.stdout.write('  scenarios:  DIN rail, mounting plate, WDM 8-slot, WDM 2-slot,')
-        self.stdout.write('              LV busbar, modular PLC, 2U rack DIN shelf, 4U rack DIN shelf')
+        self.stdout.write('  rack:       Test Rack A (24U)')
+        self.stdout.write('  scenarios:  9 standalone + 7 classic OT/ICS (A marshalling, B MCC,')
+        self.stdout.write('              C VFD, D Wago I/O, E industrial switch, F safety panel,')
+        self.stdout.write('              G substation protection panel)')

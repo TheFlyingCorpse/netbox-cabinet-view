@@ -1,0 +1,49 @@
+<svg baseProfile="full" height="390.0" version="1.1" viewBox="0,0,920.0,390.0" width="920.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.carrier { stroke: #333; stroke-width: 1; }
+.carrier.din-rail       { fill: #c0c7d1; }
+.carrier.subrack        { fill: #e3ebf1; stroke: #456; }
+.carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to <object> documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .carrier                { stroke: #9aa2ad; }
+  .carrier.din-rail       { fill: #4b5460; }
+  .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+}
+]]></style><clipPath id="clip-mount-18"><rect height="70" width="35.0" x="40.0" y="252.0" /></clipPath><clipPath id="clip-mount-19"><rect height="70" width="35.0" x="110.0" y="252.0" /></clipPath><clipPath id="clip-mount-20"><rect height="70" width="35.0" x="180.0" y="252.0" /></clipPath><clipPath id="clip-mount-16"><rect height="70" width="35.0" x="40.0" y="82.0" /></clipPath><clipPath id="clip-mount-17"><rect height="70" width="35.0" x="180.0" y="82.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">DIN Shelf 4U #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="280.0" /><text class="carrier-label" x="44.0" y="276.0">Lower rail</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/25/"><title>Name: MCB 4U-A
+Role: MCB
+Type: MCB 1P 45mm</title><rect class="slot" height="70" style="fill: #f44336" width="35.0" x="40.0" y="252.0" /><text class="label" clip-path="url(#clip-mount-18)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="57.5" y="287.0">MCB…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/26/"><title>Name: MCB 4U-B
+Role: MCB
+Type: MCB 1P 45mm</title><rect class="slot" height="70" style="fill: #f44336" width="35.0" x="110.0" y="252.0" /><text class="label" clip-path="url(#clip-mount-19)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="127.5" y="287.0">MCB…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/27/"><title>Name: MCB 4U-C
+Role: MCB
+Type: MCB 1P 45mm</title><rect class="slot" height="70" style="fill: #f44336" width="35.0" x="180.0" y="252.0" /><text class="label" clip-path="url(#clip-mount-20)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="197.5" y="287.0">MCB…</text></a><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="110.0" /><text class="carrier-label" x="44.0" y="106.0">Upper rail</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/23/"><title>Name: Relay 4U-A
+Role: Relay
+Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="40.0" y="82.0" /><text class="label" clip-path="url(#clip-mount-16)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="57.5" y="117.0">Rel…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/24/"><title>Name: Relay 4U-B
+Role: Relay
+Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="180.0" y="82.0" /><text class="label" clip-path="url(#clip-mount-17)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="197.5" y="117.0">Rel…</text></a></svg>

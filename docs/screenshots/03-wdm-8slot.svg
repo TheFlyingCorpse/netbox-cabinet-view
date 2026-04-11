@@ -1,0 +1,43 @@
+<svg baseProfile="full" height="128.0" version="1.1" viewBox="0,0,920.0,128.0" width="920.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.carrier { stroke: #333; stroke-width: 1; }
+.carrier.din-rail       { fill: #c0c7d1; }
+.carrier.subrack        { fill: #e3ebf1; stroke: #456; }
+.carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to <object> documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .carrier                { stroke: #9aa2ad; }
+  .carrier.din-rail       { fill: #4b5460; }
+  .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+}
+]]></style><clipPath id="clip-carrier-3-lbl"><rect height="120" width="812.0" x="50.0" y="30.0" /></clipPath><clipPath id="clip-mount-4"><rect height="112" width="40.64" x="50.0" y="34.0" /></clipPath><clipPath id="clip-mount-5"><rect height="112" width="40.64" x="456.4" y="34.0" /></clipPath></defs><rect class="svg-bg" height="128.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="88.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">WDM Shelf #1</text><rect class="carrier subrack" height="120" width="812.0" x="50.0" y="30.0" /><text class="carrier-label" clip-path="url(#clip-carrier-3-lbl)" x="54.0" y="44.0">Slot carrier</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/7/"><title>Name: WDM Filter A
+Role: WDM
+Type: WDM Mux/Demux 4-slot</title><rect class="slot" height="112" style="fill: #e91e63" width="40.64" x="50.0" y="34.0" /><text class="label" clip-path="url(#clip-mount-4)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="70.32" y="90.0">WDM …</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/8/"><title>Name: WDM Filter B
+Role: WDM
+Type: WDM Mux/Demux 4-slot</title><rect class="slot" height="112" style="fill: #e91e63" width="40.64" x="456.4" y="34.0" /><text class="label" clip-path="url(#clip-mount-5)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="476.71999999999997" y="90.0">WDM …</text></a></svg>

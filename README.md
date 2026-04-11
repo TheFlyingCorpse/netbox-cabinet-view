@@ -2,6 +2,12 @@
 
 A NetBox plugin that models physical mounting that doesn't fit a 19″ rack — DIN rails, Eurocard subracks, mounting plates, and busbars — and renders each cabinet as an SVG drawing with real device images.
 
+![DIN rail with relays](docs/screenshots/01-din-rail.svg)
+![4U DIN shelf with stacked rails](docs/screenshots/08-din-shelf-4u-two-rail.svg)
+![LV panelboard busbar with MCBs](docs/screenshots/05-busbar.svg)
+
+*(Above: three of the 16 demo scenarios seeded by `manage.py cabinetview_seed`. Every drawing is a live SVG rendered from the plugin's own endpoint — they flip to a dark palette automatically when your browser is in dark mode.)*
+
 ## Compatibility
 
 | NetBox version | Supported | Tested | Notes |
@@ -80,20 +86,58 @@ The plugin ships a management command that creates a realistic OT/ICS demo datas
 python manage.py cabinetview_seed
 ```
 
-The command is idempotent — safe to re-run, updates drifted fields back to the canonical values. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, twelve `DeviceType`s with matching `DeviceTypeProfile`s, one `Rack` (`Test Rack A`, 12U), and the devices below:
+The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 25 `DeviceType`s with matching `DeviceTypeProfile`s, one `Rack` (`Test Rack A`, 24U), and the sixteen scenarios below:
 
-| # | Scenario | Host device | Host DeviceType | Carrier(s) | Mount target | Demonstrates |
-|---|---|---|---|---|---|---|
-| 1 | Standalone DIN rail | `DIN Rail #1` | DIN TS35 480 mm | 1× DIN rail (480 mm) | 2× Phoenix REL-MR (Device) | Bare rail with no enclosing cabinet |
-| 2 | 2D mounting plate | `Enclosure #1` | Rittal TS8 800×2000 | 1× mounting plate (760×1960 mm) | 1× Industrial PC (Device, 220×90 mm) | Back-plate with `(x, y)` mm placement |
-| 3 | Chassis with child devices | `WDM Shelf #1` | WDM Shelf 1U 8-slot | 1× subrack (HP 3U, 406 mm) | 2× WDM Mux/Demux (DeviceBay, slots 1 and 5) | `DeviceBay`-backed mounts, parent/child visualization |
-| 4 | Small chassis | `WDM Shelf 2-slot #1` | WDM Shelf 1U 2-slot | 1× subrack (HP 3U, 440 mm, full width) | 2× WDM Mux/Demux (DeviceBay, 20 HP each) | Fixed-width slots in a wider carrier |
-| 5 | LV panelboard | `LV Panel Busbar` | Rittal RiLine 60 1 m | 1× busbar (1000 mm) | 3× MCB 1P 45 mm (Device, at mm positions) | Copper busbar with clip-on modules |
-| 6 | Modular PLC | `PLC Backplane #1` | Test PLC Backplane 8-slot | 1× subrack (HP 3U, 400 mm) | 2× DI 16×24 VDC (ModuleBay) | `ModuleBay`-backed mounts, modular chassis |
-| 7 | Rack-mounted DIN shelf (2U) | `DIN Shelf 2U #1` | Rittal 2U 19″ DIN rail shelf | 1× DIN rail (420 mm, centered) | 3× Phoenix REL-MR (Device) | Realistic 2U DIN shelf for rack-elevation testing |
-| 8 | Rack-mounted DIN shelf (4U) | `DIN Shelf 4U #1` | Rittal 4U 19″ DIN rail shelf | 2× stacked DIN rails (upper + lower) | 2× Relay + 3× MCB (Device) | Multi-carrier host device, stacked rails |
+### Core scenarios (9)
 
-The eight scenarios populate `Test Rack A` with the 1U / 2U / 4U DIN shelves and the two WDM shelves at various U positions, so the rack detail page and rack elevation both show a realistic mix.
+| # | Scenario | Host device | Carrier(s) | Mount target | Demonstrates |
+|---|---|---|---|---|---|
+| 1 | Standalone DIN rail | `DIN Rail #1` | 1× DIN rail (480 mm) | 2× Phoenix REL-MR (Device) | Bare rail with no enclosing cabinet |
+| 2 | 2D mounting plate | `Enclosure #1` | 1× mounting plate (760×1960 mm) | 1× Industrial PC (Device, 220×90 mm) | Back-plate with `(x, y)` mm placement |
+| 3 | Chassis with child devices | `WDM Shelf #1` | 1× subrack (HP 3U, 406 mm) | 2× WDM Mux/Demux (DeviceBay, slots 1 and 5) | `DeviceBay`-backed mounts, parent/child visualization |
+| 4 | Small chassis | `WDM Shelf 2-slot #1` | 1× subrack (HP 3U, 440 mm, full width) | 2× WDM Mux/Demux (DeviceBay, 20 HP each) | Fixed-width slots in a wider carrier |
+| 5 | LV panelboard | `LV Panel Busbar` | 1× busbar (1000 mm) | 3× MCB 1P 45 mm (Device, at mm positions) | Copper busbar with clip-on modules |
+| 6 | Modular PLC | `PLC Backplane #1` | 1× subrack (HP 3U, 400 mm) | 2× DI 16×24 VDC (ModuleBay) | `ModuleBay`-backed mounts, modular chassis |
+| 7 | Rack-mounted DIN shelf (2U) | `DIN Shelf 2U #1` | 1× DIN rail (420 mm, centered) | 3× Phoenix REL-MR (Device) | Realistic 2U DIN shelf for rack-elevation testing |
+| 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails (upper + lower) | 2× Relay + 3× MCB (Device) | Multi-carrier host, stacked rails |
+| 9 | ISP-style 4U DIN shelf (single rail) | `DIN Shelf 4U ISP #1` | 1× DIN rail (420 mm, centered vertically) | 5× Phoenix REL-MR (Device) | Single rail with wire-management headroom |
+
+### Classic OT/ICS scenarios (7 extras, v0.1.1+)
+
+| # | Scenario | Host device | Carrier(s) | Mount target | Demonstrates |
+|---|---|---|---|---|---|
+| A | **Marshalling cabinet** | `Marshalling Cabinet #1` (4U) | 1× DIN rail (mm unit, 420 mm) | 20× Phoenix UT 2.5 terminal block at 6 mm pitch | Dense narrow-slot rendering; label fitting under pressure |
+| B | **MCC with withdrawable buckets** | `MCC Cabinet #1` (standalone) | 1× vertical busbar (1800 mm) + nested DIN rails per bucket | 3× `MCC Bucket` devices (each also a carrier host), each with a motor contactor + auxiliary relay | **Device-in-Device recursion** on a busbar; vertical-orientation carrier |
+| C | **VFD control cabinet** | `VFD Cabinet #1` (Rittal 600×1800) | 1× mounting plate + nested aux DIN strip | 1× Schneider ATV630 + `aux DIN strip` device holding a 24 V PSU and 2 motor contactors | Mixed plate + DIN; rail-on-plate nesting |
+| D | **Wago remote I/O station** | `Wago Remote I/O #1` (2U) | 1× DIN rail (mm unit) | 1× Wago 750-362 coupler + 4× 750-430 DI + 3× 750-530 DO chained along the rail | Bus-coupler-plus-modules pattern on DIN |
+| E | **Industrial Ethernet switch panel** | `Industrial Switch Shelf #1` (2U) | 1× DIN rail | 1× Hirschmann MACH1000 (90 mm, wider than 1 module) | Single wider-footprint device on a rail |
+| F | **Safety relay panel** | `Safety Panel #1` (600×800 enclosure) | 1× mounting plate | 4× Pilz PNOZ X3 (45×100 mm each) | Multiple fixed-size devices on a 2D plate |
+| G | **Substation protection panel** | `Protection Panel #1` (800×2200 cabinet) | 1× mounting plate + nested test block rail | 2× Siemens SIPROTEC 7SJ82 + 1× ABB REL670 + nested test rail with 4× ABB RTXF test blocks | Protective relays / IEDs in a realistic utility protection cabinet; rail-on-plate nesting with its own mounts |
+
+`Test Rack A` (24U) holds the 1U / 2U / 4U rack-mounted scenarios (3, 4, 7, 8, 9, A, D, E) at consecutive U positions. The standalone scenarios (1, 2, 5, 6, B, C, F, G) live in `OT Test Site` / `Control Room` without a rack.
+
+### Rendered scenario gallery
+
+The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — every stroke, fill and label you see is exactly what the plugin's `/dcim/devices/<pk>/cabinet-layout/svg/` endpoint returns for that device.
+
+| Scenario | Rendering |
+|---|---|
+| **1. Standalone DIN rail** | ![](docs/screenshots/01-din-rail.svg) |
+| **2. Mounting plate + IPC** | ![](docs/screenshots/02-mounting-plate.svg) |
+| **3. WDM 8-slot shelf (DeviceBay)** | ![](docs/screenshots/03-wdm-8slot.svg) |
+| **4. WDM 2-slot shelf** | ![](docs/screenshots/04-wdm-2slot.svg) |
+| **5. LV panelboard busbar** | ![](docs/screenshots/05-busbar.svg) |
+| **6. Modular PLC (ModuleBay)** | ![](docs/screenshots/06-modular-plc.svg) |
+| **7. 2U rack DIN shelf** | ![](docs/screenshots/07-din-shelf-2u.svg) |
+| **8. 4U rack DIN shelf — two stacked rails** | ![](docs/screenshots/08-din-shelf-4u-two-rail.svg) |
+| **9. 4U rack DIN shelf — ISP single-rail** | ![](docs/screenshots/09-din-shelf-4u-isp.svg) |
+| **A. Marshalling cabinet (20 terminal blocks)** | ![](docs/screenshots/A-marshalling.svg) |
+| **B. MCC with withdrawable buckets** | ![](docs/screenshots/B-mcc-cabinet.svg) |
+| **C. VFD control cabinet** | ![](docs/screenshots/C-vfd-cabinet.svg) |
+| **D. Wago remote I/O station** | ![](docs/screenshots/D-wago-remote-io.svg) |
+| **E. Industrial Ethernet switch** | ![](docs/screenshots/E-industrial-switch.svg) |
+| **F. Safety relay panel** | ![](docs/screenshots/F-safety-panel.svg) |
+| **G. Substation protection panel** | ![](docs/screenshots/G-protection-panel.svg) |
 
 ## Not in v1
 

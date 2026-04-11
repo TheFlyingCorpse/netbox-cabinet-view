@@ -6,9 +6,27 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Planned
 - Option 2: monkey-patch `RackElevationSVG` so carrier-host devices render their cabinet layout SVG inside the rack elevation at their U slot (letterboxed for ≥2U, falls back to stock `front_image` for 1U).
-- Expanded demo dataset: marshalling cabinet, MCC with withdrawable buckets, VFD control cabinet, Wago remote I/O station, industrial Ethernet switch panel, safety relay panel, substation protection panel.
 - Vertical DIN rail rendering + test coverage.
 - Grid-view carrier type (discrete-cell 2D matrix for panel-grid layouts).
+- Multi-depth / swing-frame rack support.
+
+## [0.1.1] — 2026-04-11
+
+### Added
+- Seven classic OT/ICS demo scenarios added to `manage.py cabinetview_seed`:
+  - **A. Marshalling cabinet** — 4U rack shelf with 20 Phoenix UT 2.5 terminal blocks at 6 mm pitch, stress-testing narrow-slot label fitting.
+  - **B. MCC with withdrawable buckets** — standalone 800 × 2200 cabinet with a vertical Rittal RiLine 60 busbar carrying three bucket devices, each hosting its own DIN rail with a contactor and an auxiliary relay inside. Exercises Device-in-Device recursion on a busbar.
+  - **C. VFD control cabinet** — Rittal 600 × 1800 enclosure with a back plate holding an ATV630 VFD and a nested DIN rail strip device that carries its own 24 V PSU and motor contactors. Exercises rail-on-plate nesting.
+  - **D. Wago remote I/O** — 2U fieldbus shelf with a DIN rail carrying a Wago 750-362 coupler plus four DI and three DO modules chained along the rail.
+  - **E. Industrial Ethernet switch** — 2U shelf with a DIN rail carrying a Hirschmann MACH1000 switch.
+  - **F. Safety relay panel** — 600 × 800 enclosure with a back plate holding four Pilz PNOZ X3 safety relays.
+  - **G. Substation protection panel** — 800 × 2200 protection cabinet with a back plate holding two Siemens SIPROTEC 7SJ82 IEDs, one ABB REL670, and a nested test block rail device with four ABB RTXF test blocks.
+- `Test Rack A` resized from 16U to 24U to accommodate the new rack-mounted scenarios (A, D, E) alongside the existing DIN/WDM variety.
+- Rack placement in the seed command now runs in two passes (clear, then assign) so re-runs never collide on a used U slot.
+- More mounts now rely on `Mount.size` auto-defaulting from `DeviceTypeProfile.footprint_primary` / `footprint_secondary` rather than specifying it explicitly.
+
+### Changed
+- `Rittal 2U/4U 19" DIN rail shelf` profiles updated with realistic internal depths.
 
 ## [0.1.0] — 2026-04-11
 
@@ -29,5 +47,6 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.1.0
