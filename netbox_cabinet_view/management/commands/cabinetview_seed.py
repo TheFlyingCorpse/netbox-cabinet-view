@@ -185,10 +185,12 @@ class Command(BaseCommand):
                                               u_height=0)
         dt_wdm_shelf = ensure_device_type(mfr, 'wdm-shelf-1u-8-slot',
                                           'WDM shelf 1U 8-slot',
-                                          u_height=1, subdevice_role='parent')
+                                          u_height=1, subdevice_role='parent',
+                                          is_full_depth=False)
         dt_wdm_shelf2 = ensure_device_type(mfr, 'wdm-shelf-1u-2-slot',
                                            'WDM shelf 1U 2-slot',
-                                           u_height=1, subdevice_role='parent')
+                                           u_height=1, subdevice_role='parent',
+                                           is_full_depth=False)
         dt_wdm_filter = ensure_device_type(mfr, 'wdm-mux-demux-filter-4-slot',
                                            'WDM mux/demux filter 4-slot',
                                            u_height=0, subdevice_role='child')
@@ -205,23 +207,26 @@ class Command(BaseCommand):
         dt_mcb_din = ensure_device_type(mfr, 'din-mount-mcb-1p',
                                         'DIN-mount MCB 1P',
                                         u_height=0)
-        # Rack-mounted DIN shelves
+        # Rack-mounted DIN shelves — marked is_full_depth=False because
+        # real DIN shelves terminate well short of the rack's rear rails
+        # (the rails + cable management stay near the front face), so
+        # they should only render on whichever face they're installed on.
         dt_din_shelf_2u = ensure_device_type(mfr, 'rack-din-shelf-2u-single-rail',
                                              'Rack DIN shelf 2U (single rail)',
-                                             u_height=2)
+                                             u_height=2, is_full_depth=False)
         dt_din_shelf_4u = ensure_device_type(mfr, 'rack-din-shelf-4u-dual-rail',
                                              'Rack DIN shelf 4U (dual rail)',
-                                             u_height=4)
+                                             u_height=4, is_full_depth=False)
         dt_din_shelf_4u_isp = ensure_device_type(mfr, 'rack-din-shelf-4u-single-rail',
                                                  'Rack DIN shelf 4U (single rail)',
-                                                 u_height=4)
+                                                 u_height=4, is_full_depth=False)
 
         # --- Scenarios A-G ---
 
         # A: Marshalling shelf + terminal block
         dt_marshalling_shelf = ensure_device_type(mfr, 'marshalling-rack-shelf-4u',
                                                   'Marshalling rack shelf 4U',
-                                                  u_height=4)
+                                                  u_height=4, is_full_depth=False)
         dt_terminal_block = ensure_device_type(mfr, 'din-mount-terminal-block',
                                                'DIN-mount terminal block',
                                                u_height=0)
@@ -254,7 +259,7 @@ class Command(BaseCommand):
         # D: Fieldbus remote I/O shelf + coupler + I/O modules
         dt_fieldbus_shelf = ensure_device_type(mfr, 'fieldbus-rack-shelf-2u',
                                                'Fieldbus rack shelf 2U',
-                                               u_height=2)
+                                               u_height=2, is_full_depth=False)
         dt_fb_coupler = ensure_device_type(mfr, 'fieldbus-ethernet-coupler',
                                            'Fieldbus Ethernet coupler',
                                            u_height=0)
