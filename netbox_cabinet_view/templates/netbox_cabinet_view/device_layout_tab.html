@@ -1,0 +1,85 @@
+{% extends 'dcim/device/base.html' %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header d-flex justify-content-between align-items-center">
+        <span>Cabinet Layout</span>
+        <a href="{% url 'plugins:netbox_cabinet_view:carrier_add' %}?host_device={{ object.pk }}"
+           class="btn btn-sm btn-primary">
+          <i class="mdi mdi-plus-thick"></i> Add Carrier
+        </a>
+      </h5>
+      <div class="card-body text-center">
+        {% if carriers %}
+          <object type="image/svg+xml"
+                  data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
+                  style="max-width: 100%; height: auto;">
+            Cabinet layout for {{ object }}
+          </object>
+        {% else %}
+          <div class="text-muted py-4">
+            No carriers defined for this device.
+            <div class="mt-2">
+              <a href="{% url 'plugins:netbox_cabinet_view:carrier_add' %}?host_device={{ object.pk }}"
+                 class="btn btn-sm btn-outline-primary">
+                Add the first carrier
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if carriers %}
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header">Carriers</h5>
+      <div class="card-body table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Subtype</th>
+              <th>Unit</th>
+              <th>Size</th>
+              <th>Mounts</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for carrier in carriers %}
+            <tr>
+              <td><a href="{{ carrier.get_absolute_url }}">{{ carrier.name }}</a></td>
+              <td>{{ carrier.get_carrier_type_display }}</td>
+              <td>{{ carrier.get_subtype_display|default:"—" }}</td>
+              <td>{{ carrier.get_unit_display }}</td>
+              <td>
+                {% if carrier.length_mm %}
+                  {{ carrier.length_mm }} mm ({{ carrier.capacity_units }} units)
+                {% else %}
+                  {{ carrier.width_mm }} × {{ carrier.height_mm }} mm
+                {% endif %}
+              </td>
+              <td>{{ carrier.mounts.count }}</td>
+              <td class="text-end">
+                <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?carrier={{ carrier.pk }}"
+                   class="btn btn-sm btn-outline-primary">
+                  <i class="mdi mdi-plus-thick"></i> Mount
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock content %}

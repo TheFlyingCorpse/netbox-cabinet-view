@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netbox-cabinet-view"
+version = "0.1.0"
+description = "NetBox plugin: DIN rails, subracks, mounting plates and busbars with SVG visualization of cabinet interiors, including chassis/parent-child devices and modular PLC chassis."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Rune Darrud", email = "theflyingcorpse@gmail.com" },
+]
+keywords = [
+    "netbox",
+    "netbox-plugin",
+    "dcim",
+    "din-rail",
+    "cabinet",
+    "ot",
+    "ics",
+    "industrial",
+    "subrack",
+    "busbar",
+    "plc",
+    "wdm",
+    "svg",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Systems Administration",
+]
+
+# NetBox itself is installed from source inside the NetBox image / dev env; it is not
+# distributed on PyPI (the `netbox` name there is unrelated). Plugins therefore don't
+# depend on it at the Python package level — they target a NetBox version at runtime.
+dependencies = [
+    "svgwrite>=1.4",
+]
+
+[project.urls]
+Homepage      = "https://github.com/TheFlyingCorpse/netbox-cabinet-view"
+Source        = "https://github.com/TheFlyingCorpse/netbox-cabinet-view"
+Issues        = "https://github.com/TheFlyingCorpse/netbox-cabinet-view/issues"
+Changelog     = "https://github.com/TheFlyingCorpse/netbox-cabinet-view/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["netbox_cabinet_view*"]
+
+[tool.setuptools.package-data]
+netbox_cabinet_view = ["templates/**/*", "static/**/*"]
+
+[project.entry-points."netbox_plugins"]
+netbox_cabinet_view = "netbox_cabinet_view:config"

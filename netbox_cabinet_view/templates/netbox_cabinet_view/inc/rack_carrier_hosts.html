@@ -1,0 +1,38 @@
+{% if hosts %}
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header">Cabinet Layouts</h5>
+      <div class="card-body">
+        {% for host, carriers in hosts %}
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">
+              <a href="{{ host.get_absolute_url }}">{{ host }}</a>
+              {% if host.position %}
+                <span class="text-muted small ms-2">U{{ host.position }}{% if host.face %} ({{ host.get_face_display }}){% endif %}</span>
+              {% endif %}
+              <span class="text-muted small ms-2">
+                &middot;
+                {% for carrier in carriers %}{{ carrier.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+              </span>
+            </h6>
+            <a href="{% url 'dcim:device_cabinet_layout' pk=host.pk %}" class="btn btn-sm btn-outline-primary">
+              <i class="mdi mdi-open-in-new"></i> Open Layout tab
+            </a>
+          </div>
+          <div class="border rounded p-2 text-center">
+            <object type="image/svg+xml"
+                    data="{% url 'dcim:device_cabinet_layout_svg' pk=host.pk %}"
+                    style="max-width: 100%; height: auto;"
+                    aria-label="Cabinet layout for {{ host }}">
+              Cabinet layout for {{ host }}
+            </object>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
