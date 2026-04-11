@@ -139,6 +139,25 @@ class PlacementDeleteView(generic.ObjectDeleteView):
 # Device detail integration — Layout tab + SVG endpoint
 # ---------------------------------------------------------------------------
 
+def _device_hosts_mounts(device):
+    """
+    Tab visibility predicate for DeviceCabinetLayoutView — Finding B
+    (v0.4.0).
+
+    The Layout tab should be visible whenever the device's DeviceType
+    has a DeviceMountProfile with ``hosts_mounts=True``, EVEN IF there
+    are zero mounts yet. That unlocks the empty-state "Add the first
+    mount" CTA for devices that the admin has declared as
+    cabinet-shaped but not yet populated.
+
+    Devices with no profile, or with ``hosts_mounts=False``, still
+    suppress the tab. That preserves the "don't pollute every Device
+    page with a useless tab" guarantee from v0.3.0.
+    """
+    profile = getattr(device.device_type, 'cabinet_profile', None)
+    return bool(profile and profile.hosts_mounts)
+
+
 @register_model_view(Device, 'cabinet_layout', path='cabinet-layout')
 class DeviceCabinetLayoutView(generic.ObjectView):
     """Adds a 'Layout' tab to the Device detail page, showing the host's mounts."""
@@ -147,10 +166,13 @@ class DeviceCabinetLayoutView(generic.ObjectView):
     template_name = 'netbox_cabinet_view/device_layout_tab.html'
     tab = ViewTab(
         label=_('Layout'),
+        visible=_device_hosts_mounts,
         badge=lambda obj: obj.cabinet_mounts.count(),
         permission='netbox_cabinet_view.view_mount',
         weight=2000,
-        hide_if_empty=True,
+        # hide_if_empty removed in v0.4.0: the visible= callable above
+        # already gates on profile presence, and the empty-state CTA
+        # inside the tab body handles the zero-mounts case explicitly.
     )
 
     def get_extra_context(self, request, instance):
@@ -161,8 +183,15 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'placements__device_bay__installed_device__role',
             'placements__module_bay__installed_module__module_type',
         )
+        profile = getattr(instance.device_type, 'cabinet_profile', None)
         return {
             'mounts': mounts,
+            'has_mounts': mounts.exists(),
+            # Internal dimensions for the empty-state scale-reference
+            # canvas. May be None — the template degrades gracefully to
+            # a plain Bootstrap card + button when unset.
+            'internal_width_mm': profile.internal_width_mm if profile else None,
+            'internal_height_mm': profile.internal_height_mm if profile else None,
         }
 
 

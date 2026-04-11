@@ -11,30 +11,76 @@
           <i class="mdi mdi-plus-thick"></i> Add Mount
         </a>
       </h5>
-      <div class="card-body text-center">
-        {% if mounts %}
+      <div class="card-body text-center p-0">
+        {% if has_mounts %}
           <object type="image/svg+xml"
                   data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
                   style="max-width: 100%; height: auto;">
             Cabinet layout for {{ object }}
           </object>
         {% else %}
-          <div class="text-muted py-4">
-            No mounts defined for this device.
-            <div class="mt-2">
+          {# ========================================================== #}
+          {# Finding B (v0.4.0): empty-state scale-reference canvas.     #}
+          {#                                                             #}
+          {# When the device has a profile but no mounts yet, render a   #}
+          {# dashed rectangle sized to the internal_width/height_mm so   #}
+          {# users see the cabinet's actual scale before they pick a    #}
+          {# mount type. Centered CTA button offers the "+ first mount"  #}
+          {# flow. If the profile has no internal dims, degrade to a     #}
+          {# plain card with just the CTA.                               #}
+          {# ========================================================== #}
+          {% if internal_width_mm and internal_height_mm %}
+            {# 2 px per mm, matches CabinetLayoutSVG.DEFAULT_MM_TO_PX   #}
+            {% widthratio internal_width_mm 1 2 as canvas_w %}
+            {% widthratio internal_height_mm 1 2 as canvas_h %}
+            <div style="padding: 24px;">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 {{ canvas_w }} {{ canvas_h }}"
+                   style="max-width: 100%; max-height: 420px; height: auto;">
+                <rect x="2" y="2"
+                      width="{{ canvas_w|add:'-4' }}"
+                      height="{{ canvas_h|add:'-4' }}"
+                      fill="none"
+                      stroke="#6c7078"
+                      stroke-width="2"
+                      stroke-dasharray="6 4"
+                      rx="4" />
+                <foreignObject x="0" y="0" width="{{ canvas_w }}" height="{{ canvas_h }}">
+                  <div xmlns="http://www.w3.org/1999/xhtml"
+                       style="display: flex; flex-direction: column;
+                              align-items: center; justify-content: center;
+                              width: 100%; height: 100%;
+                              font-family: -apple-system, 'Segoe UI', sans-serif;">
+                    <div style="font-size: 14px; color: #9aa2ad; margin-bottom: 4px;">
+                      No mounts defined
+                    </div>
+                    <div style="font-size: 11px; color: #6c7078; margin-bottom: 12px;">
+                      Interior: {{ internal_width_mm }} × {{ internal_height_mm }} mm
+                    </div>
+                    <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
+                       class="btn btn-sm btn-primary">
+                      <i class="mdi mdi-plus-thick"></i> Add the first mount
+                    </a>
+                  </div>
+                </foreignObject>
+              </svg>
+            </div>
+          {% else %}
+            <div class="text-muted py-5">
+              <div class="mb-2">No mounts defined for this device.</div>
               <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
-                 class="btn btn-sm btn-outline-primary">
-                Add the first mount
+                 class="btn btn-sm btn-primary">
+                <i class="mdi mdi-plus-thick"></i> Add the first mount
               </a>
             </div>
-          </div>
+          {% endif %}
         {% endif %}
       </div>
     </div>
   </div>
 </div>
 
-{% if mounts %}
+{% if has_mounts %}
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">
