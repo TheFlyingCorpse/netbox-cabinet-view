@@ -5,11 +5,28 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
+- **Per-face mounting** — different mount layouts on the front vs rear of the same cabinet-host device. Models the common case where e.g. a rack shelf has a network switch clipped to a front rail and standalone PSUs clipped to a rear rail. Needs a `Mount.face` field or per-`Placement` face override, plus renderer logic to pick which subset of mounts draws on which face. Related to (but distinct from) this release's `is_full_depth` seed fix: that change removed spurious rear-face rendering for devices that have no rear layout at all; per-face mounting would enable cabinets with genuine-but-different rear layouts.
 - Multi-depth / swing-frame rack support.
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Auto-provisioning of Mounts from existing DeviceBay / ModuleBay templates on a DeviceType.
 - Nested SVG recursion (a hosted device's own interior rendered inline inside its rectangle on the parent Mount — e.g. click into an MCC bucket from the cabinet view and see the DIN rail inside).
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
+
+## [0.4.1] — 2026-04-12
+
+### Fixed
+
+- **Seed command incorrectly marked front-only rack shelves as `is_full_depth=True`**, causing NetBox's core rack elevation (and by extension the plugin's rack-elevation monkey-patch) to draw their cabinet interiors on BOTH front and rear faces. Real DIN shelves, WDM shelves, marshalling shelves, and fieldbus shelves terminate well short of the rear rails, so they should only render on the face they're installed on. Fixed by setting `is_full_depth=False` on the relevant DeviceTypes in `cabinetview_seed`:
+  - `wdm-shelf-1u-8-slot`, `wdm-shelf-1u-2-slot`
+  - `rack-din-shelf-2u-single-rail`, `rack-din-shelf-4u-dual-rail`, `rack-din-shelf-4u-single-rail`
+  - `marshalling-rack-shelf-4u`
+  - `fieldbus-rack-shelf-2u`
+  - `ODF Frame 1U` stays `is_full_depth=True` — ODFs ARE genuinely full-depth, with cassette geometry on both faces. That's why the ODF scenario was chosen to exercise the rear-face rack elevation patch in v0.3.0 in the first place.
+  - User-visible effect: on users who re-run `manage.py cabinetview_seed` after upgrading, the rear face of `Test Rack A` now correctly shows only the ODF Frame plus empty slots, matching real-world physics.
+
+### Notes
+
+v0.4.1 is a seed-data fix; no model, view, or renderer code changed. Users who don't run the demo seed will see no difference.
 
 ## [0.4.0] — 2026-04-12
 
@@ -159,7 +176,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...v0.2.0
