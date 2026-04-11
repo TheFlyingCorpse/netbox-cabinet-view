@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
@@ -209,6 +210,36 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'ledger_enabled': ledger_enabled,
             'ledger_sections': ledger_sections,
         }
+
+
+# ---------------------------------------------------------------------------
+# Discovery hint — Finding H (v0.4.0)
+# ---------------------------------------------------------------------------
+
+class DiscoveryHintDismissView(LoginRequiredMixin, View):
+    """
+    Dismiss the discovery hint card for a specific device, for the
+    current user only. Writes the device PK into
+    ``user.config['cabinet_view.dismissed_hints']`` and redirects back
+    to the device detail page.
+
+    GET is used rather than POST so the plain `<a href>` in the hint
+    card works without a CSRF token and without JavaScript. The
+    action is idempotent and user-scoped - no shared state is
+    modified - so GET-based mutation is acceptable here.
+    """
+
+    def get(self, request, device_pk):
+        device = get_object_or_404(Device, pk=device_pk)
+        # UserConfig uses dotted keys. Read current list, append, write back.
+        key = 'cabinet_view.dismissed_hints'
+        current = request.user.config.get(key) or []
+        if not isinstance(current, list):
+            current = []
+        if device.pk not in current:
+            current.append(device.pk)
+            request.user.config.set(key, current, commit=True)
+        return redirect(device.get_absolute_url())
 
 
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')
