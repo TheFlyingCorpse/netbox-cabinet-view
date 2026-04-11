@@ -7,11 +7,11 @@ class CabinetViewConfig(PluginConfig):
     name = 'netbox_cabinet_view'
     verbose_name = 'Cabinet View'
     description = (
-        'DIN rails, subracks, mounting plates, and busbars for NetBox — with SVG '
-        'visualization of cabinet interiors, including chassis/parent-child devices '
-        'and modular PLCs.'
+        'DIN rails, subracks, mounting plates, busbars, and multi-row grids '
+        'for NetBox — with SVG visualization of cabinet interiors, chassis/'
+        'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
-    version = '0.3.0'
+    version = '0.4.0'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
@@ -21,7 +21,7 @@ class CabinetViewConfig(PluginConfig):
     min_version = '4.4.0'
     max_version = '4.9.99'
     default_settings = {
-        # SVG scale factor — 1 mm of carrier geometry = this many SVG pixels.
+        # SVG scale factor — 1 mm of mount geometry = this many SVG pixels.
         'MM_TO_PX': 2,
         # Whether the Layout tab's SVG embeds DeviceType/ModuleType front images by default.
         'INCLUDE_IMAGES_DEFAULT': True,
