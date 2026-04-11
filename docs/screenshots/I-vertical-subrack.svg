@@ -1,0 +1,49 @@
+<svg baseProfile="full" height="1040.0" version="1.1" viewBox="0,0,560.0,1040.0" width="560.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.carrier { stroke: #333; stroke-width: 1; }
+.carrier.din-rail       { fill: #c0c7d1; }
+.carrier.subrack        { fill: #e3ebf1; stroke: #456; }
+.carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.carrier-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to <object> documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .carrier                { stroke: #9aa2ad; }
+  .carrier.din-rail       { fill: #4b5460; }
+  .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .carrier-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+}
+]]></style><clipPath id="clip-mount-215"><rect height="10.16" width="112" x="64.0" y="60.0" /></clipPath><clipPath id="clip-mount-216"><rect height="10.16" width="112" x="64.0" y="161.6" /></clipPath><clipPath id="clip-mount-217"><rect height="10.16" width="112" x="64.0" y="263.2" /></clipPath><clipPath id="clip-mount-218"><rect height="10.16" width="112" x="64.0" y="364.8" /></clipPath></defs><rect class="svg-bg" height="1040.0" width="560.0" x="0" y="0" /><rect class="cabinet-outline" height="1000.0" width="520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Vertical Subrack #1</text><rect class="carrier subrack" height="920.0" width="120" x="60.0" y="60.0" /><text class="carrier-label" x="64.0" y="56.0">Card cage</text><a target="_parent" xlink:href="/dcim/devices/282/"><title>Name: Eurocard EC01
+Role: PLC
+Type: Eurocard 6U 8HP card</title><rect class="slot" height="10.16" style="fill: #4caf50" width="112" x="64.0" y="60.0" /><text class="label" clip-path="url(#clip-mount-215)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="120.0" y="65.08">Eurocard EC01</text></a><a target="_parent" xlink:href="/dcim/devices/283/"><title>Name: Eurocard EC02
+Role: PLC
+Type: Eurocard 6U 8HP card</title><rect class="slot" height="10.16" style="fill: #4caf50" width="112" x="64.0" y="161.6" /><text class="label" clip-path="url(#clip-mount-216)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="120.0" y="166.68">Eurocard EC02</text></a><a target="_parent" xlink:href="/dcim/devices/284/"><title>Name: Eurocard EC03
+Role: PLC
+Type: Eurocard 6U 8HP card</title><rect class="slot" height="10.16" style="fill: #4caf50" width="112" x="64.0" y="263.2" /><text class="label" clip-path="url(#clip-mount-217)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="120.0" y="268.28">Eurocard EC03</text></a><a target="_parent" xlink:href="/dcim/devices/285/"><title>Name: Eurocard EC04
+Role: PLC
+Type: Eurocard 6U 8HP card</title><rect class="slot" height="10.16" style="fill: #4caf50" width="112" x="64.0" y="364.8" /><text class="label" clip-path="url(#clip-mount-218)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="120.0" y="369.88">Eurocard EC04</text></a></svg>

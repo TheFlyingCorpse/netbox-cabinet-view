@@ -8,12 +8,14 @@ class CarrierTypeChoices(ChoiceSet):
     TYPE_SUBRACK        = 'subrack'
     TYPE_MOUNTING_PLATE = 'mounting_plate'
     TYPE_BUSBAR         = 'busbar'
+    TYPE_GRID           = 'grid'
 
     CHOICES = [
         (TYPE_DIN_RAIL,       'DIN rail',       'blue'),
         (TYPE_SUBRACK,        'Subrack (HP)',   'teal'),
         (TYPE_MOUNTING_PLATE, 'Mounting plate', 'purple'),
         (TYPE_BUSBAR,         'Busbar',         'orange'),
+        (TYPE_GRID,           'Grid (multi-row)', 'gray'),
     ]
 
 
@@ -27,6 +29,11 @@ ONE_D_CARRIER_TYPES = frozenset((
 # Carrier types that are two-dimensional (x, y placement on an area).
 TWO_D_CARRIER_TYPES = frozenset((
     CarrierTypeChoices.TYPE_MOUNTING_PLATE,
+))
+
+# Carrier types that are multi-row grids (row + position within row).
+GRID_CARRIER_TYPES = frozenset((
+    CarrierTypeChoices.TYPE_GRID,
 ))
 
 
@@ -47,10 +54,11 @@ class CarrierSubtypeChoices(ChoiceSet):
     # Mounting plate variants
     PLATE_GENERIC = 'plate_generic'
 
-    # Busbar variants
-    BB_RILINE_60     = 'bb_riline_60'
-    BB_SIEMENS_8US   = 'bb_8us'
-    BB_ABB_SMISSLINE = 'bb_smissline'
+    # Busbar variants (named by mechanical pitch / slot system rather than
+    # vendor product line so the taxonomy stays generic).
+    BB_60MM_PITCH    = 'bb_60mm_pitch'
+    BB_40MM_PITCH    = 'bb_40mm_pitch'
+    BB_CLIP_ON       = 'bb_clip_on'
     BB_GENERIC_CU    = 'bb_generic_cu'
 
     CHOICES = [
@@ -62,9 +70,9 @@ class CarrierSubtypeChoices(ChoiceSet):
         (HP_6U,            'Eurocard 6U',               'teal'),
         (HP_9U,            'Eurocard 9U',               'teal'),
         (PLATE_GENERIC,    'Generic back plate',        'purple'),
-        (BB_RILINE_60,     'Rittal RiLine 60',          'orange'),
-        (BB_SIEMENS_8US,   'Siemens SIVACON 8US',       'orange'),
-        (BB_ABB_SMISSLINE, 'ABB SMISSLINE',             'orange'),
+        (BB_60MM_PITCH,    '60 mm pitch busbar system', 'orange'),
+        (BB_40MM_PITCH,    '40 mm pitch busbar system', 'orange'),
+        (BB_CLIP_ON,       'Clip-on modular busbar',    'orange'),
         (BB_GENERIC_CU,    'Generic Cu busbar',         'yellow'),
     ]
 
@@ -86,11 +94,15 @@ CARRIER_TYPE_SUBTYPES = {
         CarrierSubtypeChoices.PLATE_GENERIC,
     )),
     CarrierTypeChoices.TYPE_BUSBAR: frozenset((
-        CarrierSubtypeChoices.BB_RILINE_60,
-        CarrierSubtypeChoices.BB_SIEMENS_8US,
-        CarrierSubtypeChoices.BB_ABB_SMISSLINE,
+        CarrierSubtypeChoices.BB_60MM_PITCH,
+        CarrierSubtypeChoices.BB_40MM_PITCH,
+        CarrierSubtypeChoices.BB_CLIP_ON,
         CarrierSubtypeChoices.BB_GENERIC_CU,
     )),
+    # Grid carriers don't have subtypes in v0.3.0 — they're driven entirely
+    # by the `rows` / `row_height_mm` / `unit` / `length_mm` fields. Leaving
+    # this empty means no subtype is accepted.
+    CarrierTypeChoices.TYPE_GRID: frozenset(),
 }
 
 

@@ -155,14 +155,21 @@ class CabinetLayoutSVG:
         if carrier.is_two_d:
             return (carrier.width_mm or 0, carrier.height_mm or 0)
 
+        if carrier.is_grid:
+            # Grid: rows × (row_height × rows) perpendicular to length_mm.
+            length = carrier.length_mm or 0
+            rows = max(1, carrier.rows or 1)
+            row_h = carrier.row_height_mm or 0
+            perp = rows * row_h
+            if carrier.orientation == OrientationChoices.VERTICAL:
+                # Rows sit side-by-side along x; carrier's length runs down y.
+                return (perp, length)
+            # Horizontal: rows stack along y; carrier's length runs across x.
+            return (length, perp)
+
         length = carrier.length_mm or 0
         # 1D carriers get a nominal visual height.
-        if carrier.carrier_type == CarrierTypeChoices.TYPE_BUSBAR:
-            thickness_mm = BUSBAR_PX / self.mm_to_px
-        elif carrier.carrier_type == CarrierTypeChoices.TYPE_SUBRACK:
-            thickness_mm = SUBRACK_DEFAULT_HEIGHT_PX / self.mm_to_px
-        else:  # DIN rail
-            thickness_mm = DIN_RAIL_PX / self.mm_to_px
+        thickness_mm = self._carrier_visual_width_px(carrier) / self.mm_to_px
 
         if carrier.orientation == OrientationChoices.VERTICAL:
             return (thickness_mm, length)
@@ -250,48 +257,142 @@ class CabinetLayoutSVG:
         return '\n'.join(bits)
 
     # ------------------------------------------------------------------
-    # Mount geometry (1D / 2D)
+    # Mount geometry (1D / 2D / grid)
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _carrier_visual_width_px(carrier):
+        """
+        Thickness in px of a single-row 1D carrier drawn perpendicular to
+        its axis (rail line, busbar, subrack rack body, or grid row). For a
+        horizontal carrier this is its height; for a vertical one, its
+        width. Used to center mounts on the carrier regardless of orientation.
+        """
+        ctype = carrier.carrier_type
+        if ctype == CarrierTypeChoices.TYPE_DIN_RAIL:
+            return DIN_RAIL_PX
+        if ctype == CarrierTypeChoices.TYPE_BUSBAR:
+            return BUSBAR_PX
+        if ctype == CarrierTypeChoices.TYPE_SUBRACK:
+            return SUBRACK_DEFAULT_HEIGHT_PX
+        if ctype == CarrierTypeChoices.TYPE_GRID:
+            # Grid rows are drawn as DIN-rail-style strips.
+            return DIN_RAIL_PX
+        return DIN_RAIL_PX
+
+    @staticmethod
+    def _mount_visual_thickness_px(carrier):
+        """
+        Thickness in px of a mount (how much it protrudes from its carrier
+        perpendicular to the carrier's axis). Larger than the carrier's own
+        line so mounts "overhang" the rail visually.
+        """
+        ctype = carrier.carrier_type
+        if ctype == CarrierTypeChoices.TYPE_BUSBAR:
+            return BUSBAR_PX
+        if ctype == CarrierTypeChoices.TYPE_SUBRACK:
+            # Let the mount visually occupy most of the subrack height.
+            return SUBRACK_DEFAULT_HEIGHT_PX - 8
+        if ctype == CarrierTypeChoices.TYPE_GRID:
+            # Grid rows get a modest thickness so text fits.
+            return 56
+        # DIN rail
+        return 70  # typical DIN module height ~90 mm — give it real presence
+
+    def _row_origin_px(self, carrier, row: int):
+        """
+        Return the (x, y) SVG px origin of one row of a grid carrier, or of
+        a single-row 1D carrier. Row numbering is 1-indexed.
+
+        For horizontal grids, rows stack vertically with `row_height_mm` spacing.
+        For vertical grids, rows sit side-by-side along the x-axis, same spacing.
+        """
+        ox, oy = self._carrier_origin_px(carrier)
+        if carrier.carrier_type != CarrierTypeChoices.TYPE_GRID:
+            return (ox, oy)
+        step = self._mm(carrier.row_height_mm or 0)
+        offset = max(0, row - 1) * step
+        if carrier.orientation == OrientationChoices.VERTICAL:
+            return (ox + offset, oy)
+        return (ox, oy + offset)
 
     def _mount_box_px(self, mount, carrier):
         """
         Return ((x, y), (w, h)) in SVG px for a mount on the given carrier.
+        Handles 1D (din_rail / subrack / busbar), 2D (mounting_plate), and
+        grid (1-N rows of slotted strips).
         """
-        ox, oy = self._carrier_origin_px(carrier)
-
         if carrier.is_two_d:
+            ox, oy = self._carrier_origin_px(carrier)
             return (
                 (ox + self._mm(mount.position_x), oy + self._mm(mount.position_y)),
                 (self._mm(mount.size_x), self._mm(mount.size_y)),
             )
 
-        # 1D
-        start_mm = (mount.position - 1) * carrier.mm_per_unit if mount.position else 0
+        # 1D or grid — compute (start, length) along the carrier's axis,
+        # then thicken perpendicular to it.
+        start_units = (mount.position - 1) if mount.position else 0
+        start_mm = start_units * carrier.mm_per_unit
         size_mm = (mount.size or 1) * carrier.mm_per_unit
 
-        if carrier.carrier_type == CarrierTypeChoices.TYPE_BUSBAR:
-            thickness_px = BUSBAR_PX
-        elif carrier.carrier_type == CarrierTypeChoices.TYPE_SUBRACK:
-            # Let the mount visually occupy most of the subrack height.
-            thickness_px = SUBRACK_DEFAULT_HEIGHT_PX - 8
-        else:  # DIN rail
-            thickness_px = 70  # typical DIN module height ~90 mm — give it real presence
+        mount_thickness = self._mount_visual_thickness_px(carrier)
+        carrier_width = self._carrier_visual_width_px(carrier)
 
-        if carrier.orientation == OrientationChoices.VERTICAL:
-            # y axis runs along the rail
-            x_center = ox + (DIN_RAIL_PX / 2 if carrier.carrier_type == CarrierTypeChoices.TYPE_DIN_RAIL
-                             else 0)
+        if carrier.is_grid:
+            # A mount in a grid sits in a specific row, and may span
+            # multiple rows (row_span). Find the origin of the first row
+            # and extend thickness across the spanned rows.
+            base_x, base_y = self._row_origin_px(carrier, mount.row or 1)
+            row_span = max(1, mount.row_span or 1)
+            if row_span > 1:
+                step = self._mm(carrier.row_height_mm or 0)
+                span_thickness = (row_span - 1) * step + mount_thickness
+            else:
+                span_thickness = mount_thickness
+
+            if carrier.orientation == OrientationChoices.VERTICAL:
+                # Rows run side by side along x; mount extends down along y.
+                x_center = base_x + carrier_width / 2
+                x = x_center - mount_thickness / 2
+                # If multi-row, stretch the box to cover all spanned rows.
+                if row_span > 1:
+                    step = self._mm(carrier.row_height_mm or 0)
+                    x = base_x + carrier_width / 2 - mount_thickness / 2
+                    return (
+                        (x, base_y + self._mm(start_mm)),
+                        (span_thickness, self._mm(size_mm)),
+                    )
+                return (
+                    (x, base_y + self._mm(start_mm)),
+                    (mount_thickness, self._mm(size_mm)),
+                )
+            # horizontal grid: rows stack along y; mount extends right along x.
+            y_center = base_y + carrier_width / 2
+            y = y_center - mount_thickness / 2
+            if row_span > 1:
+                y = base_y + carrier_width / 2 - mount_thickness / 2
+                return (
+                    (base_x + self._mm(start_mm), y),
+                    (self._mm(size_mm), span_thickness),
+                )
             return (
-                (x_center - thickness_px / 2, oy + self._mm(start_mm)),
-                (thickness_px, self._mm(size_mm)),
+                (base_x + self._mm(start_mm), y),
+                (self._mm(size_mm), mount_thickness),
+            )
+
+        # Plain 1D carrier
+        ox, oy = self._carrier_origin_px(carrier)
+        if carrier.orientation == OrientationChoices.VERTICAL:
+            x_center = ox + carrier_width / 2
+            return (
+                (x_center - mount_thickness / 2, oy + self._mm(start_mm)),
+                (mount_thickness, self._mm(size_mm)),
             )
         # horizontal
-        y_center = oy + (DIN_RAIL_PX / 2 if carrier.carrier_type == CarrierTypeChoices.TYPE_DIN_RAIL
-                         else BUSBAR_PX / 2 if carrier.carrier_type == CarrierTypeChoices.TYPE_BUSBAR
-                         else SUBRACK_DEFAULT_HEIGHT_PX / 2)
+        y_center = oy + carrier_width / 2
         return (
-            (ox + self._mm(start_mm), y_center - thickness_px / 2),
-            (self._mm(size_mm), thickness_px),
+            (ox + self._mm(start_mm), y_center - mount_thickness / 2),
+            (self._mm(size_mm), mount_thickness),
         )
 
     # ------------------------------------------------------------------
@@ -354,22 +455,45 @@ class CabinetLayoutSVG:
             self._draw_carrier_label(dwg, carrier, ox, oy, cw, ch)
             return
 
+        # Grid: draw one strip per row. Each strip is a DIN-rail-style rect
+        # anchored at that row's origin (see _row_origin_px).
+        if carrier.is_grid:
+            rows = max(1, carrier.rows or 1)
+            length_px = self._mm(carrier.length_mm or 0)
+            strip_thickness = self._carrier_visual_width_px(carrier)
+            # Compute the full grid bounding box for the label helper.
+            full_perp_mm = rows * (carrier.row_height_mm or 0)
+            full_perp_px = self._mm(full_perp_mm)
+            if carrier.orientation == OrientationChoices.VERTICAL:
+                grid_w_px, grid_h_px = full_perp_px, length_px
+            else:
+                grid_w_px, grid_h_px = length_px, full_perp_px
+            self._draw_carrier_label(dwg, carrier, ox, oy, grid_w_px, grid_h_px)
+
+            for r in range(1, rows + 1):
+                row_x, row_y = self._row_origin_px(carrier, r)
+                if carrier.orientation == OrientationChoices.VERTICAL:
+                    rect = Rect(
+                        insert=(row_x, row_y),
+                        size=(strip_thickness, length_px),
+                        class_='carrier grid grid-row',
+                    )
+                else:
+                    rect = Rect(
+                        insert=(row_x, row_y),
+                        size=(length_px, strip_thickness),
+                        class_='carrier grid grid-row',
+                    )
+                dwg.add(rect)
+            return
+
         length_px = self._mm(carrier.length_mm or 0)
+        thickness_px = self._carrier_visual_width_px(carrier)
 
         if carrier.orientation == OrientationChoices.VERTICAL:
-            width_px = {
-                CarrierTypeChoices.TYPE_DIN_RAIL: DIN_RAIL_PX,
-                CarrierTypeChoices.TYPE_SUBRACK:  SUBRACK_DEFAULT_HEIGHT_PX,
-                CarrierTypeChoices.TYPE_BUSBAR:   BUSBAR_PX,
-            }[ctype]
-            cw, ch = width_px, length_px
+            cw, ch = thickness_px, length_px
         else:
-            height_px = {
-                CarrierTypeChoices.TYPE_DIN_RAIL: DIN_RAIL_PX,
-                CarrierTypeChoices.TYPE_SUBRACK:  SUBRACK_DEFAULT_HEIGHT_PX,
-                CarrierTypeChoices.TYPE_BUSBAR:   BUSBAR_PX,
-            }[ctype]
-            cw, ch = length_px, height_px
+            cw, ch = length_px, thickness_px
 
         rect = Rect(
             insert=(ox, oy),
@@ -557,6 +681,7 @@ _EMBEDDED_CSS = """
 .carrier.subrack        { fill: #e3ebf1; stroke: #456; }
 .carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
 .carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
 .carrier-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
@@ -577,6 +702,7 @@ _EMBEDDED_CSS = """
   .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
   .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
   .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
   .carrier-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }

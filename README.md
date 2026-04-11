@@ -4,9 +4,10 @@ A NetBox plugin that models physical mounting that doesn't fit a 19″ rack — 
 
 ![DIN rail with relays](docs/screenshots/01-din-rail.svg)
 ![4U DIN shelf with stacked rails](docs/screenshots/08-din-shelf-4u-two-rail.svg)
-![LV panelboard busbar with MCBs](docs/screenshots/05-busbar.svg)
+![Grid-mounted protection IED](docs/screenshots/J-grid-ied.svg)
+![LV distribution busbar with MCBs](docs/screenshots/05-busbar.svg)
 
-*(Above: three of the 16 demo scenarios seeded by `manage.py cabinetview_seed`. Every drawing is a live SVG rendered from the plugin's own endpoint — they flip to a dark palette automatically when your browser is in dark mode.)*
+*(Above: four of the 20 demo scenarios seeded by `manage.py cabinetview_seed`. Every drawing is a live SVG rendered from the plugin's own endpoint — they flip to a dark palette automatically when your browser is in dark mode. The third image shows v0.3.0's new `grid` carrier type with a comms module spanning both rows at the right edge.)*
 
 ## Compatibility
 
@@ -24,7 +25,7 @@ Python 3.10+ required (matches NetBox 4.4 / 4.5's own Python support).
 Three models:
 
 - **DeviceTypeProfile** — per-DeviceType declaration of whether the device hosts carriers (i.e. it's a cabinet or enclosure) and/or mounts on carriers (it's a DIN-mounted relay, a 4-HP Eurocard, a clip-on MCB). Internal dimensions and footprints live here.
-- **Carrier** — a geometric mounting structure attached to a host `Device`. Four types ship in v1: `din_rail`, `subrack`, `mounting_plate`, `busbar`. Each has offset, orientation, length (1D) or width/height (2D), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm).
+- **Carrier** — a geometric mounting structure attached to a host `Device`. Five types: `din_rail`, `subrack`, `mounting_plate`, `busbar`, `grid`. Each has offset, orientation (horizontal **or vertical** — all 1D types since v0.3.0), length (1D) or width/height (2D) or rows/row_height_mm (grid), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm). Grid carriers are 1-to-N stacked rows ("bars") for modular IED / multi-row backplanes where a mount can span multiple rows via `row_span`.
 - **Mount** — a placement on a carrier. Points at exactly one of:
   - a standalone `dcim.Device` (bare DIN rail mounts)
   - a `dcim.DeviceBay` (chassis with child devices — e.g. a WDM shelf with two filter modules)
@@ -72,23 +73,27 @@ erDiagram
     Carrier {
         int     host_device_id              "FK to dcim.Device"
         string  name
-        string  carrier_type                "din_rail subrack plate busbar"
+        string  carrier_type                "din_rail subrack plate busbar grid"
         string  subtype                     "ChoiceSet, blank allowed"
-        string  orientation                 "horizontal or vertical"
+        string  orientation                 "horizontal or vertical (all 1D types)"
         string  unit                        "mm module_17_5 hp_5_08"
         int     offset_x_mm
         int     offset_y_mm
-        int     length_mm                   "1D carriers"
+        int     length_mm                   "1D and grid (row length)"
         int     width_mm                    "2D carriers"
         int     height_mm                   "2D carriers"
+        int     rows                        "grid carriers"
+        int     row_height_mm               "grid carriers"
     }
     Mount {
         int     carrier_id                  "FK to Carrier"
         int     device_id                   "XOR target, nullable"
         int     device_bay_id               "XOR target, nullable"
         int     module_bay_id               "XOR target, nullable"
-        int     position                    "1D"
-        int     size                        "1D, defaults from profile"
+        int     position                    "1D and grid (within row)"
+        int     size                        "1D and grid, defaults from profile"
+        int     row                         "grid carriers"
+        int     row_span                    "grid carriers, default 1"
         int     position_x                  "2D"
         int     position_y                  "2D"
         int     size_x                      "2D"
@@ -150,35 +155,46 @@ The plugin ships a management command that creates a realistic OT/ICS demo datas
 python manage.py cabinetview_seed
 ```
 
-The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 25 `DeviceType`s with matching `DeviceTypeProfile`s, one `Rack` (`Test Rack A`, 24U), and the sixteen scenarios below:
+The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 30 `DeviceType`s with matching `DeviceTypeProfile`s, one `Rack` (`Test Rack A`, 24U), and **20 scenarios** across four groups.
 
-### Core scenarios (9)
+Device type and model names in the seed are deliberately generic by category (no real vendor part numbers) as an operational-security hygiene measure — the plugin's repo should not help adversaries fingerprint which specific equipment lives at which site.
 
-| # | Scenario | Host device | Carrier(s) | Mount target | Demonstrates |
-|---|---|---|---|---|---|
-| 1 | Standalone DIN rail | `DIN Rail #1` | 1× DIN rail (480 mm) | 2× Phoenix REL-MR (Device) | Bare rail with no enclosing cabinet |
-| 2 | 2D mounting plate | `Enclosure #1` | 1× mounting plate (760×1960 mm) | 1× Industrial PC (Device, 220×90 mm) | Back-plate with `(x, y)` mm placement |
-| 3 | Chassis with child devices | `WDM Shelf #1` | 1× subrack (HP 3U, 406 mm) | 2× WDM Mux/Demux (DeviceBay, slots 1 and 5) | `DeviceBay`-backed mounts, parent/child visualization |
-| 4 | Small chassis | `WDM Shelf 2-slot #1` | 1× subrack (HP 3U, 440 mm, full width) | 2× WDM Mux/Demux (DeviceBay, 20 HP each) | Fixed-width slots in a wider carrier |
-| 5 | LV panelboard | `LV Panel Busbar` | 1× busbar (1000 mm) | 3× MCB 1P 45 mm (Device, at mm positions) | Copper busbar with clip-on modules |
-| 6 | Modular PLC | `PLC Backplane #1` | 1× subrack (HP 3U, 400 mm) | 2× DI 16×24 VDC (ModuleBay) | `ModuleBay`-backed mounts, modular chassis |
-| 7 | Rack-mounted DIN shelf (2U) | `DIN Shelf 2U #1` | 1× DIN rail (420 mm, centered) | 3× Phoenix REL-MR (Device) | Realistic 2U DIN shelf for rack-elevation testing |
-| 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails (upper + lower) | 2× Relay + 3× MCB (Device) | Multi-carrier host, stacked rails |
-| 9 | ISP-style 4U DIN shelf (single rail) | `DIN Shelf 4U ISP #1` | 1× DIN rail (420 mm, centered vertically) | 5× Phoenix REL-MR (Device) | Single rail with wire-management headroom |
+### Core scenarios (9) — the basic model
 
-### Classic OT/ICS scenarios (7 extras, v0.1.1+)
+| # | Scenario | Host device | Carrier(s) | Demonstrates |
+|---|---|---|---|---|
+| 1 | Standalone DIN rail | `DIN Rail #1` | 1× DIN rail (480 mm) | Bare rail with no enclosing cabinet |
+| 2 | 2D mounting plate | `Floor Enclosure #1` | 1× mounting plate (760×1960 mm) | Back-plate with `(x, y)` mm placement |
+| 3 | Chassis with child devices | `WDM Shelf #1` | 1× subrack (HP 3U, 406 mm) | `DeviceBay`-backed mounts, parent/child |
+| 4 | Small chassis, wider carrier | `WDM Shelf 2-slot #1` | 1× subrack (HP 3U, 440 mm) | Fixed-width slots in a wider carrier |
+| 5 | LV panelboard | `LV Distribution Busbar` | 1× busbar (1000 mm) | Copper busbar with clip-on modules |
+| 6 | Modular PLC | `PLC Backplane #1` | 1× subrack (HP 3U, 400 mm) | `ModuleBay`-backed mounts |
+| 7 | Rack-mounted DIN shelf (2U) | `DIN Shelf 2U #1` | 1× DIN rail (420 mm, centered) | Realistic 2U rack-mounted DIN |
+| 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails | Multi-carrier host, stacked rails |
+| 9 | ISP-style 4U DIN shelf (single rail) | `DIN Shelf 4U ISP #1` | 1× DIN rail (centered vertically) | Single rail with wire-management headroom |
 
-| # | Scenario | Host device | Carrier(s) | Mount target | Demonstrates |
-|---|---|---|---|---|---|
-| A | **Marshalling cabinet** | `Marshalling Cabinet #1` (4U) | 1× DIN rail (mm unit, 420 mm) | 20× Phoenix UT 2.5 terminal block at 6 mm pitch | Dense narrow-slot rendering; label fitting under pressure |
-| B | **MCC with withdrawable buckets** | `MCC Cabinet #1` (standalone) | 1× vertical busbar (1800 mm) + nested DIN rails per bucket | 3× `MCC Bucket` devices (each also a carrier host), each with a motor contactor + auxiliary relay | **Device-in-Device recursion** on a busbar; vertical-orientation carrier |
-| C | **VFD control cabinet** | `VFD Cabinet #1` (Rittal 600×1800) | 1× mounting plate + nested aux DIN strip | 1× Schneider ATV630 + `aux DIN strip` device holding a 24 V PSU and 2 motor contactors | Mixed plate + DIN; rail-on-plate nesting |
-| D | **Wago remote I/O station** | `Wago Remote I/O #1` (2U) | 1× DIN rail (mm unit) | 1× Wago 750-362 coupler + 4× 750-430 DI + 3× 750-530 DO chained along the rail | Bus-coupler-plus-modules pattern on DIN |
-| E | **Industrial Ethernet switch panel** | `Industrial Switch Shelf #1` (2U) | 1× DIN rail | 1× Hirschmann MACH1000 (90 mm, wider than 1 module) | Single wider-footprint device on a rail |
-| F | **Safety relay panel** | `Safety Panel #1` (600×800 enclosure) | 1× mounting plate | 4× Pilz PNOZ X3 (45×100 mm each) | Multiple fixed-size devices on a 2D plate |
-| G | **Substation protection panel** | `Protection Panel #1` (800×2200 cabinet) | 1× mounting plate + nested test block rail | 2× Siemens SIPROTEC 7SJ82 + 1× ABB REL670 + nested test rail with 4× ABB RTXF test blocks | Protective relays / IEDs in a realistic utility protection cabinet; rail-on-plate nesting with its own mounts |
+### Classic OT/ICS scenarios (A–G)
 
-`Test Rack A` (24U) holds the 1U / 2U / 4U rack-mounted scenarios (3, 4, 7, 8, 9, A, D, E) at consecutive U positions. The standalone scenarios (1, 2, 5, 6, B, C, F, G) live in `OT Test Site` / `Control Room` without a rack.
+| # | Scenario | Host device | Demonstrates |
+|---|---|---|---|
+| A | **Marshalling cabinet** | `Marshalling Cabinet #1` (4U rack) | 20 terminal blocks at 6 mm pitch — dense narrow-slot rendering stress test |
+| B | **MCC with withdrawable buckets** | `MCC Cabinet #1` | **Device-in-Device recursion** on a vertical busbar carrier; three bucket devices, each a host with its own DIN rail inside holding a contactor and an auxiliary relay |
+| C | **VFD control cabinet** | `VFD Cabinet #1` | Mounting plate holding a VFD + a nested DIN strip device that itself carries a 24 V PSU and two motor contactors — rail-on-plate nesting |
+| D | **Fieldbus remote I/O station** | `Fieldbus Remote I/O #1` (2U rack) | Bus-coupler-plus-modules pattern on DIN: 1 coupler + 4 DI + 3 DO cards |
+| E | **Industrial Ethernet switch panel** | `Industrial Switch Shelf #1` (2U rack) | Single wider-footprint device on a DIN rail |
+| F | **Safety relay panel** | `Safety Panel #1` | Four fixed-size safety relays on a 2D plate |
+| G | **Substation protection panel** | `Protection Panel #1` | Two overcurrent IEDs + one line-distance IED on a plate, plus a nested test-block rail device carrying four test blocks |
+
+### v0.3.0 scenarios (H–K) — grid carriers, vertical, and ISP
+
+| # | Scenario | Host device | Demonstrates |
+|---|---|---|---|
+| H | **Vertical DIN rail wall box** | `Vertical DIN Wall Box #1` | Vertical-orientation DIN rail with 6 relays stacked top-to-bottom |
+| I | **Vertical Eurocard subrack** | `Vertical Subrack #1` | Vertical-orientation subrack with 4 cards — proves all 1D carrier types support `orientation='vertical'` |
+| J | **Grid-mounted protection IED** | `Protection IED L01` | **Grid carrier** with 2 rows × 12 slots, ModuleBay-backed mounts including a comms module that **spans both rows** via `row_span=2` — the "one device, many carrier positions depending on its ModuleBays" story |
+| K | **ISP ODF (fibre patch frame)** | `ODF Frame #1` (1U rack) | 12 fibre splice cassettes in a 2×6 grid. The interesting face of an ODF is the **rear**, so this also proves the v0.3.0 rear-face `RackElevationSVG` patch — the ODF layout appears inside the rack elevation at U21 on both front and rear columns |
+
+`Test Rack A` (24U) holds the 1U / 2U / 4U rack-mounted scenarios (3, 4, 7, 8, 9, A, D, E, K) at consecutive U positions. The standalone scenarios (1, 2, 5, 6, B, C, F, G, H, I, J) live in `OT Test Site` / `Control Room` without a rack.
 
 ### Rendered scenario gallery
 
@@ -190,7 +206,7 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 | **2. Mounting plate + IPC** | ![](docs/screenshots/02-mounting-plate.svg) |
 | **3. WDM 8-slot shelf (DeviceBay)** | ![](docs/screenshots/03-wdm-8slot.svg) |
 | **4. WDM 2-slot shelf** | ![](docs/screenshots/04-wdm-2slot.svg) |
-| **5. LV panelboard busbar** | ![](docs/screenshots/05-busbar.svg) |
+| **5. LV distribution busbar** | ![](docs/screenshots/05-busbar.svg) |
 | **6. Modular PLC (ModuleBay)** | ![](docs/screenshots/06-modular-plc.svg) |
 | **7. 2U rack DIN shelf** | ![](docs/screenshots/07-din-shelf-2u.svg) |
 | **8. 4U rack DIN shelf — two stacked rails** | ![](docs/screenshots/08-din-shelf-4u-two-rail.svg) |
@@ -198,10 +214,83 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 | **A. Marshalling cabinet (20 terminal blocks)** | ![](docs/screenshots/A-marshalling.svg) |
 | **B. MCC with withdrawable buckets** | ![](docs/screenshots/B-mcc-cabinet.svg) |
 | **C. VFD control cabinet** | ![](docs/screenshots/C-vfd-cabinet.svg) |
-| **D. Wago remote I/O station** | ![](docs/screenshots/D-wago-remote-io.svg) |
+| **D. Fieldbus remote I/O station** | ![](docs/screenshots/D-wago-remote-io.svg) |
 | **E. Industrial Ethernet switch** | ![](docs/screenshots/E-industrial-switch.svg) |
 | **F. Safety relay panel** | ![](docs/screenshots/F-safety-panel.svg) |
 | **G. Substation protection panel** | ![](docs/screenshots/G-protection-panel.svg) |
+| **H. Vertical DIN wall box** | ![](docs/screenshots/H-vertical-din-wall-box.svg) |
+| **I. Vertical Eurocard subrack** | ![](docs/screenshots/I-vertical-subrack.svg) |
+| **J. Grid-mounted IED (multi-row span)** | ![](docs/screenshots/J-grid-ied.svg) |
+| **K. ISP ODF (12-cassette grid)** | ![](docs/screenshots/K-odf-chassis.svg) |
+
+### Rack elevation integration — both faces
+
+The plugin monkey-patches NetBox's core `RackElevationSVG` so that carrier-host devices render their cabinet layout **inside the rack elevation** at their U slot, on both the **front** and **rear** faces. For ≥2U devices the embedded SVG is letterboxed to preserve aspect ratio; 1U devices fall through to the stock `DeviceType.front_image` / `rear_image`. The rear face is particularly important for fibre patch panels and ODF chassis where the interesting equipment faces backward.
+
+| Rack elevation — front (scenario K ODF visible at U21) | Rack elevation — rear (same ODF rendered on rear face) |
+|---|---|
+| ![Rack front](docs/screenshots/rack-front.svg) | ![Rack rear](docs/screenshots/rack-rear.svg) |
+
+Opt out with `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION'] = False`.
+
+## Supporting ISPs
+
+Yes. The plugin covers the main physical-mounting patterns ISPs encounter:
+
+- **Modular OLT / WDM / ROADM shelves** with line cards — `subrack` carriers with `ModuleBay`-backed mounts (scenarios 3, 4, 6)
+- **ODF / fibre patch chassis** — `grid` carriers with cassette positions, visible on the rack rear face (scenario K, v0.3.0+)
+- **DIN-mounted NIDs, media converters, surge protectors, small fieldbus switches** — `din_rail` carriers (scenarios 1, D, E, H)
+- **Telco DC power distribution** — `busbar` carriers + nested DIN for MCBs (scenario 5)
+- **Vertical DIN rails in street cabinets / OSP pedestals** — `orientation='vertical'` on any 1D carrier (scenario H, v0.3.0+)
+- **Rack elevation showing what's inside each shelf on both faces** — v0.3.0 rear-face rack patch
+
+Gaps for ISPs, called out explicitly: Krone LSA / 110-block copper frames are deferred (see "Not in v0.3"). Standard 19″ patch panel cabling (front/rear port tracking) is already handled by NetBox core — the plugin doesn't need to duplicate it.
+
+## Environmental / certification ratings — use NetBox custom fields
+
+This plugin's job is **geometric visualization** of what's inside a physical enclosure. Textual certification attributes (IP rating, Ex rating, temperature range, RF shielding, EMP/HEMP hardening, SIL rating, seismic zone, fire rating, etc.) are a different axis — they're not about where things are, they're about what the enclosure or equipment is certified to withstand. These belong in NetBox's first-class **custom fields** system, not in the plugin's models.
+
+To add them, go to NetBox → Customization → Custom Fields → Add and create fields on the `dcim.rack` and/or `dcim.devicetype` content types. A reasonable baseline covering most industrial / utility / telco / ISP use cases:
+
+| Field | Type | Example | Applies to | Category |
+|---|---|---|---|---|
+| `ip_rating` | Text | `IP54` | Rack + DeviceType | Ingress protection (IEC 60529) |
+| `nema_rating` | Text | `NEMA 4X` | Rack + DeviceType | Ingress protection (North America) |
+| `operating_temp_min_c` / `_max_c` | Integer | `-40` / `70` | DeviceType | Thermal operating range |
+| `ex_rating` | Text | `II 2 G Ex d IIB T4 Gb` | Rack + DeviceType | Hazardous area (ATEX / IECEx) |
+| `nec_class_division` | Text | `Class I Div 1 Group D` | Rack + DeviceType | Hazardous area (NEC, North America) |
+| `emc_class` | Selection | `Class A` / `Class B` | DeviceType | EMC emissions (CISPR 22 / FCC Part 15) |
+| `surge_withstand_kv` | Decimal | `4.0` | DeviceType | Transient immunity (IEC 61000-4-5) |
+| `rf_shielding_db` | Integer | `80` | Rack + DeviceType | RF shielding effectiveness at frequency |
+| `tempest_zone` | Selection | `Zone 0` / `1` / `2` / `3` | Rack + DeviceType | TEMPEST emanation security |
+| `hemp_protected` | Boolean | `true` | Rack + DeviceType | HEMP hardening (IEC 61000-5-10 / MIL-STD-188-125) |
+| `fire_rating` | Text | `UL 94 V-0` or `FR60` | Rack + DeviceType | Flame retardance |
+| `seismic_zone` | Text | `Bellcore GR-63 Zone 4` | Rack | Seismic qualification |
+| `vibration_grade` | Text | `IEC 60068-2-6 Fc` | DeviceType | Vibration withstand |
+| `ik_rating` | Text | `IK10` | Rack + DeviceType | Mechanical impact (IEC 62262) |
+| `sccr_ka` | Integer | `65` | DeviceType | Short-circuit current rating |
+| `sil_rating` | Selection | `SIL 1` / `2` / `3` / `4` | DeviceType | Functional safety (IEC 61508/61511) |
+| `pl_rating` | Selection | `PLa`…`PLe` | DeviceType | Machine safety (ISO 13849) |
+| `certifications` | Text (multiline) | `CE, UKCA, UL, CSA, IEC 61439, IEC 61850, EN 50155` | Rack + DeviceType | Regulatory / compliance |
+
+**Recommended split:** put the ratings on **Rack** when you care about "as-installed" (an individual rack might have been modified in the field) and on **DeviceType** when you maintain a device-type library with design-value ratings. NetBox custom fields don't inherit, so if you want both, fill in both — or pick the one your workflow actually queries. For most ISP / OT / utility operators, **Rack is the more load-bearing location** because that's where field modifications happen.
+
+These aren't in the plugin's models on purpose: adding them would duplicate NetBox's built-in custom-fields system, commit the plugin to maintaining a taxonomy of every rating scheme across every region, and dilute the "this is a geometry plugin" narrative without giving operators anything they can't already do in the NetBox UI in 30 seconds.
+
+## Offline-first — zero runtime network dependencies
+
+OT/ICS, air-gapped substation networks, segregated utility networks, shipboard systems, and classified facilities all need to run NetBox without any outbound internet access at all. This plugin is **fully offline-safe at runtime**:
+
+- **No CDN references** in any template, stylesheet, or rendered SVG. Zero `<link>` or `<script>` tags pointing at `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `fonts.googleapis.com`, `unpkg.com`, `bootstrapcdn.com` or similar.
+- **No external font dependencies.** The embedded SVG stylesheet uses generic `font: ... sans-serif` declarations only — browsers resolve these against the local system font, never fetching Google Fonts or similar. No `@font-face`, no `@import url(https://…)`.
+- **No runtime HTTP calls** from the plugin code. Everything the Layout tab renders comes from the local NetBox database. The `svgwrite` runtime dependency is a pure-Python SVG generator with no network calls.
+- **All plugin assets bundled in the wheel.** The plugin's static CSS, templates, and SVG renderer are packaged inside the wheel under `netbox_cabinet_view/static/` and `netbox_cabinet_view/templates/`. No external asset resolution.
+- **Committed `docs/screenshots/*.svg` use relative hrefs only** (`/dcim/devices/N/` rather than `http://…/dcim/devices/N/`). They're portable across any NetBox instance and don't leak the dev environment they were generated from.
+- **The `RackElevationSVG` monkey-patch** embeds cabinet-layout SVG URLs at the **same origin** as the rack elevation itself (same NetBox host) — no cross-origin fetches.
+
+The only network traffic this plugin generates at runtime is the browser fetching `/dcim/devices/<pk>/cabinet-layout/svg/?w=…&h=…&v=…` as a sub-resource of whichever NetBox page it's viewing, which is identical in scope to NetBox core fetching `/media/devicetype-images/…`. If NetBox works in your air gap, the plugin works in your air gap.
+
+The one external reference in the entire repo is the **Mermaid schema diagram** in this README, which GitHub renders server-side when you view the README on github.com. That's GitHub's rendering, not the plugin's runtime — the live plugin never touches Mermaid. Offline git clones of the repo show the diagram as a code block in the README, which is still readable.
 
 ## Security & supply chain
 
@@ -214,6 +303,8 @@ Both files are regenerated on every tagged release. See [`security/README.md`](s
 
 **Reporting a vulnerability:** please open a private [Security Advisory](https://github.com/TheFlyingCorpse/netbox-cabinet-view/security/advisories) on GitHub rather than a public issue.
 
-## Not in v1
+## Not in v0.3
 
-Strut channel, keystone frames, Krone LSA/110-block frames, fiber cassettes, HMI panel cutouts, pneumatic manifolds, auto-provisioning carriers from existing bay templates, drag-to-place UI, REST API, GraphQL.
+Strut channel, keystone frames, Krone LSA / 110-block terminal frames, HMI panel cutouts, pneumatic manifolds, auto-provisioning carriers from existing bay templates, drag-to-place UI, REST API (v0.3 ships minimal read-only serializers; full CRUD deferred), GraphQL.
+
+Environmental / certification metadata (IP, NEMA, Ex, temperature, RF shielding, EMP/HEMP, SIL, seismic, fire, impact, etc.) is handled via **NetBox custom fields** on `dcim.rack` and `dcim.devicetype` — see the "Environmental / certification ratings" section above. The plugin will not grow first-class fields for these.

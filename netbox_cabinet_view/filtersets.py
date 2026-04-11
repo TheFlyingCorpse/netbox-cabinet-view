@@ -70,7 +70,7 @@ class MountFilterSet(NetBoxModelFilterSet):
         model = Mount
         fields = (
             'id', 'carrier_id', 'device_id', 'device_bay', 'module_bay',
-            'position', 'size',
+            'position', 'size', 'row', 'row_span',
         )
 
     def search(self, queryset, name, value):

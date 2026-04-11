@@ -41,6 +41,7 @@ class CarrierTable(NetBoxTable):
             'pk', 'id', 'name', 'host_device', 'carrier_type', 'subtype',
             'orientation', 'unit',
             'offset_x_mm', 'offset_y_mm', 'length_mm', 'width_mm', 'height_mm',
+            'rows', 'row_height_mm',
             'mount_count', 'description', 'actions',
         )
         default_columns = (
@@ -59,9 +60,11 @@ class MountTable(NetBoxTable):
         model = Mount
         fields = (
             'pk', 'id', 'carrier', 'device', 'device_bay', 'module_bay',
-            'position', 'size', 'position_x', 'position_y', 'size_x', 'size_y',
+            'position', 'size', 'row', 'row_span',
+            'position_x', 'position_y', 'size_x', 'size_y',
             'actions',
         )
         default_columns = (
-            'carrier', 'device', 'device_bay', 'module_bay', 'position', 'size', 'actions',
+            'carrier', 'device', 'device_bay', 'module_bay',
+            'row', 'position', 'size', 'actions',
         )

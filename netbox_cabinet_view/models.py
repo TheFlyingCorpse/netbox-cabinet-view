@@ -9,6 +9,7 @@ from .choices import (
     CARRIER_TYPE_SUBTYPES,
     CarrierSubtypeChoices,
     CarrierTypeChoices,
+    GRID_CARRIER_TYPES,
     ONE_D_CARRIER_TYPES,
     OrientationChoices,
     TWO_D_CARRIER_TYPES,
@@ -179,10 +180,10 @@ class Carrier(NetBoxModel):
         help_text='Y offset inside the host device (mm from the top of the interior).',
     )
 
-    # 1D carriers (din_rail, subrack, busbar)
+    # 1D carriers (din_rail, subrack, busbar) and grid (length of each row)
     length_mm = models.PositiveIntegerField(
         null=True, blank=True,
-        help_text='Physical length of the rail/bar in mm. Required for 1D carriers.',
+        help_text='Physical length of the rail/bar in mm. Required for 1D and grid carriers.',
     )
     # 2D carriers (mounting_plate)
     width_mm = models.PositiveIntegerField(
@@ -192,6 +193,15 @@ class Carrier(NetBoxModel):
     height_mm = models.PositiveIntegerField(
         null=True, blank=True,
         help_text='Plate height in mm. Required for 2D carriers.',
+    )
+    # Grid carriers only
+    rows = models.PositiveSmallIntegerField(
+        null=True, blank=True,
+        help_text='Number of rows (bars) in a grid carrier. Required for grid carriers.',
+    )
+    row_height_mm = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text='Vertical spacing between grid rows in mm. Required for grid carriers.',
     )
 
     description = models.CharField(max_length=500, blank=True)
@@ -219,6 +229,10 @@ class Carrier(NetBoxModel):
         return self.carrier_type in TWO_D_CARRIER_TYPES
 
     @property
+    def is_grid(self):
+        return self.carrier_type in GRID_CARRIER_TYPES
+
+    @property
     def mm_per_unit(self) -> float:
         return UNIT_TO_MM.get(self.unit, 1.0)
 
@@ -230,18 +244,18 @@ class Carrier(NetBoxModel):
     @property
     def capacity_units(self) -> int:
         """
-        How many carrier-units fit on this carrier (1D only).
+        How many carrier-units fit along a single row of this carrier.
 
         Returns 0 for 2D carriers.
         """
-        if not self.is_one_d or not self.length_mm:
+        if not (self.is_one_d or self.is_grid) or not self.length_mm:
             return 0
         return int(self.length_mm / self.mm_per_unit)
 
     def clean(self):
         super().clean()
 
-        # 1D vs 2D field coherence
+        # 1D / 2D / grid field coherence
         if self.is_one_d:
             if not self.length_mm:
                 raise ValidationError({
@@ -251,6 +265,10 @@ class Carrier(NetBoxModel):
                 raise ValidationError({
                     'width_mm': '2D dimensions are only valid for mounting plates.',
                 })
+            if self.rows or self.row_height_mm:
+                raise ValidationError({
+                    'rows': 'Grid fields (rows, row_height_mm) are only valid for grid carriers.',
+                })
         elif self.is_two_d:
             if not self.width_mm or not self.height_mm:
                 raise ValidationError({
@@ -258,7 +276,28 @@ class Carrier(NetBoxModel):
                 })
             if self.length_mm:
                 raise ValidationError({
-                    'length_mm': 'length_mm is only valid for 1D carriers (DIN rail, subrack, busbar).',
+                    'length_mm': 'length_mm is only valid for 1D carriers (DIN rail, subrack, busbar) or grid carriers.',
+                })
+            if self.rows or self.row_height_mm:
+                raise ValidationError({
+                    'rows': 'Grid fields (rows, row_height_mm) are only valid for grid carriers.',
+                })
+        elif self.is_grid:
+            if not self.length_mm:
+                raise ValidationError({
+                    'length_mm': 'Required for grid carriers (row length).',
+                })
+            if not self.rows or self.rows < 1:
+                raise ValidationError({
+                    'rows': 'Required for grid carriers (number of rows/bars, minimum 1).',
+                })
+            if not self.row_height_mm:
+                raise ValidationError({
+                    'row_height_mm': 'Required for grid carriers (vertical spacing between rows).',
+                })
+            if self.width_mm or self.height_mm:
+                raise ValidationError({
+                    'width_mm': '2D dimensions are only valid for mounting plates.',
                 })
 
         # Subtype must belong to carrier_type
@@ -324,10 +363,10 @@ class Mount(NetBoxModel):
         related_name='cabinet_mounts',
     )
 
-    # 1D placement (din_rail, subrack, busbar)
+    # 1D placement (din_rail, subrack, busbar) and grid row placement
     position = models.PositiveSmallIntegerField(
         null=True, blank=True,
-        help_text='Starting position in carrier units (1-indexed for discrete units, mm for mm units).',
+        help_text='Starting position along the carrier (or within a grid row), in carrier units.',
     )
     size = models.PositiveSmallIntegerField(
         null=True, blank=True,
@@ -335,6 +374,16 @@ class Mount(NetBoxModel):
             'Width in carrier units. Leave blank to default to the mounted '
             "device's DeviceTypeProfile.footprint_primary (slots are fixed-width)."
         ),
+    )
+
+    # Grid placement (grid carriers only)
+    row = models.PositiveSmallIntegerField(
+        null=True, blank=True,
+        help_text='1-indexed row (bar) number on a grid carrier.',
+    )
+    row_span = models.PositiveSmallIntegerField(
+        null=True, blank=True, default=1,
+        help_text='How many rows this mount spans starting at `row`. Defaults to 1.',
     )
 
     # 2D placement (mounting_plate)
@@ -473,7 +522,7 @@ class Mount(NetBoxModel):
         #    the user only needs to pick a position.
         profile = self.effective_profile
         if profile:
-            if carrier.is_one_d and self.size is None and profile.footprint_primary:
+            if (carrier.is_one_d or carrier.is_grid) and self.size is None and profile.footprint_primary:
                 self.size = profile.footprint_primary
             elif carrier.is_two_d:
                 if self.size_x is None and profile.footprint_primary:
@@ -481,7 +530,7 @@ class Mount(NetBoxModel):
                 if self.size_y is None and profile.footprint_secondary:
                     self.size_y = profile.footprint_secondary
 
-        # 3. Field coherence: 1D vs 2D
+        # 3. Field coherence: 1D / 2D / grid
         if carrier.is_one_d:
             if self.position is None:
                 raise ValidationError({
@@ -497,6 +546,10 @@ class Mount(NetBoxModel):
             if any(v is not None for v in (self.position_x, self.position_y, self.size_x, self.size_y)):
                 raise ValidationError({
                     'position_x': '2D position fields are only valid for mounting plates.',
+                })
+            if self.row is not None or (self.row_span or 1) != 1:
+                raise ValidationError({
+                    'row': 'Grid row fields are only valid on grid carriers.',
                 })
 
             # Bounds
@@ -529,6 +582,10 @@ class Mount(NetBoxModel):
                 raise ValidationError({
                     'position': '1D position/size are not valid for mounting plates.',
                 })
+            if self.row is not None or (self.row_span or 1) != 1:
+                raise ValidationError({
+                    'row': 'Grid row fields are only valid on grid carriers.',
+                })
 
             if self.position_x + self.size_x > (carrier.width_mm or 0):
                 raise ValidationError({
@@ -550,6 +607,66 @@ class Mount(NetBoxModel):
                 ):
                     raise ValidationError({
                         'position_x': f'Overlaps with {other._target_summary()}.',
+                    })
+
+        elif carrier.is_grid:
+            if self.row is None:
+                raise ValidationError({
+                    'row': 'Required for grid carriers (1-indexed row number).',
+                })
+            if self.position is None:
+                raise ValidationError({
+                    'position': 'Required for grid carriers (position within the row).',
+                })
+            if self.size is None:
+                raise ValidationError({
+                    'size': (
+                        'Required for grid carriers. Either set a value or '
+                        "configure the mounted device's DeviceTypeProfile.footprint_primary."
+                    ),
+                })
+            if any(v is not None for v in (self.position_x, self.position_y, self.size_x, self.size_y)):
+                raise ValidationError({
+                    'position_x': '2D position fields are only valid for mounting plates.',
+                })
+
+            span = max(1, self.row_span or 1)
+            if self.row < 1 or self.row + span - 1 > (carrier.rows or 0):
+                raise ValidationError({
+                    'row': (
+                        f'Mount spans rows {self.row}–{self.row + span - 1}, but the carrier '
+                        f'has only {carrier.rows} rows.'
+                    ),
+                })
+
+            end = self.position + self.size - 1
+            if self.position < 1 or end > carrier.capacity_units:
+                raise ValidationError({
+                    'position': (
+                        f'Mount occupies units {self.position}–{end} within a row, but each '
+                        f'row has only {carrier.capacity_units} units.'
+                    ),
+                })
+
+            # Overlap detection: any sibling whose (row, row+span, position, size)
+            # rectangle intersects ours is a conflict.
+            siblings = carrier.mounts.exclude(pk=self.pk).filter(row__isnull=False)
+            my_row_lo, my_row_hi = self.row, self.row + span - 1
+            my_col_lo, my_col_hi = self.position, end
+            for other in siblings:
+                o_span = max(1, other.row_span or 1)
+                o_row_lo, o_row_hi = other.row, other.row + o_span - 1
+                o_col_lo = other.position
+                o_col_hi = other.position + (other.size or 1) - 1
+                if (
+                    my_row_lo <= o_row_hi and my_row_hi >= o_row_lo
+                    and my_col_lo <= o_col_hi and my_col_hi >= o_col_lo
+                ):
+                    raise ValidationError({
+                        'row': (
+                            f'Overlaps with {other._target_summary()} at rows '
+                            f'{o_row_lo}–{o_row_hi}, cols {o_col_lo}–{o_col_hi}.'
+                        ),
                     })
 
         # 3. Ownership: device_bay/module_bay must belong to the carrier host device.

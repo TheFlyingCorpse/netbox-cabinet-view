@@ -83,6 +83,10 @@ class CarrierForm(NetBoxModelForm):
             'offset_x_mm', 'offset_y_mm', 'length_mm', 'width_mm', 'height_mm',
             name=_('Geometry (mm)'),
         ),
+        FieldSet(
+            'rows', 'row_height_mm',
+            name=_('Grid layout (grid carriers only)'),
+        ),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -93,6 +97,7 @@ class CarrierForm(NetBoxModelForm):
             'carrier_type', 'subtype', 'orientation', 'unit',
             'offset_x_mm', 'offset_y_mm',
             'length_mm', 'width_mm', 'height_mm',
+            'rows', 'row_height_mm',
             'tags',
         )
 
@@ -154,6 +159,7 @@ class MountForm(NetBoxModelForm):
         FieldSet('carrier', name=_('Carrier')),
         FieldSet('device', 'device_bay', 'module_bay', name=_('Target (pick exactly one)')),
         FieldSet('position', 'size', name=_('1D placement (DIN / subrack / busbar)')),
+        FieldSet('row', 'row_span', name=_('Grid placement (grid carriers only)')),
         FieldSet('position_x', 'position_y', 'size_x', 'size_y', name=_('2D placement (mounting plate)')),
         FieldSet('tags', name=_('Details')),
     )
@@ -163,6 +169,7 @@ class MountForm(NetBoxModelForm):
         fields = (
             'carrier', 'device', 'device_bay', 'module_bay',
             'position', 'size',
+            'row', 'row_span',
             'position_x', 'position_y', 'size_x', 'size_y',
             'tags',
         )

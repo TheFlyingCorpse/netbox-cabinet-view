@@ -9,6 +9,7 @@
 .carrier.subrack        { fill: #e3ebf1; stroke: #456; }
 .carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
 .carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
 .carrier-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
@@ -29,6 +30,7 @@
   .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
   .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
   .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
   .carrier-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }
@@ -36,20 +38,20 @@
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
 }
-]]></style><clipPath id="clip-mount-60"><rect height="70" width="2.0" x="58.0" y="80.0" /></clipPath><clipPath id="clip-mount-61"><rect height="70" width="2.0" x="268.0" y="80.0" /></clipPath><clipPath id="clip-mount-62"><rect height="70" width="2.0" x="296.0" y="80.0" /></clipPath><clipPath id="clip-mount-63"><rect height="70" width="2.0" x="324.0" y="80.0" /></clipPath><clipPath id="clip-mount-64"><rect height="70" width="2.0" x="352.0" y="80.0" /></clipPath><clipPath id="clip-mount-65"><rect height="70" width="2.0" x="380.0" y="80.0" /></clipPath><clipPath id="clip-mount-66"><rect height="70" width="2.0" x="408.0" y="80.0" /></clipPath><clipPath id="clip-mount-67"><rect height="70" width="2.0" x="436.0" y="80.0" /></clipPath></defs><rect class="svg-bg" height="216.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="176.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Wago Remote I/O #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="108.0" /><text class="carrier-label" x="44.0" y="104.0">Main rail</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/72/"><title>Name: Wago 750-362 #1
+]]></style><clipPath id="clip-mount-188"><rect height="70" width="2.0" x="58.0" y="80.0" /></clipPath><clipPath id="clip-mount-189"><rect height="70" width="2.0" x="268.0" y="80.0" /></clipPath><clipPath id="clip-mount-190"><rect height="70" width="2.0" x="296.0" y="80.0" /></clipPath><clipPath id="clip-mount-191"><rect height="70" width="2.0" x="324.0" y="80.0" /></clipPath><clipPath id="clip-mount-192"><rect height="70" width="2.0" x="352.0" y="80.0" /></clipPath><clipPath id="clip-mount-193"><rect height="70" width="2.0" x="380.0" y="80.0" /></clipPath><clipPath id="clip-mount-194"><rect height="70" width="2.0" x="408.0" y="80.0" /></clipPath><clipPath id="clip-mount-195"><rect height="70" width="2.0" x="436.0" y="80.0" /></clipPath></defs><rect class="svg-bg" height="216.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="176.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Fieldbus Remote I/O #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="108.0" /><text class="carrier-label" x="44.0" y="104.0">Main rail</text><a target="_parent" xlink:href="/dcim/devices/250/"><title>Name: Fieldbus coupler #1
 Role: PLC
-Type: Wago 750-362 ETHERNET coupler</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="58.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/73/"><title>Name: Wago DI #1
+Type: Fieldbus Ethernet coupler</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="58.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/251/"><title>Name: DI module #1
 Role: PLC
-Type: Wago 750-430 8DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="268.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/74/"><title>Name: Wago DI #2
+Type: Fieldbus 8-channel DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="268.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/252/"><title>Name: DI module #2
 Role: PLC
-Type: Wago 750-430 8DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="296.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/75/"><title>Name: Wago DI #3
+Type: Fieldbus 8-channel DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="296.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/253/"><title>Name: DI module #3
 Role: PLC
-Type: Wago 750-430 8DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="324.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/76/"><title>Name: Wago DI #4
+Type: Fieldbus 8-channel DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="324.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/254/"><title>Name: DI module #4
 Role: PLC
-Type: Wago 750-430 8DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="352.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/77/"><title>Name: Wago DO #1
+Type: Fieldbus 8-channel DI module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="352.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/255/"><title>Name: DO module #1
 Role: PLC
-Type: Wago 750-530 8DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="380.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/78/"><title>Name: Wago DO #2
+Type: Fieldbus 8-channel DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="380.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/256/"><title>Name: DO module #2
 Role: PLC
-Type: Wago 750-530 8DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="408.0" y="80.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/79/"><title>Name: Wago DO #3
+Type: Fieldbus 8-channel DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="408.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/devices/257/"><title>Name: DO module #3
 Role: PLC
-Type: Wago 750-530 8DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="436.0" y="80.0" /></a></svg>
+Type: Fieldbus 8-channel DO module</title><rect class="slot" height="70" style="fill: #4caf50" width="2.0" x="436.0" y="80.0" /></a></svg>

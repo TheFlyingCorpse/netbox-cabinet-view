@@ -9,6 +9,7 @@
 .carrier.subrack        { fill: #e3ebf1; stroke: #456; }
 .carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
 .carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
 .carrier-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
@@ -29,6 +30,7 @@
   .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
   .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
   .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
   .carrier-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }
@@ -36,14 +38,14 @@
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
 }
-]]></style><clipPath id="clip-mount-21"><rect height="70" width="35.0" x="40.0" y="168.0" /></clipPath><clipPath id="clip-mount-22"><rect height="70" width="35.0" x="180.0" y="168.0" /></clipPath><clipPath id="clip-mount-23"><rect height="70" width="35.0" x="320.0" y="168.0" /></clipPath><clipPath id="clip-mount-24"><rect height="70" width="35.0" x="460.0" y="168.0" /></clipPath><clipPath id="clip-mount-25"><rect height="70" width="35.0" x="600.0" y="168.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">DIN Shelf 4U ISP #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="196.0" /><text class="carrier-label" x="44.0" y="192.0">Main rail</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/29/"><title>Name: Relay ISP-A
+]]></style><clipPath id="clip-mount-149"><rect height="70" width="35.0" x="40.0" y="168.0" /></clipPath><clipPath id="clip-mount-150"><rect height="70" width="35.0" x="180.0" y="168.0" /></clipPath><clipPath id="clip-mount-151"><rect height="70" width="35.0" x="320.0" y="168.0" /></clipPath><clipPath id="clip-mount-152"><rect height="70" width="35.0" x="460.0" y="168.0" /></clipPath><clipPath id="clip-mount-153"><rect height="70" width="35.0" x="600.0" y="168.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">DIN Shelf 4U ISP #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="196.0" /><text class="carrier-label" x="44.0" y="192.0">Main rail</text><a target="_parent" xlink:href="/dcim/devices/207/"><title>Name: Relay ISP-A
 Role: Relay
-Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="40.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-21)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="57.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/30/"><title>Name: Relay ISP-B
+Type: DIN-mount relay 17.5 mm</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="40.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-149)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="57.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="/dcim/devices/208/"><title>Name: Relay ISP-B
 Role: Relay
-Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="180.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-22)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="197.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/31/"><title>Name: Relay ISP-C
+Type: DIN-mount relay 17.5 mm</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="180.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-150)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="197.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="/dcim/devices/209/"><title>Name: Relay ISP-C
 Role: Relay
-Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="320.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-23)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="337.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/32/"><title>Name: Relay ISP-D
+Type: DIN-mount relay 17.5 mm</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="320.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-151)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="337.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="/dcim/devices/210/"><title>Name: Relay ISP-D
 Role: Relay
-Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="460.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-24)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="477.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/33/"><title>Name: Relay ISP-E
+Type: DIN-mount relay 17.5 mm</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="460.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-152)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="477.5" y="203.0">Rel…</text></a><a target="_parent" xlink:href="/dcim/devices/211/"><title>Name: Relay ISP-E
 Role: Relay
-Type: Phoenix REL-MR</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="600.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-25)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="617.5" y="203.0">Rel…</text></a></svg>
+Type: DIN-mount relay 17.5 mm</title><rect class="slot" height="70" style="fill: #2196f3" width="35.0" x="600.0" y="168.0" /><text class="label" clip-path="url(#clip-mount-153)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="617.5" y="203.0">Rel…</text></a></svg>

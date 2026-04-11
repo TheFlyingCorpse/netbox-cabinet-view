@@ -9,6 +9,7 @@
 .carrier.subrack        { fill: #e3ebf1; stroke: #456; }
 .carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
 .carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
 .carrier-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
@@ -29,6 +30,7 @@
   .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
   .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
   .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
   .carrier-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }
@@ -36,44 +38,44 @@
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
 }
-]]></style><clipPath id="clip-mount-26"><rect height="70" width="2.0" x="58.0" y="168.0" /></clipPath><clipPath id="clip-mount-27"><rect height="70" width="2.0" x="70.0" y="168.0" /></clipPath><clipPath id="clip-mount-28"><rect height="70" width="2.0" x="82.0" y="168.0" /></clipPath><clipPath id="clip-mount-29"><rect height="70" width="2.0" x="94.0" y="168.0" /></clipPath><clipPath id="clip-mount-30"><rect height="70" width="2.0" x="106.0" y="168.0" /></clipPath><clipPath id="clip-mount-31"><rect height="70" width="2.0" x="118.0" y="168.0" /></clipPath><clipPath id="clip-mount-32"><rect height="70" width="2.0" x="130.0" y="168.0" /></clipPath><clipPath id="clip-mount-33"><rect height="70" width="2.0" x="142.0" y="168.0" /></clipPath><clipPath id="clip-mount-34"><rect height="70" width="2.0" x="154.0" y="168.0" /></clipPath><clipPath id="clip-mount-35"><rect height="70" width="2.0" x="166.0" y="168.0" /></clipPath><clipPath id="clip-mount-36"><rect height="70" width="2.0" x="178.0" y="168.0" /></clipPath><clipPath id="clip-mount-37"><rect height="70" width="2.0" x="190.0" y="168.0" /></clipPath><clipPath id="clip-mount-38"><rect height="70" width="2.0" x="202.0" y="168.0" /></clipPath><clipPath id="clip-mount-39"><rect height="70" width="2.0" x="214.0" y="168.0" /></clipPath><clipPath id="clip-mount-40"><rect height="70" width="2.0" x="226.0" y="168.0" /></clipPath><clipPath id="clip-mount-41"><rect height="70" width="2.0" x="238.0" y="168.0" /></clipPath><clipPath id="clip-mount-42"><rect height="70" width="2.0" x="250.0" y="168.0" /></clipPath><clipPath id="clip-mount-43"><rect height="70" width="2.0" x="262.0" y="168.0" /></clipPath><clipPath id="clip-mount-44"><rect height="70" width="2.0" x="274.0" y="168.0" /></clipPath><clipPath id="clip-mount-45"><rect height="70" width="2.0" x="286.0" y="168.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Marshalling Cabinet #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="196.0" /><text class="carrier-label" x="44.0" y="192.0">Terminal rail</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/35/"><title>Name: TB01
+]]></style><clipPath id="clip-mount-154"><rect height="70" width="2.0" x="58.0" y="168.0" /></clipPath><clipPath id="clip-mount-155"><rect height="70" width="2.0" x="70.0" y="168.0" /></clipPath><clipPath id="clip-mount-156"><rect height="70" width="2.0" x="82.0" y="168.0" /></clipPath><clipPath id="clip-mount-157"><rect height="70" width="2.0" x="94.0" y="168.0" /></clipPath><clipPath id="clip-mount-158"><rect height="70" width="2.0" x="106.0" y="168.0" /></clipPath><clipPath id="clip-mount-159"><rect height="70" width="2.0" x="118.0" y="168.0" /></clipPath><clipPath id="clip-mount-160"><rect height="70" width="2.0" x="130.0" y="168.0" /></clipPath><clipPath id="clip-mount-161"><rect height="70" width="2.0" x="142.0" y="168.0" /></clipPath><clipPath id="clip-mount-162"><rect height="70" width="2.0" x="154.0" y="168.0" /></clipPath><clipPath id="clip-mount-163"><rect height="70" width="2.0" x="166.0" y="168.0" /></clipPath><clipPath id="clip-mount-164"><rect height="70" width="2.0" x="178.0" y="168.0" /></clipPath><clipPath id="clip-mount-165"><rect height="70" width="2.0" x="190.0" y="168.0" /></clipPath><clipPath id="clip-mount-166"><rect height="70" width="2.0" x="202.0" y="168.0" /></clipPath><clipPath id="clip-mount-167"><rect height="70" width="2.0" x="214.0" y="168.0" /></clipPath><clipPath id="clip-mount-168"><rect height="70" width="2.0" x="226.0" y="168.0" /></clipPath><clipPath id="clip-mount-169"><rect height="70" width="2.0" x="238.0" y="168.0" /></clipPath><clipPath id="clip-mount-170"><rect height="70" width="2.0" x="250.0" y="168.0" /></clipPath><clipPath id="clip-mount-171"><rect height="70" width="2.0" x="262.0" y="168.0" /></clipPath><clipPath id="clip-mount-172"><rect height="70" width="2.0" x="274.0" y="168.0" /></clipPath><clipPath id="clip-mount-173"><rect height="70" width="2.0" x="286.0" y="168.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Marshalling Cabinet #1</text><rect class="carrier din-rail" height="14" width="840.0" x="40.0" y="196.0" /><text class="carrier-label" x="44.0" y="192.0">Terminal rail</text><a target="_parent" xlink:href="/dcim/devices/213/"><title>Name: TB01
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="58.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/36/"><title>Name: TB02
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="58.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/214/"><title>Name: TB02
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="70.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/37/"><title>Name: TB03
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="70.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/215/"><title>Name: TB03
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="82.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/38/"><title>Name: TB04
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="82.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/216/"><title>Name: TB04
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="94.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/39/"><title>Name: TB05
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="94.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/217/"><title>Name: TB05
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="106.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/40/"><title>Name: TB06
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="106.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/218/"><title>Name: TB06
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="118.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/41/"><title>Name: TB07
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="118.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/219/"><title>Name: TB07
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="130.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/42/"><title>Name: TB08
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="130.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/220/"><title>Name: TB08
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="142.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/43/"><title>Name: TB09
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="142.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/221/"><title>Name: TB09
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="154.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/44/"><title>Name: TB10
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="154.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/222/"><title>Name: TB10
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="166.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/45/"><title>Name: TB11
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="166.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/223/"><title>Name: TB11
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="178.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/46/"><title>Name: TB12
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="178.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/224/"><title>Name: TB12
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="190.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/47/"><title>Name: TB13
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="190.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/225/"><title>Name: TB13
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="202.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/48/"><title>Name: TB14
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="202.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/226/"><title>Name: TB14
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="214.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/49/"><title>Name: TB15
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="214.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/227/"><title>Name: TB15
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="226.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/50/"><title>Name: TB16
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="226.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/228/"><title>Name: TB16
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="238.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/51/"><title>Name: TB17
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="238.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/229/"><title>Name: TB17
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="250.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/52/"><title>Name: TB18
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="250.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/230/"><title>Name: TB18
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="262.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/53/"><title>Name: TB19
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="262.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/231/"><title>Name: TB19
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="274.0" y="168.0" /></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/54/"><title>Name: TB20
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="274.0" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/232/"><title>Name: TB20
 Role: Rail
-Type: Phoenix UT 2.5 terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="286.0" y="168.0" /></a></svg>
+Type: DIN-mount terminal block</title><rect class="slot" height="70" style="fill: #607d8b" width="2.0" x="286.0" y="168.0" /></a></svg>

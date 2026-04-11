@@ -5,9 +5,31 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
-- Vertical DIN rail rendering + test coverage.
-- Grid-view carrier type (discrete-cell 2D matrix for panel-grid layouts).
 - Multi-depth / swing-frame rack support.
+- Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
+- Auto-provisioning of Carriers from existing DeviceBay / ModuleBay templates on a DeviceType.
+
+## [0.3.0] — 2026-04-11
+
+### Added
+- **Grid carrier type.** New `carrier_type='grid'` for multi-row ("multi-bar") backplanes — think modular protection IEDs with 2 rows of 12 module slots, ODF chassis with fibre cassette grids, large BCU backplanes. A grid carrier has `rows`, `row_height_mm`, and a per-row `length_mm`.
+- **Multi-row `Mount.row_span`.** A single Mount can span multiple grid rows, modelling oversized cards that physically occupy more than one bar (common on ABB / GE / Siemens protection IED chassis for comms or differential input modules). `Mount.clean()` does proper rectangle-intersection overlap detection across `(row, row_span, position, size)`.
+- **Vertical orientation for all 1D carrier types.** DIN rails, subracks, and busbars can now all be `orientation='vertical'`. The SVG renderer was refactored to centralise `_carrier_visual_width_px` / `_mount_visual_thickness_px` helpers so horizontal and vertical paths share one code path. Previously only DIN rails rendered cleanly in vertical.
+- **Rack elevation rear-face patch.** `RackElevationSVG.draw_device_rear` is now monkey-patched alongside `draw_device_front` with identical logic. Fibre patch panels and ODF chassis — where the interesting equipment faces backward — now render their cabinet layout SVG inside the rear column of the rack elevation, not just the front. The 2U threshold and letterboxing behaviour are unchanged. Same opt-out flag (`PATCH_RACK_ELEVATION`).
+- **Four new seed scenarios (H–K):**
+  - **H. Vertical DIN wall box** — standalone wall-mounted cabinet with one vertical TS35 rail holding 6 stacked relays.
+  - **I. Vertical Eurocard subrack** — rotated 6U subrack with 4 cards stacked along its vertical axis.
+  - **J. Grid-mounted protection IED** — single host `Device` with 24 `ModuleBay`s across 2 rows × 12 slots, populated with a mix of PSU / CPU / binary I/O / analog / high-speed I/O / Ethernet and fibre comms modules. The fibre comms module spans **both** rows via `row_span=2`, exercising the multi-row mount case. Demonstrates the "one Device, many carrier positions via its ModuleBays" pattern end-to-end.
+  - **K. ISP ODF chassis** — 1U fibre patch frame with a 2×6 grid of splice cassettes backed by ModuleBays. Rack-mounted at U21 so the rear-face rack patch is directly exercisable.
+
+### Changed
+- **`cabinetview_seed` idempotency hardened.** The command now uses a new `ensure_device_type(mfr, slug, model, ...)` helper that performs `update_or_create` keyed on `(manufacturer, slug)` alone, with the display `model` name in defaults. This fixes an `IntegrityError` when the command was re-run after an upgrade had renamed a DeviceType's `model` string but kept its `slug`. `ensure_mount` similarly switched to `update_or_create` keyed on the target (`device` / `device_bay` / `module_bay`) alone, so a mount can be re-homed onto a new carrier on re-run without tripping `unique_mount_*` constraints. The rack placement pass also now clears ALL devices currently in the managed rack before reassigning, so stale occupants from earlier seed versions can't block the canonical layout.
+- **Seed DeviceType / ModuleType / Device names made generic.** Previous seed versions used real vendor part numbers (e.g. "Phoenix UT 2.5", "Pilz PNOZ X3", "ABB REL670", "Wago 750-362", "Rittal TS8 800x2000"). These are withheld as an operational-security hygiene measure — the public repo should not help adversaries fingerprint which specific equipment lives at which OT/ICS site. All seed names are now category-based ("Protection IED chassis 2-row (24-slot)", "Fieldbus Ethernet coupler", "Safety relay (E-Stop)", etc.).
+- **Busbar subtypes renamed** in `CarrierSubtypeChoices`: `BB_RILINE_60` → `BB_60MM_PITCH`, `BB_SIEMENS_8US` → `BB_40MM_PITCH`, `BB_ABB_SMISSLINE` → `BB_CLIP_ON`. The taxonomy is now keyed on mechanical pitch and modularity rather than vendor product lines.
+- **README expanded** with a gallery of all 20 scenarios (up from 16), an explicit ISP-support section, and an environmental / certification rating guide pointing users at NetBox custom fields rather than asking the plugin to grow first-class fields for them.
+
+### Migration
+- **New migration `0002_grid_carrier`** adds `Carrier.rows`, `Carrier.row_height_mm`, `Mount.row`, `Mount.row_span`, and relaxes `Mount.size` from `default=1` to nullable (the auto-default already comes from `DeviceTypeProfile.footprint_primary`). Upgraders run `python manage.py migrate netbox_cabinet_view` after upgrading the plugin.
 
 ## [0.2.0] — 2026-04-11
 
@@ -71,7 +93,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.0...v0.1.1

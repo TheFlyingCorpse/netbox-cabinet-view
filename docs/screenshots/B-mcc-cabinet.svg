@@ -9,6 +9,7 @@
 .carrier.subrack        { fill: #e3ebf1; stroke: #456; }
 .carrier.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
 .carrier.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.carrier.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
 .carrier-label          { font: 500 11px sans-serif; fill: #444; }
 
 .slot        { stroke: #222; stroke-width: 0.6; }
@@ -29,6 +30,7 @@
   .carrier.subrack        { fill: #3b4451; stroke: #7a8696; }
   .carrier.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
   .carrier.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .carrier.grid.grid-row  { fill: #454034; stroke: #a09777; }
   .carrier-label          { fill: #c8ccd4; }
 
   .slot        { stroke: #101114; }
@@ -36,10 +38,10 @@
   .label       { fill: #f3f3f3; }
   .label.empty { fill: #7a8696; }
 }
-]]></style><clipPath id="clip-mount-46"><rect height="2.0" width="24" x="508.0" y="618.0" /></clipPath><clipPath id="clip-mount-47"><rect height="2.0" width="24" x="508.0" y="1418.0" /></clipPath><clipPath id="clip-mount-48"><rect height="2.0" width="24" x="508.0" y="2218.0" /></clipPath></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">MCC Cabinet #1</text><rect class="carrier busbar" height="3600.0" width="24" x="520.0" y="420.0" /><text class="carrier-label" x="524.0" y="416.0">Vertical busbar</text><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/56/"><title>Name: MCC Bucket #1
+]]></style><clipPath id="clip-mount-174"><rect height="2.0" width="24" x="520.0" y="618.0" /></clipPath><clipPath id="clip-mount-175"><rect height="2.0" width="24" x="520.0" y="1418.0" /></clipPath><clipPath id="clip-mount-176"><rect height="2.0" width="24" x="520.0" y="2218.0" /></clipPath></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">MCC Cabinet #1</text><rect class="carrier busbar" height="3600.0" width="24" x="520.0" y="420.0" /><text class="carrier-label" x="524.0" y="416.0">Vertical busbar</text><a target="_parent" xlink:href="/dcim/devices/234/"><title>Name: MCC Bucket #1
 Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="508.0" y="618.0" /><text class="label" clip-path="url(#clip-mount-46)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="520.0" y="619.0">MC…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/57/"><title>Name: MCC Bucket #2
+Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="520.0" y="618.0" /><text class="label" clip-path="url(#clip-mount-174)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="619.0">MC…</text></a><a target="_parent" xlink:href="/dcim/devices/235/"><title>Name: MCC Bucket #2
 Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="508.0" y="1418.0" /><text class="label" clip-path="url(#clip-mount-47)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="520.0" y="1419.0">MC…</text></a><a target="_parent" xlink:href="http://localhost:7543/dcim/devices/58/"><title>Name: MCC Bucket #3
+Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="520.0" y="1418.0" /><text class="label" clip-path="url(#clip-mount-175)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="1419.0">MC…</text></a><a target="_parent" xlink:href="/dcim/devices/236/"><title>Name: MCC Bucket #3
 Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="508.0" y="2218.0" /><text class="label" clip-path="url(#clip-mount-48)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="520.0" y="2219.0">MC…</text></a></svg>
+Type: MCC withdrawable bucket</title><rect class="slot" height="2.0" style="fill: #3f51b5" width="24" x="520.0" y="2218.0" /><text class="label" clip-path="url(#clip-mount-176)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="2219.0">MC…</text></a></svg>

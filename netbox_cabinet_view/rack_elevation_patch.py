@@ -1,19 +1,24 @@
 """
 Monkey-patch ``dcim.svg.racks.RackElevationSVG`` so that cabinet-host
 devices render their cabinet layout SVG *inside* the rack elevation at
-their U slot, instead of the stock DeviceType.front_image.
+their U slot, instead of the stock DeviceType.front_image /
+DeviceType.rear_image.
 
 The core rack elevation does not expose a plugin hook for this — it
-iterates a model's devices and emits one ``<image>`` per device from
+iterates a rack's devices and emits one ``<image>`` per device from
 Python. The only practical seam is patching the ``draw_device_front``
-method at plugin ``ready()`` time.
+and ``draw_device_rear`` methods at plugin ``ready()`` time.
+
+Both front and rear faces are patched in v0.3.0+. The rear patch is
+particularly important for ISPs running fibre patch panels and ODF
+chassis where the *rear* face is where the interesting stuff is.
 
 Design notes
 ============
 * **Opt-out flag** — controlled by ``PLUGINS_CONFIG['netbox_cabinet_view']
   ['PATCH_RACK_ELEVATION']``. Defaults to ``True``. Flip to ``False`` if
   a NetBox upgrade breaks the patch.
-* **1U fallback** — devices with ``u_height <= 1`` fall through to the
+* **1U fallback** — devices with ``u_height < 2`` fall through to the
   stock behaviour. A 230×22 px slot is too narrow to usefully show a
   cabinet layout, and real-world DIN shelves in a rack are always 2U+
   anyway (a DIN module with wire management needs ~90 mm = 2U).
@@ -25,7 +30,7 @@ Design notes
 * **Cache-busting** — the URL gains a ``?v=<hash>`` query token derived
   from the device's carriers and mounts. When a Mount is added or
   moved, the hash changes, the URL changes, the browser refetches.
-* **Idempotent** — ``install_patch`` tags the wrapper so re-entry (from
+* **Idempotent** — ``install_patch`` tags each wrapper so re-entry (from
   Django autoreload) doesn't double-wrap.
 * **Graceful degradation** — any exception during patch installation
   is logged at WARNING level and swallowed, so a broken patch never
@@ -39,7 +44,7 @@ from django.urls import NoReverseMatch, reverse
 log = logging.getLogger(__name__)
 
 _PATCH_FLAG = '_cabinet_view_patched'
-_MIN_U_FOR_LAYOUT = 2  # devices shorter than this fall through to front_image
+_MIN_U_FOR_LAYOUT = 2  # devices shorter than this fall through to front/rear_image
 
 
 class _URLOnlyImage:
@@ -73,29 +78,15 @@ def _content_hash(device) -> str:
     return hasher.hexdigest()[:10]
 
 
-def install_patch() -> None:
+def _make_face_patch(original, face_name: str):
     """
-    Wrap ``RackElevationSVG.draw_device_front`` with our cabinet-layout
-    substitution. Safe to call multiple times (idempotent).
+    Build an upgraded draw_device_{front,rear} method that replaces the
+    stock DeviceType image with our cabinet-layout SVG URL when the
+    device is a carrier host. The replacement logic is identical for
+    both faces — only the original callable and the log label differ.
     """
-    try:
-        from dcim.svg.racks import RackElevationSVG
-    except ImportError as exc:
-        log.warning(
-            'netbox_cabinet_view: cannot import RackElevationSVG, '
-            'skipping rack-elevation patch: %s', exc,
-        )
-        return
 
-    original = RackElevationSVG.draw_device_front
-    if getattr(original, _PATCH_FLAG, False):
-        return
-
-    def patched_draw_device_front(self, device, coords, size):
-        # Only intercept when: the caller wants images; the device's
-        # DeviceType has a cabinet_profile declaring hosts_carriers=True;
-        # the device is tall enough (>= 2U) to usefully show a layout;
-        # and at least one carrier actually exists on the device.
+    def patched(self, device, coords, size):
         try:
             profile = getattr(device.device_type, 'cabinet_profile', None)
             u_height = getattr(device.device_type, 'u_height', 0) or 0
@@ -124,16 +115,48 @@ def install_patch() -> None:
         except NoReverseMatch as exc:
             log.debug(
                 'netbox_cabinet_view: cabinet_layout_svg URL not registered '
-                'yet for %s, falling back: %s', device, exc,
+                'yet for %s, falling back to stock %s: %s',
+                device, face_name, exc,
             )
         except Exception as exc:
             log.warning(
-                'netbox_cabinet_view: rack-elevation patch fell back for '
-                '%s: %s', device, exc,
+                'netbox_cabinet_view: rack-elevation %s patch fell back for '
+                '%s: %s', face_name, device, exc,
             )
 
         return original(self, device, coords, size)
 
-    setattr(patched_draw_device_front, _PATCH_FLAG, True)
-    RackElevationSVG.draw_device_front = patched_draw_device_front
-    log.info('netbox_cabinet_view: patched RackElevationSVG.draw_device_front')
+    setattr(patched, _PATCH_FLAG, True)
+    return patched
+
+
+def install_patch() -> None:
+    """
+    Wrap ``RackElevationSVG.draw_device_front`` AND
+    ``RackElevationSVG.draw_device_rear`` with our cabinet-layout
+    substitution. Safe to call multiple times (idempotent).
+    """
+    try:
+        from dcim.svg.racks import RackElevationSVG
+    except ImportError as exc:
+        log.warning(
+            'netbox_cabinet_view: cannot import RackElevationSVG, '
+            'skipping rack-elevation patch: %s', exc,
+        )
+        return
+
+    # Front face
+    original_front = RackElevationSVG.draw_device_front
+    if not getattr(original_front, _PATCH_FLAG, False):
+        RackElevationSVG.draw_device_front = _make_face_patch(
+            original_front, 'front',
+        )
+        log.info('netbox_cabinet_view: patched RackElevationSVG.draw_device_front')
+
+    # Rear face
+    original_rear = RackElevationSVG.draw_device_rear
+    if not getattr(original_rear, _PATCH_FLAG, False):
+        RackElevationSVG.draw_device_rear = _make_face_patch(
+            original_rear, 'rear',
+        )
+        log.info('netbox_cabinet_view: patched RackElevationSVG.draw_device_rear')

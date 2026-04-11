@@ -35,6 +35,7 @@ class CarrierSerializer(serializers.ModelSerializer):
             'id', 'url', 'display', 'host_device', 'name',
             'carrier_type', 'subtype', 'orientation', 'unit',
             'offset_x_mm', 'offset_y_mm', 'length_mm', 'width_mm', 'height_mm',
+            'rows', 'row_height_mm',
             'description',
         )
 
@@ -50,6 +51,6 @@ class MountSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'url', 'display', 'carrier',
             'device', 'device_bay', 'module_bay',
-            'position', 'size',
+            'position', 'size', 'row', 'row_span',
             'position_x', 'position_y', 'size_x', 'size_y',
         )
