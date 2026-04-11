@@ -93,11 +93,19 @@ class CabinetLayoutSVG:
         If False, only colored rectangles are drawn (useful for debugging).
     """
 
-    def __init__(self, host_device, user=None, base_url='', include_images=True):
+    def __init__(self, host_device, user=None, base_url='', include_images=True,
+                 fit_width=None, fit_height=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
         self.include_images = include_images
+        # Optional target display dimensions. When both are set, the outer
+        # <svg> root is emitted at these pixel dimensions with a viewBox at
+        # the drawing's natural size and `preserveAspectRatio="xMidYMid meet"`,
+        # letterboxing the layout inside the target. This is how the rack
+        # elevation patch requests a "fit into this U slot" rendering.
+        self.fit_width = fit_width
+        self.fit_height = fit_height
 
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
@@ -292,8 +300,17 @@ class CabinetLayoutSVG:
 
     def _setup_drawing(self):
         width, height = self._drawing_size()
-        dwg = svgwrite.Drawing(size=(width, height))
-        dwg.viewbox(width=width, height=height)
+        if self.fit_width and self.fit_height:
+            # Render at natural size internally (viewBox), but tell the
+            # browser to display the SVG at the caller-supplied dimensions
+            # with `xMidYMid meet` so the layout keeps its aspect ratio and
+            # any spare space gets letterboxed with the theme background.
+            dwg = svgwrite.Drawing(size=(self.fit_width, self.fit_height))
+            dwg.viewbox(width=width, height=height)
+            dwg['preserveAspectRatio'] = 'xMidYMid meet'
+        else:
+            dwg = svgwrite.Drawing(size=(width, height))
+            dwg.viewbox(width=width, height=height)
         dwg.defs.add(dwg.style(_EMBEDDED_CSS))
 
         # Theme-aware background rect. This is painted as the very first

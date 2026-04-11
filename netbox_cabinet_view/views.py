@@ -144,14 +144,32 @@ class DeviceCabinetLayoutView(generic.ObjectView):
 
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')
 class DeviceCabinetLayoutSVGView(View):
-    """Raw SVG payload for the Layout tab's <object> embed."""
+    """
+    Raw SVG payload for the Layout tab's <object> embed.
+
+    Accepts three optional query parameters:
+
+    * ``?w=<int>`` and ``?h=<int>`` — render the drawing letterboxed into
+      this pixel box (used by the rack elevation patch to fit a cabinet
+      layout into a U slot without distortion).
+    * ``?v=<str>`` — cache-buster token. Ignored by the view but varies
+      the URL so the browser invalidates its cached copy whenever the
+      host device's carriers or mounts change.
+    """
 
     def get(self, request, pk):
         device = get_object_or_404(Device, pk=pk)
+        try:
+            fit_w = int(request.GET['w']) if 'w' in request.GET else None
+            fit_h = int(request.GET['h']) if 'h' in request.GET else None
+        except (ValueError, TypeError):
+            fit_w = fit_h = None
         svg = CabinetLayoutSVG(
             host_device=device,
             user=request.user,
             base_url=request.build_absolute_uri('/').rstrip('/'),
             include_images=True,
+            fit_width=fit_w,
+            fit_height=fit_h,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')

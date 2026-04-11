@@ -5,10 +5,24 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
-- Option 2: monkey-patch `RackElevationSVG` so carrier-host devices render their cabinet layout SVG inside the rack elevation at their U slot (letterboxed for ≥2U, falls back to stock `front_image` for 1U).
 - Vertical DIN rail rendering + test coverage.
 - Grid-view carrier type (discrete-cell 2D matrix for panel-grid layouts).
 - Multi-depth / swing-frame rack support.
+
+## [0.2.0] — 2026-04-11
+
+### Added
+- **Rack elevation integration.** The plugin now patches `dcim.svg.racks.RackElevationSVG.draw_device_front` at startup so that devices of type `hosts_carriers=True` with `u_height >= 2` render their cabinet layout SVG **inside the rack elevation at their U slot**, instead of the stock `DeviceType.front_image`. This is done as a best-effort, opt-out monkey-patch because the core rack elevation has no plugin hook for per-device image substitution.
+  - 1U devices keep the stock behaviour (230×22 px is too narrow for a useful layout).
+  - Layout is letterboxed with `preserveAspectRatio="xMidYMid meet"` so it never distorts.
+  - URL is cache-busted with a SHA-256 hash of each carrier and mount in the device, so the rack elevation invalidates automatically when anyone edits the host's content.
+  - Graceful degradation: patch failures are logged at WARNING and fall through to the stock rendering; they never prevent the plugin from loading.
+  - Controlled by `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION']`, default `True`.
+- **`CabinetLayoutSVG.fit_width` / `fit_height`** parameters for requesting a pixel-dimensioned render that letterboxes the natural drawing inside a target box. Used by the rack elevation patch.
+- **`?w=&h=&v=` query parameters** on `/dcim/devices/<pk>/cabinet-layout/svg/` — the first two forward to `CabinetLayoutSVG.fit_width` / `fit_height`, the third is an opaque cache-buster.
+
+### Notes for upgraders
+- If a future NetBox version changes the `RackElevationSVG.draw_device_front` signature, the patch will log a warning and the plugin will continue to work without the rack-elevation integration. Set `PATCH_RACK_ELEVATION=False` to silence the warning while still using the Layout tab and rack detail panel.
 
 ## [0.1.2] — 2026-04-11
 
@@ -57,7 +71,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.1.0

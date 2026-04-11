@@ -30,9 +30,11 @@ Three models:
   - a `dcim.DeviceBay` (chassis with child devices — e.g. a WDM shelf with two filter modules)
   - a `dcim.ModuleBay` (modular PLC / line-card chassis)
 
-And one view:
+And three views:
 
 - A **Layout** tab on every `dcim.Device` detail page. Renders the host's carriers and their mounts as an SVG via `svgwrite`, reusing `DeviceType.front_image` and `ModuleType.front_image` from core NetBox. Falls back to colored rectangles with labels when no image is available.
+- A **Cabinet Layouts** panel on every `dcim.Rack` detail page, listing all carrier-host devices in the rack and embedding each one's layout SVG inline.
+- **Rack elevation integration** (v0.2.0+): the plugin monkey-patches `dcim.svg.racks.RackElevationSVG.draw_device_front` at startup so that ≥2U devices with `hosts_carriers=True` render their cabinet layout **inside the rack elevation at their U slot**, instead of the stock `DeviceType.front_image`. Letterboxed with `xMidYMid meet` so the layout keeps its natural aspect ratio. Falls back to the stock front image for 1U devices (a 230×22 px slot is too narrow for a useful layout). Cache-busted by a content hash of the host's carriers and mounts, so edits invalidate the browser cache. Opt out with `PLUGINS_CONFIG['netbox_cabinet_view']['PATCH_RACK_ELEVATION'] = False`.
 
 ## Schema
 
