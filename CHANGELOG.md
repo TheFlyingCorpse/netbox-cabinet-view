@@ -5,12 +5,31 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
-- **Per-face mounting** — different mount layouts on the front vs rear of the same cabinet-host device. Models the common case where e.g. a rack shelf has a network switch clipped to a front rail and standalone PSUs clipped to a rear rail. Needs a `Mount.face` field or per-`Placement` face override, plus renderer logic to pick which subset of mounts draws on which face. Related to (but distinct from) this release's `is_full_depth` seed fix: that change removed spurious rear-face rendering for devices that have no rear layout at all; per-face mounting would enable cabinets with genuine-but-different rear layouts.
+- **Bundled placeholder line-art** — generic front-panel SVGs for IED modules (PSU, CPU, I/O, comms), RTU/PLC DIN-mount modules (DI, DO, AI, CPU), SFP/QSFP transceiver face plates, chassis enclosures, DIN-rail devices, rack shelves. Ships with the plugin so out-of-the-box rendering looks realistic without requiring users to upload manufacturer photos. Requires `ModuleMountProfile.front_image` ImageField (architecture decided, migration ready).
+- **Management IP easter egg** — render `device.primary_ip4` on the CPU module's LCD overlay in the SVG.
 - Multi-depth / swing-frame rack support.
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
-- Auto-provisioning of Mounts from existing DeviceBay / ModuleBay templates on a DeviceType.
-- Nested SVG recursion (a hosted device's own interior rendered inline inside its rectangle on the parent Mount — e.g. click into an MCC bucket from the cabinet view and see the DIN rail inside).
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
+
+## [0.5.0] — 2026-04-12
+
+### Added
+
+- **Auto-provisioning Placements from bay templates** (Feature 3). Two modes:
+  - **Mode A** — "Placements only" on an existing Mount: button on Mount detail page batch-creates one Placement per unplaced DeviceBay/ModuleBay at sequential positions. Idempotent.
+  - **Mode B** — "Mount + Placements" one-click from the Layout tab: derives mount type + unit + length from the bays' profiles (majority-vote), creates the Mount, then fills it with sequential Placements.
+  - New `provision.py` module with `auto_provision_placements()` and `auto_provision_mount_and_placements()`.
+- **Per-face mounting** (Feature 1). New `Mount.face` field with choices: `''` (Both, default), `'front'`, `'rear'`. The SVG renderer filters mounts by face when `?face=front|rear` is passed. The rack elevation monkey-patch now passes `&face={face_name}` to every embedded cabinet-layout URL, so front-face rendering only draws front-face mounts, rear only draws rear. When any mount on a device has an explicit face, the Layout tab renders **two SVGs side by side** (front + rear). Migration `0005_mount_face`.
+- **Nested SVG recursion** (Feature 2). When a Placement's resolved device is itself a mount-host with actual placements, the renderer recursively embeds a miniature cabinet layout SVG inline inside the placement's rectangle. Depth limit: 3 levels (`MAX_NESTING_DEPTH`). Circular-reference guard via `_visited` host-PK set. Nested renders use thumbnail mode + no images. MCC cabinet scenario now shows each bucket's DIN rail + contactor + relay inside the bucket's rectangle on the parent busbar.
+- **Live preview chip on PlacementForm** (Feature 6). A small inline SVG below the Placement add/edit form updates in real-time as the user types position/size values. Green dashed rectangle highlights where the proposed placement will land. Extends the existing SVG endpoint with `?mount_only=<pk>` + `?highlight_position=N&highlight_size=M` params. Vanilla JS with 300ms debounce, no HTMX (avoids content-type issues with `image/svg+xml`).
+
+### Fixed
+
+- **Grid row/placement thickness scales to `row_height_mm`** instead of using fixed constants. Previously grid mounts (ODF cassette grids, IED module grids) used `DIN_RAIL_PX` (14px) for row strips and a fixed 56px for placement thickness. On the ODF Frame with `row_height_mm=22` (44px at 2px/mm), placements overflowed both the row strip AND the cabinet outline. Now row strip = `max(DIN_RAIL_PX, row_height_mm * mm_to_px)` and placement = `max(DIN_RAIL_PX, row_height_mm * mm_to_px - 4)`.
+
+### Migration
+
+- **0005_mount_face** — `AddField('mount', 'face', CharField(blank=True, default=''))`. All existing mounts get `face=''` (Both) — zero behavioral change.
 
 ## [0.4.1] — 2026-04-12
 
@@ -176,7 +195,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.2.0...v0.3.0
