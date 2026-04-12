@@ -351,8 +351,7 @@ class CabinetLayoutSVG:
     # Placement geometry (1D / 2D / grid)
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _mount_visual_width_px(mount):
+    def _mount_visual_width_px(self, mount):
         """
         Thickness in px of a single-row 1D mount drawn perpendicular to
         its axis (rail line, busbar, subrack body, or grid row). For a
@@ -367,12 +366,15 @@ class CabinetLayoutSVG:
         if ctype == MountTypeChoices.TYPE_SUBRACK:
             return SUBRACK_DEFAULT_HEIGHT_PX
         if ctype == MountTypeChoices.TYPE_GRID:
-            # Grid rows are drawn as DIN-rail-style strips.
-            return DIN_RAIL_PX
+            # Grid row strip thickness = row_height_mm in px, capped
+            # at a minimum of DIN_RAIL_PX so very thin rows still
+            # render visibly. This fixes the ODF bug where 14px strips
+            # were much thinner than the 44px row_height, causing
+            # placements to overflow.
+            return max(DIN_RAIL_PX, self._mm(mount.row_height_mm or 0))
         return DIN_RAIL_PX
 
-    @staticmethod
-    def _placement_visual_thickness_px(mount):
+    def _placement_visual_thickness_px(self, mount):
         """
         Thickness in px of a placement (how much it protrudes from its
         mount perpendicular to the mount's axis). Larger than the mount's
@@ -385,8 +387,12 @@ class CabinetLayoutSVG:
             # Let the placement visually occupy most of the subrack height.
             return SUBRACK_DEFAULT_HEIGHT_PX - 8
         if ctype == MountTypeChoices.TYPE_GRID:
-            # Grid rows get a modest thickness so text fits.
-            return 56
+            # Placement fills the row_height minus a small gap so the
+            # row strip border is still visible. Fixes the ODF bug
+            # where fixed 56px placements overflowed 44px rows and
+            # extended outside the cabinet outline.
+            row_h_px = self._mm(mount.row_height_mm or 0)
+            return max(DIN_RAIL_PX, row_h_px - 4)
         # DIN rail
         return 70  # typical DIN module height ~90 mm — give it real presence
 
