@@ -74,9 +74,28 @@ A **Cabinet View** entry appears in the sidebar, and every `dcim.Device` detail 
 
 **Faster add-placement shortcut:** click any empty slot on the rendered layout. 1D and grid mounts turn every unoccupied slot range into a click target; 2D mounting plates accept click-anywhere coordinates. The placement form opens pre-filled with the mount and position.
 
+## Port / connector overlay
+
+Every interface, front port, and rear port on a placed device or module can be rendered as a **clickable, status-coloured hotspot** directly on the front-panel image:
+
+- **Green** — connected + enabled
+- **Amber** — connected + disabled
+- **Grey** — unconnected + enabled
+- **Dark grey** — disabled
+
+Define port positions on the profile via a `port_map` JSON field — either as **zones** (repetitive terminal blocks with pitch and protrusion) or **individual pins** at exact coordinates. Protruding spring-cage connectors (DI/DO/AI/AO terminals) extend beyond the device bounding box for realistic rendering. Click any pin to jump to the interface detail page.
+
+For modular devices (IEDs, PLCs), a **two-level overlay** composites the host device's module-bay positions with each installed module's own pin layout — no manual per-device configuration needed.
+
+Colour mapping is configurable via `PORT_STATUS_COLORS` in `PLUGINS_CONFIG`. Health indicators from external monitoring sources are planned for a future release.
+
+## Drag-to-place
+
+Grab any placed device on the Layout tab SVG and **drag it to a new position**. A ghost rectangle follows the cursor, snapping to the mount's grid. On drop, the position updates via the REST API without a page reload. Works on 1D rails (snap to mount units), 2D plates (snap to mm), and grid mounts (snap to row + position).
+
 ## Bundled line-art
 
-The plugin ships 62 generic front-panel SVGs — de-branded, multi-vendor-inspired — as ready-to-use placeholder images. Upload them to `ModuleMountProfile.front_image` (modules) or `DeviceType.front_image` (host devices) so your layouts render with real panel art instead of plain colored rectangles:
+The plugin ships 65 generic front-panel SVGs — de-branded, multi-vendor-inspired — as ready-to-use placeholder images. Upload them to `ModuleMountProfile.front_image` (modules) or `DeviceType.front_image` (host devices) so your layouts render with real panel art instead of plain colored rectangles:
 
 | IED CPU module | RTU DI module | SFP fibre face | IED chassis |
 |---|---|---|---|
@@ -84,7 +103,7 @@ The plugin ships 62 generic front-panel SVGs — de-branded, multi-vendor-inspir
 
 Auto-assign to all demo profiles: `python manage.py cabinetview_assign_lineart`
 
-Browse the full library: [`docs/line-art.md`](docs/line-art.md) — 14 categories covering IED modules (4 manufacturer families), RTU modules (4 variants), PLC/fieldbus I/O, SFP/QSFP transceivers, DIN-rail devices, busbar components, cable management, and host chassis.
+Browse the full library: [`docs/line-art.md`](docs/line-art.md) — 15 categories covering IED modules (4 manufacturer families), RTU modules (4 variants), PLC/fieldbus I/O, SFP/QSFP transceivers, DIN-rail devices, network switches and routers (DIN-mount + 1U rack-mount), busbar components, cable management, and host chassis.
 
 ## Demo data
 
@@ -103,7 +122,7 @@ The sections below live in [`docs/`](docs/) to keep this README scannable:
 - [`docs/certification-ratings.md`](docs/certification-ratings.md) — why environmental / certification metadata (IP, NEMA, Ex, temperature, SIL, fire, seismic, …) lives in NetBox custom fields instead of plugin models, with a recommended baseline of fields to create on `dcim.rack` and `dcim.devicetype`.
 - [`docs/offline.md`](docs/offline.md) — how the plugin is fully offline-safe at runtime (no CDNs, no external fonts, no runtime HTTP calls) for OT/ICS / air-gapped / classified deployments.
 - [`docs/line-art.md`](docs/line-art.md) — the bundled library of generic, de-branded front-panel SVGs that ship as ready-to-use placeholder images for modules and host devices.
-- [`docs/roadmap.md`](docs/roadmap.md) — what's not in v0.4.0 and why (Krone LSA, strut channel, nested SVG recursion, Okabe-Ito palette, drag-to-place UI, …) and what is explicitly NOT on the roadmap (environmental custom fields, standard 19″ patch cabling).
+- [`docs/roadmap.md`](docs/roadmap.md) — deferred features (Krone LSA, strut channel, Okabe-Ito palette, port health from external sources, auto-scrape port coordinates from devicetype-library, …) and what is explicitly NOT on the roadmap (environmental custom fields, standard 19″ patch cabling).
 
 ## Security & supply chain
 

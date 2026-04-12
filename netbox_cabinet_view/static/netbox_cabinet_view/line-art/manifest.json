@@ -450,6 +450,31 @@
           "description": "Cross-section of slotted cable duct with finger slots on both sides"
         }
       ]
+    },
+    {
+      "id": "network-switches",
+      "name": "Network switches and routers",
+      "mount_type": "din_rail",
+      "inspired_by": "Generic managed industrial Ethernet switch/router",
+      "form_factor": "DIN-mount and rack-mount network gear with visible port cutouts",
+      "image_for": "DeviceMountProfile.front_image",
+      "items": [
+        {
+          "file": "network-switches/managed-switch-8port.svg",
+          "name": "Managed switch (8-port, DIN-mount)",
+          "description": "DIN-mount industrial managed switch with 8x RJ45 + 2x SFP cages, status LEDs, grounding screw"
+        },
+        {
+          "file": "network-switches/router-4port.svg",
+          "name": "Industrial router (4-port, DIN-mount)",
+          "description": "DIN-mount industrial router with 4x RJ45 ETH + 2x SFP uplinks + serial console + USB"
+        },
+        {
+          "file": "network-switches/rack-switch-24port.svg",
+          "name": "Managed switch (24-port, 1U rack-mount)",
+          "description": "19-inch 1U rack-mount managed switch with 24x RJ45 + 4x SFP+ uplinks, dual PSU bay, console port"
+        }
+      ]
     }
   ]
 }

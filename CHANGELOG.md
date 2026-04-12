@@ -5,12 +5,25 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
-- **Drag-to-place UI** — drag existing placements to new positions within the SVG, with ghost rect + grid snapping + PATCH to API. Deferred from v0.6.0 to ship separately for UX iteration.
-- **Seed command auto-uploads line-art** to demo ModuleMountProfile/DeviceType records so the demo scenarios render with images out of the box.
-- **Management IP easter egg** — render `device.primary_ip4` on the CPU module's LCD overlay in the SVG.
+- **Port/connector health indicators** from external REST/GraphQL data sources (active monitoring, error counters, link state). Deferred from v0.7.0 until the data-source integration pattern is designed.
 - Multi-depth / swing-frame rack support.
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
+
+## [0.7.0] — 2026-04-12
+
+### Added
+
+- **Port/connector overlay** (Feature 1). Renders `dcim.Interface`, `FrontPort`, and `RearPort` as clickable, status-coloured hotspots on device and module front-panel images in the cabinet SVG. Supports both zone-based definitions (repetitive terminal blocks with pitch) and individual pin coordinates. Protruding connectors (spring-cage terminals for DI/DO/AI/AO) extend beyond the device bounding box for realistic rendering. Two-level overlay: a device's `port_map` defines module bay positions on its image, and each installed module's own `port_map` defines its pin positions offset by the bay location. Status colours: green (connected+enabled), amber (connected+disabled), grey (unconnected+enabled), dark grey (unconnected+disabled). Configurable via `PORT_STATUS_COLORS` in `PLUGINS_CONFIG`.
+- **`port_map` JSONField** on both `DeviceMountProfile` and `ModuleMountProfile`. Stores a list of overlay entries: `zone` (repetitive port groups with fnmatch glob pattern, edge, pitch, protrusion), `pin` (individual port at exact x/y coordinates), `module_bay` (physical module slot position on device image), and `lcd` (reserved area for management IP). Validated in `clean()`. Editable via monospace textarea in the profile form. Migration `0008`.
+- **Drag-to-place UI** (Feature 2). Drag existing placements to new positions within the SVG. Ghost rect with green dashed stroke follows the cursor, snapping to the mount's grid (mount units for 1D, mm for 2D, row+position for grid mounts). On drop, the position is updated via PATCH to the REST API. Click-vs-drag distinguished by a 5px movement threshold. Works on both front and rear face SVGs. Uses CSRF session auth.
+- **Management IP LCD overlay** (Feature 3, opt-in). Renders `device.primary_ip4` as green monospace text on a dark LCD-style background on CPU-type placements. Off by default -- enable via `SHOW_MANAGEMENT_IP: True` in `PLUGINS_CONFIG`. Position defined by `lcd` entries in `port_map`, or auto-detected for devices/modules with "cpu" in the name.
+- InterfaceTemplate definitions on demo IED/fieldbus/switch module and device types so the seed data demonstrates the port overlay out of the box.
+- `data-placement-pk` and mount geometry data attributes on populated placement SVG rects, enabling client-side interactions (drag-to-place, future extensions).
+
+### Migration
+
+- **0008** -- `AddField('devicemountprofile', 'port_map', JSONField)` + `AddField('modulemountprofile', 'port_map', JSONField)`. Both default to empty list. No behavioral change for existing users.
 
 ## [0.6.0] — 2026-04-12
 

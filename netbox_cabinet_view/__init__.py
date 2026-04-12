@@ -11,7 +11,7 @@ class CabinetViewConfig(PluginConfig):
         'for NetBox — with SVG visualization of cabinet interiors, chassis/'
         'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
-    version = '0.6.2'
+    version = '0.7.0'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
@@ -41,6 +41,18 @@ class CabinetViewConfig(PluginConfig):
         #       'netbox_cabinet_view': {'SLOT_LEDGER_ENABLED': True},
         #   }
         'SLOT_LEDGER_ENABLED': False,
+        # v0.7.0: port/connector overlay status colours (hex, no '#' prefix).
+        # Keys: connected_enabled, connected_disabled, unconnected_enabled,
+        # unconnected_disabled. Override in PLUGINS_CONFIG to customise.
+        'PORT_STATUS_COLORS': {
+            'connected_enabled': '2ecc71',    # green
+            'connected_disabled': 'f39c12',   # amber
+            'unconnected_enabled': '95a5a6',  # grey
+            'unconnected_disabled': '7f8c8d', # dark grey
+        },
+        # v0.7.0: show device.primary_ip4 on CPU-type placements as an LCD
+        # overlay. Off by default — opt in per deployment.
+        'SHOW_MANAGEMENT_IP': False,
     }
 
     def ready(self):

@@ -99,7 +99,8 @@ _DEVICE_ART_MAP = {
     'Fieldbus Ethernet coupler': 'plc-fieldbus/coupler.svg',
     'Fieldbus 8-channel DI module': 'plc-fieldbus/di-8ch.svg',
     'Fieldbus 8-channel DO module': 'plc-fieldbus/do-4ch.svg',
-    'Industrial Ethernet switch (DIN)': 'din-rail-devices/psu.svg',
+    'Industrial Ethernet switch (DIN)': 'network-switches/managed-switch-8port.svg',
+    'Industrial Ethernet switch': 'network-switches/managed-switch-8port.svg',
     # Mountable plate devices
     'Variable frequency drive': 'din-rail-devices/psu.svg',
     'Auxiliary DIN rail strip 400 mm': 'host-chassis/rtu-din.svg',

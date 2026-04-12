@@ -1,3 +1,5 @@
+import fnmatch
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -17,6 +19,111 @@ from .choices import (
     UNIT_TO_MM,
     UnitChoices,
 )
+
+
+# ---------------------------------------------------------------------------
+# Port map validation (shared by DeviceMountProfile and ModuleMountProfile)
+# ---------------------------------------------------------------------------
+
+_PORT_MAP_TYPES = {'zone', 'pin', 'module_bay', 'lcd'}
+_ZONE_EDGES = {'left', 'right', 'top', 'bottom'}
+_ZONE_REQUIRED = {'name_pattern', 'edge', 'start_mm', 'pitch_mm', 'count', 'pin_width_mm', 'pin_height_mm'}
+_PIN_REQUIRED = {'name', 'x_mm', 'y_mm', 'width_mm', 'height_mm'}
+_MODULE_BAY_REQUIRED = {'name', 'x_mm', 'y_mm', 'width_mm', 'height_mm'}
+_LCD_REQUIRED = {'x_mm', 'y_mm', 'width_mm', 'height_mm'}
+
+
+def _validate_port_map(entries):
+    """
+    Validate a port_map JSON list. Raises ValidationError on invalid entries.
+    """
+    if not isinstance(entries, list):
+        raise ValidationError({'port_map': 'port_map must be a JSON list.'})
+
+    for i, entry in enumerate(entries):
+        prefix = f'port_map[{i}]'
+        if not isinstance(entry, dict):
+            raise ValidationError({'port_map': f'{prefix}: each entry must be a JSON object.'})
+        entry_type = entry.get('type')
+        if entry_type not in _PORT_MAP_TYPES:
+            raise ValidationError({
+                'port_map': f'{prefix}: "type" must be one of {sorted(_PORT_MAP_TYPES)}.',
+            })
+
+        if entry_type == 'zone':
+            missing = _ZONE_REQUIRED - set(entry.keys())
+            if missing:
+                raise ValidationError({
+                    'port_map': f'{prefix}: zone missing keys: {sorted(missing)}.',
+                })
+            if entry['edge'] not in _ZONE_EDGES:
+                raise ValidationError({
+                    'port_map': f'{prefix}: "edge" must be one of {sorted(_ZONE_EDGES)}.',
+                })
+            if not isinstance(entry['count'], int) or entry['count'] < 1:
+                raise ValidationError({
+                    'port_map': f'{prefix}: "count" must be a positive integer.',
+                })
+            # Validate name_pattern is a valid fnmatch glob (just check it doesn't crash)
+            try:
+                fnmatch.fnmatch('test', entry['name_pattern'])
+            except Exception:
+                raise ValidationError({
+                    'port_map': f'{prefix}: "name_pattern" is not a valid glob pattern.',
+                })
+            for key in ('start_mm', 'pitch_mm', 'pin_width_mm', 'pin_height_mm'):
+                val = entry.get(key)
+                if not isinstance(val, (int, float)) or val < 0:
+                    raise ValidationError({
+                        'port_map': f'{prefix}: "{key}" must be a non-negative number.',
+                    })
+
+        elif entry_type == 'pin':
+            missing = _PIN_REQUIRED - set(entry.keys())
+            if missing:
+                raise ValidationError({
+                    'port_map': f'{prefix}: pin missing keys: {sorted(missing)}.',
+                })
+            for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
+                val = entry.get(key)
+                if not isinstance(val, (int, float)):
+                    raise ValidationError({
+                        'port_map': f'{prefix}: "{key}" must be a number.',
+                    })
+
+        elif entry_type == 'module_bay':
+            missing = _MODULE_BAY_REQUIRED - set(entry.keys())
+            if missing:
+                raise ValidationError({
+                    'port_map': f'{prefix}: module_bay missing keys: {sorted(missing)}.',
+                })
+            for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
+                val = entry.get(key)
+                if not isinstance(val, (int, float)):
+                    raise ValidationError({
+                        'port_map': f'{prefix}: "{key}" must be a number.',
+                    })
+
+        elif entry_type == 'lcd':
+            missing = _LCD_REQUIRED - set(entry.keys())
+            if missing:
+                raise ValidationError({
+                    'port_map': f'{prefix}: lcd missing keys: {sorted(missing)}.',
+                })
+            for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
+                val = entry.get(key)
+                if not isinstance(val, (int, float)) or val < 0:
+                    raise ValidationError({
+                        'port_map': f'{prefix}: "{key}" must be a non-negative number.',
+                    })
+
+        # Validate protrudes_mm if present (all types except lcd)
+        if entry_type != 'lcd' and 'protrudes_mm' in entry:
+            val = entry['protrudes_mm']
+            if not isinstance(val, (int, float)) or val < 0:
+                raise ValidationError({
+                    'port_map': f'{prefix}: "protrudes_mm" must be a non-negative number.',
+                })
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +210,18 @@ class DeviceMountProfile(NetBoxModel):
         help_text='Front-panel image for this device type. Used as a fallback when DeviceType.front_image is not set.',
     )
 
+    # v0.7.0 Feature 1: port/connector overlay definitions.
+    port_map = models.JSONField(
+        blank=True,
+        default=list,
+        help_text=(
+            'JSON list of overlay entries (zone, pin, module_bay, lcd) that '
+            'define where ports, connectors, module bays, and LCD areas sit on '
+            'the device front-panel image. Used by the SVG renderer to draw '
+            'clickable status-coloured hotspots.'
+        ),
+    )
+
     class Meta:
         ordering = ('device_type',)
         verbose_name = 'Device Mount Profile'
@@ -135,6 +254,8 @@ class DeviceMountProfile(NetBoxModel):
                     f'"{self.mountable_on}".'
                 ),
             })
+        if self.port_map:
+            _validate_port_map(self.port_map)
 
 
 # ---------------------------------------------------------------------------
@@ -201,6 +322,19 @@ class ModuleMountProfile(NetBoxModel):
         help_text='Front-panel image for this module type. Rendered inside the placement rectangle on the Layout tab SVG.',
     )
 
+    # v0.7.0 Feature 1: port/connector overlay definitions.
+    port_map = models.JSONField(
+        blank=True,
+        default=list,
+        help_text=(
+            'JSON list of overlay entries (zone, pin, lcd) that define where '
+            'ports and connectors sit on the module front-panel image. When '
+            'the module is installed in a device module bay whose device has '
+            'a module_bay entry in its own port_map, the module\'s pin '
+            'positions are offset by the bay position on the parent device.'
+        ),
+    )
+
     class Meta:
         ordering = ('module_type',)
         verbose_name = 'Module Mount Profile'
@@ -233,6 +367,8 @@ class ModuleMountProfile(NetBoxModel):
                     f'"{self.mountable_on}".'
                 ),
             })
+        if self.port_map:
+            _validate_port_map(self.port_map)
 
 
 # ---------------------------------------------------------------------------

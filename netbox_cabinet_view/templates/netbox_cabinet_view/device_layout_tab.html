@@ -179,6 +179,193 @@
   }
 })();
 </script>
+
+{# =================================================================== #}
+{# v0.7.0 Feature 2: drag-to-place.                                    #}
+{#                                                                      #}
+{# Populated placement rects carry data-placement-pk + mount geometry   #}
+{# attributes. On drag, a ghost rect follows the cursor with grid snap. #}
+{# On drop, PATCH /api/plugins/netbox-cabinet-view/placements/<pk>/     #}
+{# with the new position. On success, reload the SVG via cache-buster.  #}
+{# Click vs. drag distinguished by a 5px threshold — if the mouse       #}
+{# doesn't move enough, we navigate to the device detail URL instead.   #}
+{# =================================================================== #}
+<script>
+(function() {
+  var DRAG_THRESHOLD = 5;
+  var API_BASE = '/api/plugins/netbox-cabinet-view/placements/';
+
+  function getCsrfToken() {
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+  }
+
+  function wireDragToPlace(svgObj) {
+    var doc = svgObj.contentDocument;
+    if (!doc) return;
+    var slots = doc.querySelectorAll('.slot[data-placement-pk]');
+    if (!slots.length) return;
+
+    var dragging = null;
+    var ghost = null;
+    var startPt = null;
+    var dragStarted = false;
+    var origX, origY;
+
+    slots.forEach(function(rect) {
+      rect.addEventListener('mousedown', function(evt) {
+        if (evt.button !== 0) return;  // left click only
+        evt.preventDefault();
+        dragging = rect;
+        dragStarted = false;
+        origX = parseFloat(rect.getAttribute('x') || 0);
+        origY = parseFloat(rect.getAttribute('y') || 0);
+        var pt = doc.documentElement.createSVGPoint();
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        var ctm = rect.getScreenCTM();
+        if (!ctm) return;
+        startPt = pt.matrixTransform(ctm.inverse());
+      });
+    });
+
+    doc.addEventListener('mousemove', function(evt) {
+      if (!dragging || !startPt) return;
+      var pt = doc.documentElement.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      var ctm = dragging.getScreenCTM();
+      if (!ctm) return;
+      var local = pt.matrixTransform(ctm.inverse());
+      var dx = local.x - startPt.x;
+      var dy = local.y - startPt.y;
+
+      if (!dragStarted) {
+        if (Math.sqrt(dx * dx + dy * dy) < DRAG_THRESHOLD) return;
+        dragStarted = true;
+        ghost = dragging.cloneNode(true);
+        ghost.setAttribute('opacity', '0.5');
+        ghost.setAttribute('stroke', '#00c853');
+        ghost.setAttribute('stroke-width', '2');
+        ghost.setAttribute('stroke-dasharray', '4 2');
+        ghost.style.pointerEvents = 'none';
+        ghost.removeAttribute('data-placement-pk');
+        doc.documentElement.appendChild(ghost);
+        doc.documentElement.style.cursor = 'grabbing';
+      }
+
+      if (ghost) {
+        ghost.setAttribute('x', origX + dx);
+        ghost.setAttribute('y', origY + dy);
+      }
+    });
+
+    doc.addEventListener('mouseup', function(evt) {
+      if (!dragging) return;
+
+      if (!dragStarted) {
+        // Click — navigate to the device detail URL.
+        var link = dragging.closest('a');
+        if (link) {
+          var href = link.getAttribute('href') || link.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+          if (href) window.parent.location.href = href;
+        }
+        dragging = null;
+        startPt = null;
+        return;
+      }
+
+      // Compute new position from ghost coordinates.
+      var pk = dragging.getAttribute('data-placement-pk');
+      var mountType = dragging.getAttribute('data-mount-type') || '';
+      var mmPerPx = parseFloat(dragging.getAttribute('data-mm-per-px') || '0.5');
+      var mmPerUnit = parseFloat(dragging.getAttribute('data-mm-per-unit') || '1');
+      var ghostX = parseFloat(ghost.getAttribute('x') || 0);
+      var ghostY = parseFloat(ghost.getAttribute('y') || 0);
+
+      // Snap and compute the PATCH body.
+      var patchBody = {};
+      var is1D = (mountType === 'din_rail' || mountType === 'subrack' || mountType === 'busbar');
+      var isGrid = (mountType === 'grid');
+      var is2D = (mountType === 'mounting_plate');
+
+      if (is1D) {
+        // Convert pixel offset along mount axis to mount units.
+        // The mount's origin is encoded in the initial rect position.
+        var deltaAlongAxis = (ghostX - origX) * mmPerPx;
+        var origPos = parseInt(dragging.getAttribute('data-orig-position') || '0', 10);
+        // Estimate new position by rounding the delta in units.
+        var deltaUnits = Math.round(deltaAlongAxis / mmPerUnit);
+        var currentPos = origPos || 1;
+        var newPos = Math.max(1, currentPos + deltaUnits);
+        patchBody.position = newPos;
+      } else if (isGrid) {
+        var deltaX = (ghostX - origX) * mmPerPx;
+        var deltaY = (ghostY - origY) * mmPerPx;
+        var deltaUnits = Math.round(deltaX / mmPerUnit);
+        var rowHeightPx = parseFloat(dragging.getAttribute('data-row-height-px') || '20');
+        var deltaRows = Math.round((ghostY - origY) / rowHeightPx);
+        var currentRow = parseInt(dragging.getAttribute('data-row') || '1', 10);
+        var rows = parseInt(dragging.getAttribute('data-rows') || '0', 10);
+        var newRow = Math.max(1, Math.min(currentRow + deltaRows, rows || 999));
+        var origGridPos = parseInt(dragging.getAttribute('data-orig-position') || '0', 10) || 1;
+        patchBody.position = Math.max(1, origGridPos + deltaUnits);
+        patchBody.row = newRow;
+      } else if (is2D) {
+        // Absolute mm from the top-left of the placement area.
+        var newXmm = Math.max(0, Math.round((ghostX - origX) * mmPerPx) +
+                     parseInt(dragging.getAttribute('data-orig-position-x') || '0', 10));
+        var newYmm = Math.max(0, Math.round((ghostY - origY) * mmPerPx) +
+                     parseInt(dragging.getAttribute('data-orig-position-y') || '0', 10));
+        patchBody.position_x = newXmm;
+        patchBody.position_y = newYmm;
+      }
+
+      // PATCH the placement.
+      fetch(API_BASE + pk + '/', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(patchBody),
+      })
+      .then(function(resp) {
+        if (!resp.ok) {
+          return resp.json().then(function(data) {
+            throw new Error(JSON.stringify(data));
+          });
+        }
+        // Reload the SVG by bumping a cache-buster query param.
+        var src = svgObj.getAttribute('data');
+        var sep = src.indexOf('?') >= 0 ? '&' : '?';
+        svgObj.setAttribute('data', src.replace(/[&?]_t=\d+/, '') + sep + '_t=' + Date.now());
+      })
+      .catch(function(err) {
+        alert('Move failed: ' + err.message);
+      });
+
+      // Clean up.
+      if (ghost) ghost.remove();
+      ghost = null;
+      dragging = null;
+      startPt = null;
+      dragStarted = false;
+      doc.documentElement.style.cursor = '';
+    });
+  }
+
+  // Wire up all SVG <object> elements (handles dual-face rendering).
+  var objects = document.querySelectorAll('object[type="image/svg+xml"]');
+  objects.forEach(function(obj) {
+    if (obj.contentDocument && obj.contentDocument.readyState === 'complete') {
+      wireDragToPlace(obj);
+    } else {
+      obj.addEventListener('load', function() { wireDragToPlace(obj); });
+    }
+  });
+})();
+</script>
 <div class="row mb-3">
   <div class="col-12">
     <div class="card">

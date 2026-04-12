@@ -7,6 +7,7 @@ Rect → (optional Image) composition, same fallback chain when an image is
 absent.
 """
 
+import fnmatch
 from dataclasses import dataclass
 
 import svgwrite
@@ -181,6 +182,19 @@ class CabinetLayoutSVG:
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
 
+        # v0.7.0: port overlay status colours.
+        default_port_colors = {
+            'connected_enabled': '2ecc71',
+            'connected_disabled': 'f39c12',
+            'unconnected_enabled': '95a5a6',
+            'unconnected_disabled': '7f8c8d',
+        }
+        cfg_colors = plugin_settings.get('PORT_STATUS_COLORS', {})
+        self._port_colors = {**default_port_colors, **cfg_colors}
+
+        # v0.7.0 Feature 3: management IP LCD overlay (opt-in).
+        self._show_mgmt_ip = plugin_settings.get('SHOW_MANAGEMENT_IP', False)
+
         self.profile = getattr(host_device.device_type, 'cabinet_profile', None)
 
         mounts_qs = host_device.cabinet_mounts.all().prefetch_related(
@@ -190,6 +204,16 @@ class CabinetLayoutSVG:
             'placements__device_bay__installed_device__role',
             'placements__module_bay__installed_module__module_type',
             'placements__module_bay__device__role',
+            # v0.7.0: prefetch interfaces and ports for overlay rendering.
+            'placements__device__interfaces',
+            'placements__device__frontports',
+            'placements__device__rearports',
+            'placements__device_bay__installed_device__interfaces',
+            'placements__device_bay__installed_device__frontports',
+            'placements__device_bay__installed_device__rearports',
+            'placements__module_bay__installed_module__interfaces',
+            'placements__module_bay__installed_module__frontports',
+            'placements__module_bay__installed_module__rearports',
         )
         # Feature 1: filter mounts by face when requested.
         if face:
@@ -696,6 +720,369 @@ class CabinetLayoutSVG:
         # Too thin to label safely — suppress. The Mounts table under the
         # SVG still lists the name, so nothing is actually lost.
 
+    # ------------------------------------------------------------------
+    # v0.7.0: port / connector overlay
+    # ------------------------------------------------------------------
+
+    def _resolve_port_status_color(self, component):
+        """
+        Return a hex colour (no '#' prefix) for a port overlay pin based
+        on the component's connection and enabled state.
+        """
+        connected = (
+            getattr(component, 'cable_id', None) is not None
+            or getattr(component, 'mark_connected', False)
+        )
+        enabled = getattr(component, 'enabled', True)
+        key = f"{'connected' if connected else 'unconnected'}_{'enabled' if enabled else 'disabled'}"
+        return self._port_colors.get(key, '95a5a6')
+
+    def _expand_zone(self, zone, placement_w_mm, placement_h_mm):
+        """
+        Expand a zone port_map entry into a list of pin rects.
+
+        Returns a list of (x_mm, y_mm, w_mm, h_mm, protrudes_mm) tuples
+        relative to the placement's top-left corner.
+        """
+        edge = zone['edge']
+        count = zone['count']
+        start = zone['start_mm']
+        pitch = zone['pitch_mm']
+        pw = zone['pin_width_mm']
+        ph = zone['pin_height_mm']
+        protrudes = zone.get('protrudes_mm', 0)
+
+        pins = []
+        for i in range(count):
+            offset = start + i * pitch
+            if edge == 'left':
+                x, y = -protrudes, offset
+            elif edge == 'right':
+                x, y = placement_w_mm - pw + protrudes, offset
+            elif edge == 'top':
+                x, y = offset, -protrudes
+            elif edge == 'bottom':
+                x, y = offset, placement_h_mm - ph + protrudes
+            else:
+                continue
+            pins.append((x, y, pw, ph, protrudes))
+        return pins
+
+    def _collect_components(self, placement):
+        """
+        Collect all interfaces, front ports, and rear ports for the
+        device or module being rendered, keyed by component name.
+        """
+        components = {}
+
+        # Direct device placement
+        device = getattr(placement, 'device', None)
+        if device:
+            return self._components_from_device(device)
+
+        # Device bay placement
+        device_bay = getattr(placement, 'device_bay', None)
+        if device_bay:
+            installed = getattr(device_bay, 'installed_device', None)
+            if installed:
+                return self._components_from_device(installed)
+
+        # Module bay placement
+        module_bay = getattr(placement, 'module_bay', None)
+        if module_bay:
+            installed = getattr(module_bay, 'installed_module', None)
+            if installed:
+                return self._components_from_module(installed)
+
+        return components
+
+    def _components_from_device(self, device):
+        components = {}
+        for iface in device.interfaces.all():
+            components[iface.name] = iface
+        for fp in device.frontports.all():
+            components[fp.name] = fp
+        for rp in device.rearports.all():
+            components[rp.name] = rp
+        return components
+
+    def _components_from_module(self, module):
+        """
+        Collect components from a module, stripping the bay-name prefix.
+
+        NetBox stores module interface names as '{bay_name}/{template_name}'
+        (e.g. 'R1S5/DI-1'). The port_map patterns on ModuleMountProfile are
+        defined relative to the module's own namespace ('DI-*'), so we strip
+        the prefix when building the lookup dict.
+        """
+        components = {}
+        bay_prefix = ''
+        mb = getattr(module, 'module_bay', None)
+        if mb:
+            bay_prefix = f'{mb.name}/'
+        for iface in module.interfaces.all():
+            key = iface.name
+            if bay_prefix and key.startswith(bay_prefix):
+                key = key[len(bay_prefix):]
+            components[key] = iface
+        for fp in module.frontports.all():
+            key = fp.name
+            if bay_prefix and key.startswith(bay_prefix):
+                key = key[len(bay_prefix):]
+            components[key] = fp
+        for rp in module.rearports.all():
+            key = rp.name
+            if bay_prefix and key.startswith(bay_prefix):
+                key = key[len(bay_prefix):]
+            components[key] = rp
+        return components
+
+    def _draw_port_overlay(self, dwg, mount, placement, target, x, y, w, h, clip_ref):
+        """
+        Draw port/connector overlay pins on top of a placement.
+
+        Reads the port_map from the placement's effective profile and
+        draws coloured rects for each matched interface/port.  Protruding
+        pins are drawn outside the clip path.
+        """
+        if self.thumbnail:
+            return
+
+        profile = placement.effective_profile
+        if not profile:
+            return
+        port_map = getattr(profile, 'port_map', None)
+        if not port_map:
+            return
+
+        components = self._collect_components(placement)
+        if not components:
+            return
+
+        # Placement dimensions in mm (reverse mm_to_px).
+        placement_w_mm = w / self.mm_to_px if self.mm_to_px else 0
+        placement_h_mm = h / self.mm_to_px if self.mm_to_px else 0
+
+        for entry in port_map:
+            entry_type = entry.get('type')
+
+            if entry_type == 'zone':
+                zone_pins = self._expand_zone(entry, placement_w_mm, placement_h_mm)
+                # Match components by fnmatch glob, sorted alphabetically
+                pattern = entry.get('name_pattern', '')
+                matched = sorted(
+                    (n for n in components if fnmatch.fnmatch(n, pattern)),
+                )
+                for idx, (px_mm, py_mm, pw_mm, ph_mm, protrudes) in enumerate(zone_pins):
+                    component = components.get(matched[idx]) if idx < len(matched) else None
+                    self._draw_pin(
+                        dwg, x, y, px_mm, py_mm, pw_mm, ph_mm,
+                        protrudes, component, clip_ref,
+                    )
+
+            elif entry_type == 'pin':
+                name = entry.get('name', '')
+                component = components.get(name)
+                self._draw_pin(
+                    dwg, x, y,
+                    entry.get('x_mm', 0), entry.get('y_mm', 0),
+                    entry.get('width_mm', 3), entry.get('height_mm', 3),
+                    entry.get('protrudes_mm', 0),
+                    component, clip_ref,
+                )
+
+            elif entry_type == 'module_bay':
+                # Module bay position on the device image.  If the bay
+                # has an installed module with its own port_map, render
+                # the module's pins offset by the bay position.
+                self._draw_module_bay_overlay(
+                    dwg, placement, entry, x, y, clip_ref,
+                )
+
+            # 'lcd' entries are handled by _draw_lcd_overlay (Feature 3)
+
+    def _draw_pin(self, dwg, placement_x, placement_y,
+                  pin_x_mm, pin_y_mm, pin_w_mm, pin_h_mm,
+                  protrudes_mm, component, clip_ref):
+        """
+        Draw a single port overlay pin rect.
+
+        If the pin protrudes (protrudes_mm > 0) it is rendered without
+        clip_path so it extends beyond the placement bounds.
+        """
+        px = placement_x + self._mm(pin_x_mm)
+        py = placement_y + self._mm(pin_y_mm)
+        pw = self._mm(pin_w_mm)
+        ph = self._mm(pin_h_mm)
+
+        if component:
+            color = self._resolve_port_status_color(component)
+        else:
+            # No matching component — render as unconnected/disabled
+            color = self._port_colors.get('unconnected_disabled', '7f8c8d')
+
+        protrudes = protrudes_mm and protrudes_mm > 0
+
+        rect = Rect(
+            insert=(px, py), size=(pw, ph),
+            style=f'fill: #{color}',
+            class_='port-pin protruding' if protrudes else 'port-pin',
+        )
+        if not protrudes:
+            rect['clip-path'] = clip_ref
+
+        if component:
+            url = getattr(component, 'get_absolute_url', None)
+            if url:
+                href = url()
+                if href and href.startswith('/'):
+                    href = f'{self.base_url}{href}'
+                link = Hyperlink(href=href, target='_parent')
+                link.add(rect)
+                dwg.add(link)
+                return
+
+        dwg.add(rect)
+
+    def _draw_module_bay_overlay(self, dwg, placement, bay_entry, placement_x, placement_y, clip_ref):
+        """
+        Draw a module_bay overlay entry.  If the bay has an installed
+        module whose ModuleMountProfile has a port_map, render the
+        module's pins offset by the bay position.
+        """
+        bay_name = bay_entry.get('name', '')
+        bay_x_mm = bay_entry.get('x_mm', 0)
+        bay_y_mm = bay_entry.get('y_mm', 0)
+        bay_w_mm = bay_entry.get('width_mm', 0)
+        bay_h_mm = bay_entry.get('height_mm', 0)
+        bay_protrudes = bay_entry.get('protrudes_mm', 0)
+
+        # Draw the bay outline itself (subtle dashed rect).
+        bx = placement_x + self._mm(bay_x_mm)
+        by = placement_y + self._mm(bay_y_mm)
+        bw = self._mm(bay_w_mm)
+        bh = self._mm(bay_h_mm)
+        bay_rect = Rect(
+            insert=(bx, by), size=(bw, bh),
+            style='fill: none; stroke: #666; stroke-width: 0.5; stroke-dasharray: 2 1;',
+            class_='module-bay-outline',
+        )
+        if not bay_protrudes:
+            bay_rect['clip-path'] = clip_ref
+        dwg.add(bay_rect)
+
+        # Find the matching ModuleBay on the device and its installed module.
+        device = getattr(placement, 'device', None)
+        if not device:
+            device_bay = getattr(placement, 'device_bay', None)
+            if device_bay:
+                device = getattr(device_bay, 'installed_device', None)
+        if not device:
+            return
+
+        try:
+            module_bay = device.modulebays.get(name=bay_name)
+        except Exception:
+            return
+        installed_module = getattr(module_bay, 'installed_module', None)
+        if not installed_module:
+            return
+        module_profile = getattr(
+            getattr(installed_module, 'module_type', None),
+            'cabinet_profile', None,
+        )
+        if not module_profile or not module_profile.port_map:
+            return
+
+        # Collect the module's own components.
+        components = self._components_from_module(installed_module)
+        if not components:
+            return
+
+        # Render the module's port_map entries offset by the bay position.
+        for entry in module_profile.port_map:
+            entry_type = entry.get('type')
+            if entry_type == 'zone':
+                zone_pins = self._expand_zone(entry, bay_w_mm, bay_h_mm)
+                pattern = entry.get('name_pattern', '')
+                matched = sorted(
+                    (n for n in components if fnmatch.fnmatch(n, pattern)),
+                )
+                for idx, (px_mm, py_mm, pw_mm, ph_mm, protrudes) in enumerate(zone_pins):
+                    component = components.get(matched[idx]) if idx < len(matched) else None
+                    self._draw_pin(
+                        dwg, bx, by, px_mm, py_mm, pw_mm, ph_mm,
+                        protrudes, component, clip_ref,
+                    )
+            elif entry_type == 'pin':
+                name = entry.get('name', '')
+                component = components.get(name)
+                self._draw_pin(
+                    dwg, bx, by,
+                    entry.get('x_mm', 0), entry.get('y_mm', 0),
+                    entry.get('width_mm', 3), entry.get('height_mm', 3),
+                    entry.get('protrudes_mm', 0),
+                    component, clip_ref,
+                )
+            # LCD entries inside module port_map are also valid.
+
+    # ------------------------------------------------------------------
+    # v0.7.0 Feature 3: management IP LCD overlay (opt-in)
+    # ------------------------------------------------------------------
+
+    def _draw_lcd_overlay(self, dwg, placement, target, x, y, w, h):
+        """
+        Draw a management IP address on the placement as an LCD overlay.
+        Only renders when SHOW_MANAGEMENT_IP is True in PLUGINS_CONFIG.
+        """
+        if not self._show_mgmt_ip or self.thumbnail:
+            return
+
+        device = target.resolved_device if target else None
+        if not device:
+            return
+        ip = getattr(device, 'primary_ip4', None)
+        if not ip:
+            return
+        ip_text = str(ip).split('/')[0]  # strip CIDR prefix
+
+        profile = placement.effective_profile
+        port_map = getattr(profile, 'port_map', None) or []
+
+        # Look for an LCD entry in the port_map.
+        lcd_entry = None
+        for entry in port_map:
+            if entry.get('type') == 'lcd':
+                lcd_entry = entry
+                break
+
+        if lcd_entry:
+            lcd_x = x + self._mm(lcd_entry['x_mm'])
+            lcd_y = y + self._mm(lcd_entry['y_mm'])
+            lcd_w = self._mm(lcd_entry['width_mm'])
+            lcd_h = self._mm(lcd_entry['height_mm'])
+        else:
+            # Heuristic: render at center if device/module name suggests "cpu".
+            name = (target.name or '').lower()
+            if 'cpu' not in name:
+                return
+            lcd_w = min(w * 0.6, 80)
+            lcd_h = min(h * 0.3, 16)
+            lcd_x = x + (w - lcd_w) / 2
+            lcd_y = y + (h - lcd_h) / 2
+
+        dwg.add(Rect(
+            insert=(lcd_x, lcd_y), size=(lcd_w, lcd_h),
+            class_='lcd-bg',
+        ))
+        dwg.add(Text(
+            ip_text,
+            insert=(lcd_x + lcd_w / 2, lcd_y + lcd_h / 2),
+            text_anchor='middle',
+            dominant_baseline='central',
+            class_='lcd-text',
+        ))
+
     def _draw_placement(self, dwg, mount, placement):
         target = self._resolve_target(placement)
         (x, y), (w, h) = self._placement_box_px(placement, mount)
@@ -810,12 +1197,33 @@ class CabinetLayoutSVG:
             dwg.add(link)
             return
 
-        link.add(Rect(
+        # debug=False required: standalone Rect() objects don't inherit
+        # the Drawing's debug flag, and svgwrite's per-element validator
+        # rejects HTML5 data-* attributes without it. Trap #16.
+        slot_rect = Rect(
             insert=(x, y),
             size=(w, h),
             style=f'fill: #{color}',
             class_='slot',
-        ))
+            debug=False,
+        )
+        # v0.7.0 Feature 2: data attributes for drag-to-place.
+        if placement.pk:
+            slot_rect['data-placement-pk'] = str(placement.pk)
+            slot_rect['data-mount-type'] = mount.mount_type
+            slot_rect['data-mount-pk'] = str(mount.pk)
+            slot_rect['data-mm-per-px'] = str(round(1.0 / self.mm_to_px, 4))
+            slot_rect['data-mm-per-unit'] = str(mount.mm_per_unit)
+            # Store original position so JS can compute deltas.
+            slot_rect['data-orig-position'] = str(getattr(placement, 'position', '') or '')
+            slot_rect['data-orig-position-x'] = str(getattr(placement, 'position_x', '') or '')
+            slot_rect['data-orig-position-y'] = str(getattr(placement, 'position_y', '') or '')
+            if mount.is_grid:
+                slot_rect['data-row'] = str(getattr(placement, 'row', '') or '')
+                slot_rect['data-row-span'] = str(getattr(placement, 'row_span', 1) or 1)
+                slot_rect['data-row-height-px'] = str(self._mm(mount.row_height_mm or 0))
+                slot_rect['data-rows'] = str(mount.rows or 0)
+        link.add(slot_rect)
 
         if self.include_images and target.image:
             try:
@@ -855,6 +1263,9 @@ class CabinetLayoutSVG:
                         class_='device-image-label',
                     ))
                 dwg.add(link)
+                # v0.7.0: port overlay + LCD (drawn as siblings, on top).
+                self._draw_port_overlay(dwg, mount, placement, target, x, y, w, h, clip_ref)
+                self._draw_lcd_overlay(dwg, placement, target, x, y, w, h)
                 return
 
         # No image — draw a plain label on the colored rect (if it fits).
@@ -869,6 +1280,9 @@ class CabinetLayoutSVG:
                 class_='label',
             ))
         dwg.add(link)
+        # v0.7.0: port overlay + LCD (drawn as siblings, on top).
+        self._draw_port_overlay(dwg, mount, placement, target, x, y, w, h, clip_ref)
+        self._draw_lcd_overlay(dwg, placement, target, x, y, w, h)
 
     # ------------------------------------------------------------------
     # Finding C (v0.4.0): inline add-placement affordance.
@@ -1171,6 +1585,43 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
 /* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
  * which the embedding page propagates to <object> documents. */
 @media (prefers-color-scheme: dark) {
@@ -1195,6 +1646,10 @@ a:hover > .slot.empty-slot,
   .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
   a:hover > .slot.empty-slot,
   .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+  /* v0.7.0: dark-mode port pins and LCD */
+  .port-pin { stroke: #888; }
+  .lcd-bg   { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -1222,7 +1677,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,

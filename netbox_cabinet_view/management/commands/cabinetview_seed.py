@@ -28,6 +28,7 @@ from dcim.models import (
     DeviceBayTemplate,
     DeviceRole,
     DeviceType,
+    InterfaceTemplate,
     Location,
     Manufacturer,
     Module,
@@ -1064,6 +1065,223 @@ class Command(BaseCommand):
         mount_slot(2, 5, size_slots=2)   # high-speed I/O — occupies slots 5-6
         mount_slot(2, 8)                 # binary I/O
 
+        # ------------------------------------------------------------------
+        # v0.7.0: InterfaceTemplates for port overlay demo
+        # ------------------------------------------------------------------
+
+        def ensure_iface_templates(parent, prefix, count, iface_type='other'):
+            """Create InterfaceTemplate instances on a DeviceType or ModuleType."""
+            for i in range(1, count + 1):
+                goc(InterfaceTemplate, **_iface_parent_key(parent),
+                    name=f'{prefix}-{i}',
+                    defaults={'type': iface_type})
+
+        def _iface_parent_key(parent):
+            if isinstance(parent, DeviceType):
+                return {'device_type': parent}
+            return {'module_type': parent}
+
+        # IED modules: binary I/O has DI + DO terminals (protruding spring-cage)
+        ensure_iface_templates(mt_bin_io_module, 'DI', 8, iface_type='other')
+        ensure_iface_templates(mt_bin_io_module, 'DO', 4, iface_type='other')
+
+        # IED analog input: AI terminals (protruding spring-cage)
+        ensure_iface_templates(mt_ana_io_module, 'AI', 8, iface_type='other')
+
+        # IED CPU module: Ethernet ports + serial
+        ensure_iface_templates(mt_cpu_module, 'eth', 2, iface_type='1000base-t')
+
+        # IED Ethernet comms module: ETH ports
+        ensure_iface_templates(mt_eth_module, 'eth', 4, iface_type='1000base-t')
+
+        # IED fibre comms module: SFP fibre interfaces
+        ensure_iface_templates(mt_fibre_module, 'SFP', 2, iface_type='1000base-x-sfp')
+
+        # Fieldbus I/O modules: DI and DO channels
+        ensure_iface_templates(dt_fb_di, 'DI', 8, iface_type='other')
+        ensure_iface_templates(dt_fb_do, 'DO', 8, iface_type='other')
+
+        # Fieldbus coupler: uplink Ethernet
+        ensure_iface_templates(dt_fb_coupler, 'eth', 2, iface_type='1000base-t')
+
+        # Industrial Ethernet switch: multiple ports
+        ensure_iface_templates(dt_ethernet_switch, 'eth', 8, iface_type='1000base-t')
+
+        # ------------------------------------------------------------------
+        # v0.7.0: port_map overlay definitions on profiles
+        # ------------------------------------------------------------------
+
+        # IED binary I/O module — DI terminals protrude from top, DO from bottom
+        ensure_module_profile(mt_bin_io_module, mountable_on='grid', footprint_primary=30,
+                              port_map=[
+            {'type': 'zone', 'name_pattern': 'DI-*', 'edge': 'top',
+             'start_mm': 3, 'pitch_mm': 3, 'count': 8,
+             'pin_width_mm': 2, 'pin_height_mm': 2, 'protrudes_mm': 3},
+            {'type': 'zone', 'name_pattern': 'DO-*', 'edge': 'bottom',
+             'start_mm': 3, 'pitch_mm': 5, 'count': 4,
+             'pin_width_mm': 2, 'pin_height_mm': 2, 'protrudes_mm': 3},
+        ])
+
+        # IED analog input — AI terminals protrude from top
+        ensure_module_profile(mt_ana_io_module, mountable_on='grid', footprint_primary=30,
+                              port_map=[
+            {'type': 'zone', 'name_pattern': 'AI-*', 'edge': 'top',
+             'start_mm': 2, 'pitch_mm': 3, 'count': 8,
+             'pin_width_mm': 2, 'pin_height_mm': 2, 'protrudes_mm': 3},
+        ])
+
+        # IED CPU module — Ethernet ports on front + LCD for mgmt IP
+        ensure_module_profile(mt_cpu_module, mountable_on='grid', footprint_primary=30,
+                              port_map=[
+            {'type': 'pin', 'name': 'eth-1', 'x_mm': 5, 'y_mm': 5,
+             'width_mm': 10, 'height_mm': 8},
+            {'type': 'pin', 'name': 'eth-2', 'x_mm': 17, 'y_mm': 5,
+             'width_mm': 10, 'height_mm': 8},
+            {'type': 'lcd', 'x_mm': 3, 'y_mm': 20, 'width_mm': 24, 'height_mm': 10},
+        ])
+
+        # IED Ethernet comms module — 4 ETH ports across the front face
+        ensure_module_profile(mt_eth_module, mountable_on='grid', footprint_primary=60,
+                              port_map=[
+            {'type': 'zone', 'name_pattern': 'eth-*', 'edge': 'top',
+             'start_mm': 5, 'pitch_mm': 12, 'count': 4,
+             'pin_width_mm': 10, 'pin_height_mm': 8, 'protrudes_mm': 0},
+        ])
+
+        # IED fibre comms module — 2 SFP front ports
+        ensure_module_profile(mt_fibre_module, mountable_on='grid', footprint_primary=60,
+                              port_map=[
+            {'type': 'pin', 'name': 'SFP-1', 'x_mm': 10, 'y_mm': 5,
+             'width_mm': 12, 'height_mm': 8},
+            {'type': 'pin', 'name': 'SFP-2', 'x_mm': 30, 'y_mm': 5,
+             'width_mm': 12, 'height_mm': 8},
+        ])
+
+        # Fieldbus DI module — DI channels protrude from top (spring-cage)
+        ensure_profile(dt_fb_di, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=12, port_map=[
+            {'type': 'zone', 'name_pattern': 'DI-*', 'edge': 'top',
+             'start_mm': 1, 'pitch_mm': 1.2, 'count': 8,
+             'pin_width_mm': 1, 'pin_height_mm': 1.5, 'protrudes_mm': 2},
+        ])
+
+        # Fieldbus DO module — DO channels protrude from top
+        ensure_profile(dt_fb_do, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=12, port_map=[
+            {'type': 'zone', 'name_pattern': 'DO-*', 'edge': 'top',
+             'start_mm': 1, 'pitch_mm': 1.2, 'count': 8,
+             'pin_width_mm': 1, 'pin_height_mm': 1.5, 'protrudes_mm': 2},
+        ])
+
+        # Fieldbus coupler — 2 ETH ports on front
+        ensure_profile(dt_fb_coupler, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=100, port_map=[
+            {'type': 'pin', 'name': 'eth-1', 'x_mm': 30, 'y_mm': 10,
+             'width_mm': 12, 'height_mm': 10},
+            {'type': 'pin', 'name': 'eth-2', 'x_mm': 55, 'y_mm': 10,
+             'width_mm': 12, 'height_mm': 10},
+        ])
+
+        # Industrial Ethernet switch — 8 ETH ports across the front
+        ensure_profile(dt_ethernet_switch, mountable_on='din_rail', mountable_subtype='ts35',
+                       footprint_primary=90, port_map=[
+            {'type': 'zone', 'name_pattern': 'eth-*', 'edge': 'top',
+             'start_mm': 5, 'pitch_mm': 10, 'count': 8,
+             'pin_width_mm': 8, 'pin_height_mm': 6, 'protrudes_mm': 0},
+        ])
+
+        # IED chassis — module bay positions on the host device image.
+        # This demonstrates the two-level overlay: the chassis port_map
+        # defines where each module bay sits, and each installed module's
+        # own port_map defines its pin positions.
+        ensure_profile(dt_ied_chassis, hosts_mounts=True,
+                       internal_width_mm=440, internal_height_mm=260, internal_depth_mm=250,
+                       port_map=[
+            # Row 1 bays: R1S1..R1S12 at 30mm pitch along the top
+            *[{'type': 'module_bay', 'name': f'R1S{s}',
+               'x_mm': (s - 1) * 30 + 20, 'y_mm': 10,
+               'width_mm': 28, 'height_mm': 110}
+              for s in range(1, 13)],
+            # Row 2 bays: R2S1..R2S12 at 30mm pitch along the bottom
+            *[{'type': 'module_bay', 'name': f'R2S{s}',
+               'x_mm': (s - 1) * 30 + 20, 'y_mm': 140,
+               'width_mm': 28, 'height_mm': 110}
+              for s in range(1, 13)],
+        ])
+
+        # ------------------------------------------------------------------
+        # v0.7.0: instantiate Interface objects from templates on existing
+        # devices/modules.  NetBox only auto-creates component instances
+        # from templates at device/module creation time.  Since the seed
+        # uses get_or_create and the templates may have been added after
+        # the devices were first created, we need to backfill.
+        # ------------------------------------------------------------------
+        from dcim.models import Interface
+
+        def backfill_interfaces(device):
+            """Create Interface instances from InterfaceTemplates if missing."""
+            for tmpl in InterfaceTemplate.objects.filter(device_type=device.device_type):
+                Interface.objects.get_or_create(
+                    device=device, name=tmpl.name,
+                    defaults={'type': tmpl.type, 'enabled': tmpl.enabled},
+                )
+
+        def backfill_module_interfaces(module):
+            """Create Interface instances from InterfaceTemplates on a Module."""
+            for tmpl in InterfaceTemplate.objects.filter(module_type=module.module_type):
+                # Module interfaces live on the parent device with a unique
+                # (device, name) constraint.  Name-mangle to avoid collisions
+                # when multiple modules of the same type are installed
+                # (e.g. two binary I/O modules both define DI-1..DI-8).
+                iface_name = f'{module.module_bay.name}/{tmpl.name}'
+                Interface.objects.get_or_create(
+                    device=module.device, name=iface_name,
+                    defaults={'type': tmpl.type, 'enabled': tmpl.enabled,
+                              'module': module},
+                )
+
+        # Backfill device-level interfaces.
+        for dev_name in ('Industrial Ethernet switch #1', 'Fieldbus coupler #1',
+                         'DI module #1', 'DI module #2', 'DI module #3', 'DI module #4',
+                         'DO module #1', 'DO module #2', 'DO module #3'):
+            try:
+                dev = Device.objects.get(name=dev_name, site=site)
+                backfill_interfaces(dev)
+            except Device.DoesNotExist:
+                pass
+
+        # Set mixed interface states on the switch for demo:
+        # eth-1,2,3 = connected (mark_connected=True) + enabled
+        # eth-4,5 = enabled but not connected (default)
+        # eth-6,7 = disabled
+        # eth-8 = disabled + marked connected
+        try:
+            sw = Device.objects.get(name='Industrial Ethernet switch #1', site=site)
+            for iface in Interface.objects.filter(device=sw):
+                n = iface.name
+                if n in ('eth-1', 'eth-2', 'eth-3'):
+                    iface.mark_connected = True
+                    iface.enabled = True
+                    iface.save()
+                elif n in ('eth-6', 'eth-7'):
+                    iface.enabled = False
+                    iface.mark_connected = False
+                    iface.save()
+                elif n == 'eth-8':
+                    iface.enabled = False
+                    iface.mark_connected = True
+                    iface.save()
+        except Device.DoesNotExist:
+            pass
+
+        # Backfill module-level interfaces on installed modules.
+        for mod in Module.objects.filter(
+            device__site=site,
+            module_type__in=[mt_bin_io_module, mt_ana_io_module, mt_cpu_module,
+                             mt_eth_module, mt_fibre_module],
+        ):
+            backfill_module_interfaces(mod)
+
         # v0.6.1: assign bundled line-art to the seed's profiles.
         from .cabinetview_assign_lineart import _auto_assign_all
         art_count = _auto_assign_all(stdout=self.stdout)
@@ -1075,3 +1293,4 @@ class Command(BaseCommand):
         self.stdout.write('              I vertical Eurocard subrack, J grid IED with 2 bars,')
         self.stdout.write('              K ISP ODF with 12-cassette grid)')
         self.stdout.write(f'  line-art:   {art_count} image(s) assigned to profiles')
+        self.stdout.write('  v0.7.0:    InterfaceTemplates + port_map overlays on IED/fieldbus/switch profiles')

@@ -20,6 +20,7 @@ class DeviceMountProfileSerializer(serializers.ModelSerializer):
             'id', 'url', 'display', 'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'port_map',
         )
 
 
@@ -34,6 +35,7 @@ class ModuleMountProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'url', 'display', 'module_type',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'port_map',
         )
 
 
