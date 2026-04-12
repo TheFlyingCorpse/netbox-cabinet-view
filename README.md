@@ -28,12 +28,6 @@ An 8-port managed switch on a DIN rail, with the v0.7.0 **port/connector overlay
 
 A 2-row × 12-slot protection IED with PSU, CPU, binary I/O, analog I/O, Ethernet, and fibre comms modules. The host device's `port_map` defines where each module bay sits; each installed module's own `port_map` defines its pin positions. Protruding spring-cage terminals (DI/DO/AI) extend beyond the module bounds.
 
-### MCC cabinet — nested SVG recursion
-
-![MCC cabinet with withdrawable buckets](docs/screenshots/B-mcc-cabinet.svg)
-
-A motor control center with three withdrawable buckets on a vertical busbar. Each bucket is itself a mount-host with its own DIN rail, contactor, and auxiliary relays rendered inline via nested SVG recursion (up to 3 levels deep).
-
 > Want to see the rest? The full gallery (20+ scenarios covering DIN rails, subracks, mounting plates, busbars, grid mounts, vertical orientations, MCC buckets, VFD cabinets, modular IEDs, ODF frames, safety panels, fieldbus I/O, …) lives in [`docs/scenarios.md`](docs/scenarios.md).
 
 ## Compatibility
