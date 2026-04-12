@@ -11,7 +11,7 @@ class CabinetViewConfig(PluginConfig):
         'for NetBox — with SVG visualization of cabinet interiors, chassis/'
         'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
-    version = '0.5.0'
+    version = '0.6.0'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
