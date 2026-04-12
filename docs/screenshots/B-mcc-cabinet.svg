@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -204,30 +273,95 @@ a:hover &gt; .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to &lt;object&gt; documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on &lt;html&gt; and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into &lt;object&gt;-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root &lt;svg&gt;.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover &gt; .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover &gt; .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -255,7 +389,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -304,9 +442,9 @@ svg.thumbnail .slot {
 }
 </ns0:style><ns0:clipPath id="n1-d234-clip-placement-177"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d234-clip-placement-178"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #1</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/237/"><ns0:title>Name: Contactor K01
 Role: Relay
-Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d234-clip-placement-177)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/240/"><ns0:title>Name: Aux relay BR01
+Type: Motor contactor</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="45" data-mount-type="din_rail" data-orig-position="30" data-placement-pk="177" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d234-clip-placement-177)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/240/"><ns0:title>Name: Aux relay BR01
 Role: Relay
-Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="1418.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="45" data-mount-type="din_rail" data-orig-position="100" data-placement-pk="178" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=45&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="1418.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
 /* Light theme (default) */
 .svg-bg { fill: #f8f9fc; }
 .cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
@@ -360,30 +498,95 @@ a:hover &gt; .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to &lt;object&gt; documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on &lt;html&gt; and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into &lt;object&gt;-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root &lt;svg&gt;.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover &gt; .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover &gt; .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -411,7 +614,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -460,9 +667,9 @@ svg.thumbnail .slot {
 }
 </ns0:style><ns0:clipPath id="n1-d235-clip-placement-179"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d235-clip-placement-180"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #2</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/238/"><ns0:title>Name: Contactor K02
 Role: Relay
-Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d235-clip-placement-179)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/241/"><ns0:title>Name: Aux relay BR02
+Type: Motor contactor</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="46" data-mount-type="din_rail" data-orig-position="30" data-placement-pk="179" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d235-clip-placement-179)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/241/"><ns0:title>Name: Aux relay BR02
 Role: Relay
-Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="2218.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="46" data-mount-type="din_rail" data-orig-position="100" data-placement-pk="180" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=46&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="2218.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
 /* Light theme (default) */
 .svg-bg { fill: #f8f9fc; }
 .cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
@@ -516,30 +723,95 @@ a:hover &gt; .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to &lt;object&gt; documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on &lt;html&gt; and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into &lt;object&gt;-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root &lt;svg&gt;.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover &gt; .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover &gt; .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -567,7 +839,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -616,6 +892,6 @@ svg.thumbnail .slot {
 }
 </ns0:style><ns0:clipPath id="n1-d236-clip-placement-181"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d236-clip-placement-182"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #3</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/239/"><ns0:title>Name: Contactor K03
 Role: Relay
-Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d236-clip-placement-181)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/242/"><ns0:title>Name: Aux relay BR03
+Type: Motor contactor</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="47" data-mount-type="din_rail" data-orig-position="30" data-placement-pk="181" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d236-clip-placement-181)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/242/"><ns0:title>Name: Aux relay BR03
 Role: Relay
-Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="198.0" width="24" x="520.0" y="420.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=400"><title>Add placement at position 400</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="1218.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=800"><title>Add placement at position 800</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="2018.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1200"><title>Add placement at position 1200</title><rect class="slot empty-slot" height="1202.0" width="24" x="520.0" y="2818.0" /></a><text class="mount-label" x="524.0" y="416.0">Vertical busbar</text></svg>
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="47" data-mount-type="din_rail" data-orig-position="100" data-placement-pk="182" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="58.0" x="40.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=75"><ns0:title>Add placement at position 75</ns0:title><ns0:rect class="slot empty-slot" height="70" width="50.0" x="188.0" y="152.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=47&amp;position=101"><ns0:title>Add placement at position 101</ns0:title><ns0:rect class="slot empty-slot" height="70" width="360.0" x="240.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="198.0" width="24" x="520.0" y="420.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=400"><title>Add placement at position 400</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="1218.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=800"><title>Add placement at position 800</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="2018.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1200"><title>Add placement at position 1200</title><rect class="slot empty-slot" height="1202.0" width="24" x="520.0" y="2818.0" /></a><text class="mount-label" x="524.0" y="416.0">Vertical busbar</text></svg>

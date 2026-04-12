@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -150,4 +219,4 @@ svg.thumbnail .slot {
   .label.empty { fill: #bbb; }
   .device-image-label { fill: #fff; font-weight: 700; }
 }
-]]></style><clipPath id="clip-placement-250"><rect height="112" width="10.16" x="20.0" y="44.0" /></clipPath><clipPath id="clip-placement-251"><rect height="112" width="10.16" x="30.16" y="44.0" /></clipPath><clipPath id="clip-placement-252"><rect height="112" width="10.16" x="40.32" y="44.0" /></clipPath><clipPath id="clip-placement-253"><rect height="112" width="10.16" x="50.480000000000004" y="44.0" /></clipPath><clipPath id="clip-placement-254"><rect height="112" width="10.16" x="60.64" y="44.0" /></clipPath><clipPath id="clip-placement-255"><rect height="112" width="10.16" x="70.8" y="44.0" /></clipPath><clipPath id="clip-placement-139"><rect height="112" width="101.6" x="121.6" y="44.0" /></clipPath><clipPath id="clip-placement-140"><rect height="112" width="101.6" x="324.8" y="44.0" /></clipPath></defs><rect class="svg-bg" height="360.0" width="840.0" x="0" y="0" /><rect class="cabinet-outline" height="320.0" width="800.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">PLC Backplane #1</text><rect class="mount subrack" height="120" width="800.0" x="20.0" y="40.0" /><a target="_parent" xlink:href="/dcim/module-bays/33/"><title>Empty module bay: Slot 1</title><rect class="slot empty" height="112" width="10.16" x="20.0" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/35/"><title>Empty module bay: Slot 3</title><rect class="slot empty" height="112" width="10.16" x="30.16" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/37/"><title>Empty module bay: Slot 5</title><rect class="slot empty" height="112" width="10.16" x="40.32" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/38/"><title>Empty module bay: Slot 6</title><rect class="slot empty" height="112" width="10.16" x="50.480000000000004" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/39/"><title>Empty module bay: Slot 7</title><rect class="slot empty" height="112" width="10.16" x="60.64" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/40/"><title>Empty module bay: Slot 8</title><rect class="slot empty" height="112" width="10.16" x="70.8" y="44.0" /></a><a target="_parent" xlink:href="/dcim/modules/15/"><title>DI 16x24VDC in Slot 2</title><rect class="slot" height="112" style="fill: #4caf50" width="101.6" x="121.6" y="44.0" /><image class="device-image" clip-path="url(#clip-placement-139)" height="112" preserveAspectRatio="xMidYMid slice" width="101.6" x="121.6" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxMDAiPgogIDwhLS0gR2VuZXJpYyA4LWNoYW5uZWwgZGlnaXRhbCBpbnB1dCBtb2R1bGUg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxOSIgaGVpZ2h0PSI5OSIgcng9IjEiIGZpbGw9IiNkOGQ0YzgiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8IS0tIE9yYW5nZSBiYW5kIC0tPgogIDxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZTg3MDIwIi8+CiAgPHRleHQgeD0iMTAiIHk9IjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5ESTwvdGV4dD4KICA8IS0tIEJ1cy9wb3dlciBzdGF0dXMgc3RyaXAgLS0+CiAgPHJlY3QgeD0iMiIgeT0iMTAiIHdpZHRoPSIzIiBoZWlnaHQ9IjQiIHJ4PSIwLjMiIGZpbGw9IiMwYTAiLz4KICA8cmVjdCB4PSIyIiB5PSIxNSIgd2lkdGg9IjMiIGhlaWdodD0iNCIgcng9IjAuMyIgZmlsbD0iI2U4MCIvPgogIDwhLS0gOCBjaGFubmVsIExFRHMgLS0+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIxMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIxNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIyMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIyNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIzMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIzNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSI0MiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSI0NyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPCEtLSBDaGFubmVsIG51bWJlcnMgLS0+CiAgPHRleHQgeD0iOCIgeT0iMTMuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4xPC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjE4LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MjwvdGV4dD4KICA8dGV4dCB4PSI4IiB5PSIyMy41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzU1NSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjM8L3RleHQ+CiAgPHRleHQgeD0iOCIgeT0iMjguNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj40PC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjMzLjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+NTwvdGV4dD4KICA8dGV4dCB4PSI4IiB5PSIzOC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzU1NSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjY8L3RleHQ+CiAgPHRleHQgeD0iOCIgeT0iNDMuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj43PC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjQ4LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+ODwvdGV4dD4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjEwIiB5PSI1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiM0NDQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj44eERJPC90ZXh0PgogIDx0ZXh0IHg9IjEwIiB5PSI2MC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzQ0NCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjI0VjwvdGV4dD4KICA8IS0tIFNwcmluZy1jYWdlIHRlcm1pbmFscyAtLT4KICA8cmVjdCB4PSIyIiB5PSI2NSIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjY1IiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI3MCIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjcwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI3NSIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9Ijc1IiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI4MCIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjgwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjMuNSIgcng9IjAuMyIgZmlsbD0iIzBhMCIgc3Ryb2tlPSIjMDgwIiBzdHJva2Utd2lkdGg9IjAuMiIvPgogIDx0ZXh0IHg9IjEwIiB5PSI4Ny41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5HTkQ8L3RleHQ+CiAgPCEtLSBESU4gcmFpbCBjbGlwIC0tPgogIDxyZWN0IHg9IjMiIHk9IjkyIiB3aWR0aD0iMTQiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiM5OTkiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iNSIgeTE9Ijk0LjUiIHgyPSIxNSIgeTI9Ijk0LjUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KPC9zdmc+" y="44.0" /><text class="device-image-label" clip-path="url(#clip-placement-139)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="172.39999999999998" y="100.0">DI 16x24VDC</text><text class="device-image-label" clip-path="url(#clip-placement-139)" dominant-baseline="central" fill="white" text-anchor="middle" x="172.39999999999998" y="100.0">DI 16x24VDC</text></a><a target="_parent" xlink:href="/dcim/modules/16/"><title>DI 16x24VDC in Slot 4</title><rect class="slot" height="112" style="fill: #4caf50" width="101.6" x="324.8" y="44.0" /><image class="device-image" clip-path="url(#clip-placement-140)" height="112" preserveAspectRatio="xMidYMid slice" width="101.6" x="324.8" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxMDAiPgogIDwhLS0gR2VuZXJpYyA4LWNoYW5uZWwgZGlnaXRhbCBpbnB1dCBtb2R1bGUg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxOSIgaGVpZ2h0PSI5OSIgcng9IjEiIGZpbGw9IiNkOGQ0YzgiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8IS0tIE9yYW5nZSBiYW5kIC0tPgogIDxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZTg3MDIwIi8+CiAgPHRleHQgeD0iMTAiIHk9IjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNCIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5ESTwvdGV4dD4KICA8IS0tIEJ1cy9wb3dlciBzdGF0dXMgc3RyaXAgLS0+CiAgPHJlY3QgeD0iMiIgeT0iMTAiIHdpZHRoPSIzIiBoZWlnaHQ9IjQiIHJ4PSIwLjMiIGZpbGw9IiMwYTAiLz4KICA8cmVjdCB4PSIyIiB5PSIxNSIgd2lkdGg9IjMiIGhlaWdodD0iNCIgcng9IjAuMyIgZmlsbD0iI2U4MCIvPgogIDwhLS0gOCBjaGFubmVsIExFRHMgLS0+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIxMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIxNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIyMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIyNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIzMiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSIzNyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSI0MiIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPGNpcmNsZSBjeD0iMTMiIGN5PSI0NyIgcj0iMS4zIiBmaWxsPSIjMGEwIiBzdHJva2U9IiMwODAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPCEtLSBDaGFubmVsIG51bWJlcnMgLS0+CiAgPHRleHQgeD0iOCIgeT0iMTMuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4xPC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjE4LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MjwvdGV4dD4KICA8dGV4dCB4PSI4IiB5PSIyMy41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzU1NSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjM8L3RleHQ+CiAgPHRleHQgeD0iOCIgeT0iMjguNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj40PC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjMzLjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+NTwvdGV4dD4KICA8dGV4dCB4PSI4IiB5PSIzOC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzU1NSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjY8L3RleHQ+CiAgPHRleHQgeD0iOCIgeT0iNDMuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjIiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj43PC90ZXh0PgogIDx0ZXh0IHg9IjgiIHk9IjQ4LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi4yIiBmaWxsPSIjNTU1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+ODwvdGV4dD4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjEwIiB5PSI1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiM0NDQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj44eERJPC90ZXh0PgogIDx0ZXh0IHg9IjEwIiB5PSI2MC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuMiIgZmlsbD0iIzQ0NCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjI0VjwvdGV4dD4KICA8IS0tIFNwcmluZy1jYWdlIHRlcm1pbmFscyAtLT4KICA8cmVjdCB4PSIyIiB5PSI2NSIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjY1IiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI3MCIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjcwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI3NSIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9Ijc1IiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI4MCIgd2lkdGg9IjciIGhlaWdodD0iMy41IiByeD0iMC4zIiBmaWxsPSIjZTg3MDIwIiBzdHJva2U9IiNhNTUwMTAiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHJlY3QgeD0iMTEiIHk9IjgwIiB3aWR0aD0iNyIgaGVpZ2h0PSIzLjUiIHJ4PSIwLjMiIGZpbGw9IiNlODcwMjAiIHN0cm9rZT0iI2E1NTAxMCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSIyIiB5PSI4NSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjMuNSIgcng9IjAuMyIgZmlsbD0iIzBhMCIgc3Ryb2tlPSIjMDgwIiBzdHJva2Utd2lkdGg9IjAuMiIvPgogIDx0ZXh0IHg9IjEwIiB5PSI4Ny41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5HTkQ8L3RleHQ+CiAgPCEtLSBESU4gcmFpbCBjbGlwIC0tPgogIDxyZWN0IHg9IjMiIHk9IjkyIiB3aWR0aD0iMTQiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiM5OTkiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iNSIgeTE9Ijk0LjUiIHgyPSIxNSIgeTI9Ijk0LjUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KPC9zdmc+" y="44.0" /><text class="device-image-label" clip-path="url(#clip-placement-140)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="375.6" y="100.0">DI 16x24VDC</text><text class="device-image-label" clip-path="url(#clip-placement-140)" dominant-baseline="central" fill="white" text-anchor="middle" x="375.6" y="100.0">DI 16x24VDC</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=7"><title>Add placement at position 7</title><rect class="slot empty-slot" height="112" width="40.64" x="80.96000000000001" y="44.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=21"><title>Add placement at position 21</title><rect class="slot empty-slot" height="112" width="101.6" x="223.2" y="44.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=41"><title>Add placement at position 41</title><rect class="slot empty-slot" height="112" width="386.08" x="426.4" y="44.0" /></a><text class="mount-label" x="24.0" y="36.0">Backplane</text></svg>
+]]></style><clipPath id="clip-placement-250"><rect height="112" width="10.16" x="20.0" y="44.0" /></clipPath><clipPath id="clip-placement-251"><rect height="112" width="10.16" x="30.16" y="44.0" /></clipPath><clipPath id="clip-placement-252"><rect height="112" width="10.16" x="40.32" y="44.0" /></clipPath><clipPath id="clip-placement-253"><rect height="112" width="10.16" x="50.480000000000004" y="44.0" /></clipPath><clipPath id="clip-placement-254"><rect height="112" width="10.16" x="60.64" y="44.0" /></clipPath><clipPath id="clip-placement-255"><rect height="112" width="10.16" x="70.8" y="44.0" /></clipPath><clipPath id="clip-placement-139"><rect height="112" width="101.6" x="121.6" y="44.0" /></clipPath><clipPath id="clip-placement-140"><rect height="112" width="101.6" x="324.8" y="44.0" /></clipPath></defs><rect class="svg-bg" height="360.0" width="840.0" x="0" y="0" /><rect class="cabinet-outline" height="320.0" width="800.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">PLC Backplane #1</text><rect class="mount subrack" height="120" width="800.0" x="20.0" y="40.0" /><a target="_parent" xlink:href="/dcim/module-bays/33/"><title>Empty module bay: Slot 1</title><rect class="slot empty" height="112" width="10.16" x="20.0" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/35/"><title>Empty module bay: Slot 3</title><rect class="slot empty" height="112" width="10.16" x="30.16" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/37/"><title>Empty module bay: Slot 5</title><rect class="slot empty" height="112" width="10.16" x="40.32" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/38/"><title>Empty module bay: Slot 6</title><rect class="slot empty" height="112" width="10.16" x="50.480000000000004" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/39/"><title>Empty module bay: Slot 7</title><rect class="slot empty" height="112" width="10.16" x="60.64" y="44.0" /></a><a target="_parent" xlink:href="/dcim/module-bays/40/"><title>Empty module bay: Slot 8</title><rect class="slot empty" height="112" width="10.16" x="70.8" y="44.0" /></a><a target="_parent" xlink:href="/dcim/modules/15/"><title>DI 16x24VDC in Slot 2</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="5.08" data-mount-pk="38" data-mount-type="subrack" data-orig-position="11" data-placement-pk="139" height="112" style="fill: #4caf50" width="101.6" x="121.6" y="44.0" /><image class="device-image" clip-path="url(#clip-placement-139)" height="112" preserveAspectRatio="xMidYMid slice" width="101.6" x="121.6" xlink:href="/media/moduletype-images/plc-fieldbus-di-8ch_j1Cr0CS.svg" y="44.0" /><text class="device-image-label" clip-path="url(#clip-placement-139)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="172.39999999999998" y="100.0">DI 16x24VDC</text><text class="device-image-label" clip-path="url(#clip-placement-139)" dominant-baseline="central" fill="white" text-anchor="middle" x="172.39999999999998" y="100.0">DI 16x24VDC</text></a><a target="_parent" xlink:href="/dcim/modules/16/"><title>DI 16x24VDC in Slot 4</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="5.08" data-mount-pk="38" data-mount-type="subrack" data-orig-position="31" data-placement-pk="140" height="112" style="fill: #4caf50" width="101.6" x="324.8" y="44.0" /><image class="device-image" clip-path="url(#clip-placement-140)" height="112" preserveAspectRatio="xMidYMid slice" width="101.6" x="324.8" xlink:href="/media/moduletype-images/plc-fieldbus-di-8ch_j1Cr0CS.svg" y="44.0" /><text class="device-image-label" clip-path="url(#clip-placement-140)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="375.6" y="100.0">DI 16x24VDC</text><text class="device-image-label" clip-path="url(#clip-placement-140)" dominant-baseline="central" fill="white" text-anchor="middle" x="375.6" y="100.0">DI 16x24VDC</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=7"><title>Add placement at position 7</title><rect class="slot empty-slot" height="112" width="40.64" x="80.96000000000001" y="44.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=21"><title>Add placement at position 21</title><rect class="slot empty-slot" height="112" width="101.6" x="223.2" y="44.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=38&amp;position=41"><title>Add placement at position 41</title><rect class="slot empty-slot" height="112" width="386.08" x="426.4" y="44.0" /></a><text class="mount-label" x="24.0" y="36.0">Backplane</text></svg>

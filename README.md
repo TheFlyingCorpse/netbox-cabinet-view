@@ -41,6 +41,14 @@ The simplest case — a bare DIN rail in a Location with two relays clipped on. 
 
 Python 3.10+ required.
 
+### Browser compatibility
+
+| Browser | Status | Notes |
+|---|:---:|---|
+| **Chrome / Chromium** | ✅ | Fully supported — dark/light theme toggle updates SVGs live |
+| **Firefox** | ✅ | Fully supported |
+| **Safari** | ⚠️ | Theme toggle does not reliably update already-loaded SVGs due to aggressive `<object>` caching. Workaround: refresh the page after toggling. Initial page loads are always correct. |
+
 ## Install
 
 ```bash

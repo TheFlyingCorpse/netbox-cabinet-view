@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -152,4 +221,4 @@ svg.thumbnail .slot {
 }
 ]]></style><clipPath id="clip-placement-196"><rect height="70" width="180.0" x="358.0" y="80.0" /></clipPath></defs><rect class="svg-bg" height="216.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="176.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Industrial Switch Shelf #1</text><rect class="mount din-rail" height="14" width="840.0" x="40.0" y="108.0" /><a target="_parent" xlink:href="/dcim/devices/259/"><title>Name: Industrial Ethernet switch #1
 Role: PLC
-Type: Industrial Ethernet switch</title><rect class="slot" height="70" style="fill: #4caf50" width="180.0" x="358.0" y="80.0" /><text class="label" clip-path="url(#clip-placement-196)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="448.0" y="115.0">Industrial Ethernet switc…</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=51&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="70" width="318.0" x="40.0" y="80.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=51&amp;position=250"><title>Add placement at position 250</title><rect class="slot empty-slot" height="70" width="342.0" x="538.0" y="80.0" /></a><text class="mount-label" x="44.0" y="104.0">Main rail</text></svg>
+Type: Industrial Ethernet switch</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="51" data-mount-type="din_rail" data-orig-position="160" data-placement-pk="196" height="70" style="fill: #4caf50" width="180.0" x="358.0" y="80.0" /><image class="device-image" clip-path="url(#clip-placement-196)" height="70" preserveAspectRatio="xMidYMid slice" width="180.0" x="358.0" xlink:href="/media/devicetype-images/network-switches-managed-switch-8port.svg" y="80.0" /><text class="device-image-label" clip-path="url(#clip-placement-196)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="448.0" y="115.0">Industrial Ethernet switc…</text><text class="device-image-label" clip-path="url(#clip-placement-196)" dominant-baseline="central" fill="white" text-anchor="middle" x="448.0" y="115.0">Industrial Ethernet switc…</text></a><a target="_parent" xlink:href="/dcim/interfaces/90/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #2ecc71" width="16.0" x="368.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/91/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #2ecc71" width="16.0" x="388.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/92/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #2ecc71" width="16.0" x="408.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/93/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #95a5a6" width="16.0" x="428.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/94/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #95a5a6" width="16.0" x="448.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/95/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #7f8c8d" width="16.0" x="468.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/96/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #7f8c8d" width="16.0" x="488.0" y="80.0" /></a><a target="_parent" xlink:href="/dcim/interfaces/97/"><rect class="port-pin" clip-path="url(#clip-placement-196)" height="12.0" style="fill: #f39c12" width="16.0" x="508.0" y="80.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=51&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="70" width="318.0" x="40.0" y="80.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=51&amp;position=250"><title>Add placement at position 250</title><rect class="slot empty-slot" height="70" width="342.0" x="538.0" y="80.0" /></a><text class="mount-label" x="44.0" y="104.0">Main rail</text></svg>

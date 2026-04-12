@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -152,8 +221,8 @@ svg.thumbnail .slot {
 }
 ]]></style><clipPath id="clip-placement-136"><rect height="24" width="36.0" x="58.0" y="60.0" /></clipPath><clipPath id="clip-placement-137"><rect height="24" width="36.0" x="138.0" y="60.0" /></clipPath><clipPath id="clip-placement-138"><rect height="24" width="36.0" x="218.0" y="60.0" /></clipPath></defs><rect class="svg-bg" height="160.0" width="2040.0" x="0" y="0" /><rect class="cabinet-outline" height="120.0" width="2000.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">LV Distribution Busbar</text><rect class="mount busbar" height="24" width="2000.0" x="20.0" y="60.0" /><a target="_parent" xlink:href="/dcim/devices/192/"><title>Name: MCB F01
 Role: MCB
-Type: Clip-on MCB 1P</title><rect class="slot" height="24" style="fill: #f44336" width="36.0" x="58.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-136)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="58.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOCA3MCI+CiAgPCEtLSBHZW5lcmljIG1pbmlhdHVyZSBjaXJjdWl0IGJyZWFrZXIg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNyIgaGVpZ2h0PSI2OSIgcng9IjEiIGZpbGw9IiNlMGUwZTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8IS0tIFRvZ2dsZSBsZXZlciAoT04gcG9zaXRpb24pIC0tPgogIDxyZWN0IHg9IjUiIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2NjYyIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxwYXRoIGQ9Ik03IDIwIFE5IDggMTEgMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSI3LjUiIHk9IjgiIHdpZHRoPSIzIiBoZWlnaHQ9IjgiIHJ4PSIxIiBmaWxsPSIjZTg3MDIwIi8+CiAgPCEtLSBUcmlwIGluZGljYXRvciB3aW5kb3cgLS0+CiAgPHJlY3QgeD0iNiIgeT0iMjYiIHdpZHRoPSI2IiBoZWlnaHQ9IjMiIHJ4PSIwLjMiIGZpbGw9IiMwYTAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIFJhdGluZyBsYWJlbCAtLT4KICA8dGV4dCB4PSI5IiB5PSIzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0IiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiPkMxNjwvdGV4dD4KICA8IS0tIFRlcm1pbmFsIChsaW5lKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNDYiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI0NC41IiB4Mj0iMTAuNSIgeTI9IjQ3LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIFRlcm1pbmFsIChsb2FkKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNTUiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI1My41IiB4Mj0iMTAuNSIgeTI9IjU2LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIC0tPgogIDxyZWN0IHg9IjMiIHk9IjYxIiB3aWR0aD0iMTIiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiM5OTkiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iNSIgeTE9IjYzLjUiIHgyPSIxMyIgeTI9IjYzLjUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KPC9zdmc+" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-136)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="76.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-136)" dominant-baseline="central" fill="white" text-anchor="middle" x="76.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/dcim/devices/193/"><title>Name: MCB F02
+Type: Clip-on MCB 1P</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="37" data-mount-type="busbar" data-orig-position="20" data-placement-pk="136" height="24" style="fill: #f44336" width="36.0" x="58.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-136)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="58.0" xlink:href="/media/devicetype-images/din-rail-devices-mcb_nDXI0Mr.svg" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-136)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="76.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-136)" dominant-baseline="central" fill="white" text-anchor="middle" x="76.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/dcim/devices/193/"><title>Name: MCB F02
 Role: MCB
-Type: Clip-on MCB 1P</title><rect class="slot" height="24" style="fill: #f44336" width="36.0" x="138.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-137)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="138.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOCA3MCI+CiAgPCEtLSBHZW5lcmljIG1pbmlhdHVyZSBjaXJjdWl0IGJyZWFrZXIg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNyIgaGVpZ2h0PSI2OSIgcng9IjEiIGZpbGw9IiNlMGUwZTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8IS0tIFRvZ2dsZSBsZXZlciAoT04gcG9zaXRpb24pIC0tPgogIDxyZWN0IHg9IjUiIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2NjYyIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxwYXRoIGQ9Ik03IDIwIFE5IDggMTEgMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSI3LjUiIHk9IjgiIHdpZHRoPSIzIiBoZWlnaHQ9IjgiIHJ4PSIxIiBmaWxsPSIjZTg3MDIwIi8+CiAgPCEtLSBUcmlwIGluZGljYXRvciB3aW5kb3cgLS0+CiAgPHJlY3QgeD0iNiIgeT0iMjYiIHdpZHRoPSI2IiBoZWlnaHQ9IjMiIHJ4PSIwLjMiIGZpbGw9IiMwYTAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIFJhdGluZyBsYWJlbCAtLT4KICA8dGV4dCB4PSI5IiB5PSIzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0IiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiPkMxNjwvdGV4dD4KICA8IS0tIFRlcm1pbmFsIChsaW5lKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNDYiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI0NC41IiB4Mj0iMTAuNSIgeTI9IjQ3LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIFRlcm1pbmFsIChsb2FkKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNTUiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI1My41IiB4Mj0iMTAuNSIgeTI9IjU2LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIC0tPgogIDxyZWN0IHg9IjMiIHk9IjYxIiB3aWR0aD0iMTIiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiM5OTkiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iNSIgeTE9IjYzLjUiIHgyPSIxMyIgeTI9IjYzLjUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KPC9zdmc+" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-137)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="156.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-137)" dominant-baseline="central" fill="white" text-anchor="middle" x="156.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/dcim/devices/194/"><title>Name: MCB F03
+Type: Clip-on MCB 1P</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="37" data-mount-type="busbar" data-orig-position="60" data-placement-pk="137" height="24" style="fill: #f44336" width="36.0" x="138.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-137)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="138.0" xlink:href="/media/devicetype-images/din-rail-devices-mcb_nDXI0Mr.svg" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-137)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="156.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-137)" dominant-baseline="central" fill="white" text-anchor="middle" x="156.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/dcim/devices/194/"><title>Name: MCB F03
 Role: MCB
-Type: Clip-on MCB 1P</title><rect class="slot" height="24" style="fill: #f44336" width="36.0" x="218.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-138)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="218.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOCA3MCI+CiAgPCEtLSBHZW5lcmljIG1pbmlhdHVyZSBjaXJjdWl0IGJyZWFrZXIg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNyIgaGVpZ2h0PSI2OSIgcng9IjEiIGZpbGw9IiNlMGUwZTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8IS0tIFRvZ2dsZSBsZXZlciAoT04gcG9zaXRpb24pIC0tPgogIDxyZWN0IHg9IjUiIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2NjYyIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxwYXRoIGQ9Ik03IDIwIFE5IDggMTEgMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSI3LjUiIHk9IjgiIHdpZHRoPSIzIiBoZWlnaHQ9IjgiIHJ4PSIxIiBmaWxsPSIjZTg3MDIwIi8+CiAgPCEtLSBUcmlwIGluZGljYXRvciB3aW5kb3cgLS0+CiAgPHJlY3QgeD0iNiIgeT0iMjYiIHdpZHRoPSI2IiBoZWlnaHQ9IjMiIHJ4PSIwLjMiIGZpbGw9IiMwYTAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIFJhdGluZyBsYWJlbCAtLT4KICA8dGV4dCB4PSI5IiB5PSIzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0IiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiPkMxNjwvdGV4dD4KICA8IS0tIFRlcm1pbmFsIChsaW5lKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNDYiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI0NC41IiB4Mj0iMTAuNSIgeTI9IjQ3LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIFRlcm1pbmFsIChsb2FkKSAtLT4KICA8Y2lyY2xlIGN4PSI5IiBjeT0iNTUiIHI9IjIuNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxsaW5lIHgxPSI3LjUiIHkxPSI1My41IiB4Mj0iMTAuNSIgeTI9IjU2LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIC0tPgogIDxyZWN0IHg9IjMiIHk9IjYxIiB3aWR0aD0iMTIiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiM5OTkiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iNSIgeTE9IjYzLjUiIHgyPSIxMyIgeTI9IjYzLjUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KPC9zdmc+" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-138)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="236.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-138)" dominant-baseline="central" fill="white" text-anchor="middle" x="236.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="24" width="38.0" x="20.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=38"><title>Add placement at position 38</title><rect class="slot empty-slot" height="24" width="44.0" x="94.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=78"><title>Add placement at position 78</title><rect class="slot empty-slot" height="24" width="44.0" x="174.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=118"><title>Add placement at position 118</title><rect class="slot empty-slot" height="24" width="1766.0" x="254.0" y="60.0" /></a><text class="mount-label" x="24.0" y="56.0">L1/L2/L3 bar</text></svg>
+Type: Clip-on MCB 1P</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="37" data-mount-type="busbar" data-orig-position="100" data-placement-pk="138" height="24" style="fill: #f44336" width="36.0" x="218.0" y="60.0" /><image class="device-image" clip-path="url(#clip-placement-138)" height="24" preserveAspectRatio="xMidYMid slice" width="36.0" x="218.0" xlink:href="/media/devicetype-images/din-rail-devices-mcb_nDXI0Mr.svg" y="60.0" /><text class="device-image-label" clip-path="url(#clip-placement-138)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="236.0" y="72.0">MCB…</text><text class="device-image-label" clip-path="url(#clip-placement-138)" dominant-baseline="central" fill="white" text-anchor="middle" x="236.0" y="72.0">MCB…</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="24" width="38.0" x="20.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=38"><title>Add placement at position 38</title><rect class="slot empty-slot" height="24" width="44.0" x="94.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=78"><title>Add placement at position 78</title><rect class="slot empty-slot" height="24" width="44.0" x="174.0" y="60.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=37&amp;position=118"><title>Add placement at position 118</title><rect class="slot empty-slot" height="24" width="1766.0" x="254.0" y="60.0" /></a><text class="mount-label" x="24.0" y="56.0">L1/L2/L3 bar</text></svg>

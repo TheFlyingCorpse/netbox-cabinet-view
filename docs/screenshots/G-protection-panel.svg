@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -204,30 +273,95 @@ a:hover &gt; .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to &lt;object&gt; documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on &lt;html&gt; and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into &lt;object&gt;-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root &lt;svg&gt;.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover &gt; .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover &gt; .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -255,7 +389,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -304,16 +442,16 @@ svg.thumbnail .slot {
 }
 </ns0:style><ns0:clipPath id="n1-d269-clip-placement-205"><ns0:rect height="70" width="160.0" x="78.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-206"><ns0:rect height="70" width="160.0" x="338.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-207"><ns0:rect height="70" width="160.0" x="598.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-208"><ns0:rect height="70" width="160.0" x="858.0" y="32.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="160.0" width="1240.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="120.0" width="1200.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">Test block rail #1</ns0:text><ns0:rect class="mount din-rail" height="14" width="1160.0" x="40.0" y="60.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/270/"><ns0:title>Name: Test block F01
 Role: Relay
-Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="78.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-205)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="158.0" y="67.0">Test block F01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/271/"><ns0:title>Name: Test block F02
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="54" data-mount-type="din_rail" data-orig-position="20" data-placement-pk="205" height="70" style="fill: #2196f3" width="160.0" x="78.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-205)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="158.0" y="67.0">Test block F01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/271/"><ns0:title>Name: Test block F02
 Role: Relay
-Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="338.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-206)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="418.0" y="67.0">Test block F02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/272/"><ns0:title>Name: Test block F03
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="54" data-mount-type="din_rail" data-orig-position="150" data-placement-pk="206" height="70" style="fill: #2196f3" width="160.0" x="338.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-206)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="418.0" y="67.0">Test block F02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/272/"><ns0:title>Name: Test block F03
 Role: Relay
-Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="598.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-207)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="678.0" y="67.0">Test block F03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/273/"><ns0:title>Name: Test block F04
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="54" data-mount-type="din_rail" data-orig-position="280" data-placement-pk="207" height="70" style="fill: #2196f3" width="160.0" x="598.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-207)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="678.0" y="67.0">Test block F03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/273/"><ns0:title>Name: Test block F04
 Role: Relay
-Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="858.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-208)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="938.0" y="67.0">Test block F04</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="38.0" x="40.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=100"><ns0:title>Add placement at position 100</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="238.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=230"><ns0:title>Add placement at position 230</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="498.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=360"><ns0:title>Add placement at position 360</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="758.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=490"><ns0:title>Add placement at position 490</ns0:title><ns0:rect class="slot empty-slot" height="70" width="182.0" x="1018.0" y="32.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="56.0">Test rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/dcim/devices/268/"><title>Name: Line distance IED L1
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="54" data-mount-type="din_rail" data-orig-position="410" data-placement-pk="208" height="70" style="fill: #2196f3" width="160.0" x="858.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-208)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="938.0" y="67.0">Test block F04</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="38.0" x="40.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=100"><ns0:title>Add placement at position 100</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="238.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=230"><ns0:title>Add placement at position 230</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="498.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=360"><ns0:title>Add placement at position 360</ns0:title><ns0:rect class="slot empty-slot" height="70" width="100.0" x="758.0" y="32.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=54&amp;position=490"><ns0:title>Add placement at position 490</ns0:title><ns0:rect class="slot empty-slot" height="70" width="182.0" x="1018.0" y="32.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="56.0">Test rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/dcim/devices/268/"><title>Name: Line distance IED L1
 Role: PLC
-Type: Line distance protection IED</title><rect class="slot" height="540.0" style="fill: #4caf50" width="966.0" x="300.0" y="1820.0" /><image class="device-image" clip-path="url(#clip-placement-203)" height="540.0" preserveAspectRatio="xMidYMid slice" width="966.0" x="300.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCAxMDAiIHdpZHRoPSIzMCIgaGVpZ2h0PSIxMDAiPgogIDwhLS0gVHlwZSBDIENQVSDigJQgd2FybSB0b25lcywgaGVhdmllciB0ZXJtaW5hbHMsIFJlbGlvbi1pbnNwaXJlZCAtLT4KICA8cmVjdCB4PSIwLjUiIHk9IjAuNSIgd2lkdGg9IjI5IiBoZWlnaHQ9Ijk5IiByeD0iMSIgZmlsbD0iIzJhMjUyMCIgc3Ryb2tlPSIjNjY1IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDwhLS0gTGFiZWwgc3RyaXAgLS0+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjgiIHJ4PSIwLjUiIGZpbGw9IiMzYTM1MzAiIHN0cm9rZT0iIzc3NiIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8dGV4dCB4PSIxNSIgeT0iOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIzLjUiIGZpbGw9IiNjYmEiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5DUFU8L3RleHQ+CiAgPCEtLSBTbWFsbCBtb25vY2hyb21lIExDRCAtLT4KICA8cmVjdCB4PSI1IiB5PSIxMyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjEwIiByeD0iMSIgZmlsbD0iIzBhMTIwYSIgc3Ryb2tlPSIjNGE1YTRhIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDx0ZXh0IHg9IjE1IiB5PSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIzIiBmaWxsPSIjNGE4YTRhIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIj5PSzwvdGV4dD4KICA8IS0tIDMgbmF2IGJ1dHRvbnMgLS0+CiAgPGNpcmNsZSBjeD0iOSIgY3k9IjI4IiByPSIyIiBmaWxsPSIjMzMzIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPGNpcmNsZSBjeD0iMTUiIGN5PSIyOCIgcj0iMiIgZmlsbD0iIzMzMyIgc3Ryb2tlPSIjNTU1IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDxjaXJjbGUgY3g9IjIxIiBjeT0iMjgiIHI9IjIiIGZpbGw9IiMzMzMiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8IS0tIDYgc3RhdHVzIExFRHMgdmVydGljYWwgLS0+CiAgPGNpcmNsZSBjeD0iOCIgY3k9IjM2IiByPSIxLjIiIGZpbGw9IiMxZTRhMWUiIHN0cm9rZT0iIzQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8dGV4dCB4PSIxNSIgeT0iMzciIGZvbnQtc2l6ZT0iMS44IiBmaWxsPSIjNzc2IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+UlVOPC90ZXh0PgogIDxjaXJjbGUgY3g9IjgiIGN5PSI0MSIgcj0iMS4yIiBmaWxsPSIjMWU0YTFlIiBzdHJva2U9IiM0NDQiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHRleHQgeD0iMTUiIHk9IjQyIiBmb250LXNpemU9IjEuOCIgZmlsbD0iIzc3NiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkNPTU08L3RleHQ+CiAgPGNpcmNsZSBjeD0iOCIgY3k9IjQ2IiByPSIxLjIiIGZpbGw9IiM0YTRhMWUiIHN0cm9rZT0iIzQ0NCIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8dGV4dCB4PSIxNSIgeT0iNDciIGZvbnQtc2l6ZT0iMS44IiBmaWxsPSIjNzc2IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+VFJJUDwvdGV4dD4KICA8Y2lyY2xlIGN4PSI4IiBjeT0iNTEiIHI9IjEuMiIgZmlsbD0iIzRhM2ExZSIgc3Ryb2tlPSIjNDQ0IiBzdHJva2Utd2lkdGg9IjAuMiIvPgogIDx0ZXh0IHg9IjE1IiB5PSI1MiIgZm9udC1zaXplPSIxLjgiIGZpbGw9IiM3NzYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5XQVJOPC90ZXh0PgogIDxjaXJjbGUgY3g9IjgiIGN5PSI1NiIgcj0iMS4yIiBmaWxsPSIjNGExZTFlIiBzdHJva2U9IiM0NDQiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHRleHQgeD0iMTUiIHk9IjU3IiBmb250LXNpemU9IjEuOCIgZmlsbD0iIzc3NiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkVSUjwvdGV4dD4KICA8Y2lyY2xlIGN4PSI4IiBjeT0iNjEiIHI9IjEuMiIgZmlsbD0iIzFlMWU0YSIgc3Ryb2tlPSIjNDQ0IiBzdHJva2Utd2lkdGg9IjAuMiIvPgogIDx0ZXh0IHg9IjE1IiB5PSI2MiIgZm9udC1zaXplPSIxLjgiIGZpbGw9IiM3NzYiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5URVNUPC90ZXh0PgogIDwhLS0gUko0NSBFdGhlcm5ldCBwb3J0IC0tPgogIDxyZWN0IHg9IjciIHk9IjY3IiB3aWR0aD0iMTYiIGhlaWdodD0iMTAiIHJ4PSIxIiBmaWxsPSIjMGEwYTBhIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPHJlY3QgeD0iOSIgeT0iNjkiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiByeD0iMC41IiBmaWxsPSIjMTExIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMC4yIi8+CiAgPHRleHQgeD0iMTUiIHk9IjgxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIiIGZpbGw9IiM2NjUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5FVEg8L3RleHQ+CiAgPCEtLSBCYWNrcGxhbmUgY29ubmVjdG9yIC0tPgogIDxyZWN0IHg9IjMiIHk9Ijg0IiB3aWR0aD0iMjQiIGhlaWdodD0iMTMiIHJ4PSIxIiBmaWxsPSIjMWExYTFhIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPHJlY3QgeD0iNSIgeT0iODYiIHdpZHRoPSIyMCIgaGVpZ2h0PSI5IiByeD0iMC41IiBmaWxsPSIjMGEwYTBhIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMC4zIi8+Cjwvc3ZnPg==" y="1820.0" /><text class="device-image-label" clip-path="url(#clip-placement-203)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="783.0" y="2090.0">Line distance IED L1</text><text class="device-image-label" clip-path="url(#clip-placement-203)" dominant-baseline="central" fill="white" text-anchor="middle" x="783.0" y="2090.0">Line distance IED L1</text></a><a target="_parent" xlink:href="/dcim/devices/266/"><title>Name: Overcurrent IED F1
+Type: Line distance protection IED</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="53" data-mount-type="mounting_plate" data-orig-position-x="140" data-orig-position-y="900" data-placement-pk="203" height="540.0" style="fill: #4caf50" width="966.0" x="300.0" y="1820.0" /><image class="device-image" clip-path="url(#clip-placement-203)" height="540.0" preserveAspectRatio="xMidYMid slice" width="966.0" x="300.0" xlink:href="/media/devicetype-images/ied-type-c-cpu_C8IAzZw.svg" y="1820.0" /><text class="device-image-label" clip-path="url(#clip-placement-203)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="783.0" y="2090.0">Line distance IED L1</text><text class="device-image-label" clip-path="url(#clip-placement-203)" dominant-baseline="central" fill="white" text-anchor="middle" x="783.0" y="2090.0">Line distance IED L1</text></a><a target="_parent" xlink:href="/dcim/devices/266/"><title>Name: Overcurrent IED F1
 Role: PLC
-Type: Overcurrent protection IED (single-slot)</title><rect class="slot" height="540.0" style="fill: #4caf50" width="430.0" x="560.0" y="420.0" /><text class="label" clip-path="url(#clip-placement-201)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="775.0" y="690.0">Overcurrent IED F1</text></a><a target="_parent" xlink:href="/dcim/devices/267/"><title>Name: Overcurrent IED F2
+Type: Overcurrent protection IED (single-slot)</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="53" data-mount-type="mounting_plate" data-orig-position-x="270" data-orig-position-y="200" data-placement-pk="201" height="540.0" style="fill: #4caf50" width="430.0" x="560.0" y="420.0" /><text class="label" clip-path="url(#clip-placement-201)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="775.0" y="690.0">Overcurrent IED F1</text></a><a target="_parent" xlink:href="/dcim/devices/267/"><title>Name: Overcurrent IED F2
 Role: PLC
-Type: Overcurrent protection IED (single-slot)</title><rect class="slot" height="540.0" style="fill: #4caf50" width="430.0" x="560.0" y="1120.0" /><text class="label" clip-path="url(#clip-placement-202)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="775.0" y="1390.0">Overcurrent IED F2</text></a><rect class="slot empty-slot mount-2d" data-mm-per-px="0.5" data-mount-pk="53" data-origin-x="20.0" data-origin-y="20.0" fill-opacity="0" height="4320.0" width="1520.0" x="20.0" y="20.0" /><text class="mount-label" clip-path="url(#clip-mount-53-lbl)" x="24.0" y="34.0">Back plate</text></svg>
+Type: Overcurrent protection IED (single-slot)</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="53" data-mount-type="mounting_plate" data-orig-position-x="270" data-orig-position-y="550" data-placement-pk="202" height="540.0" style="fill: #4caf50" width="430.0" x="560.0" y="1120.0" /><text class="label" clip-path="url(#clip-placement-202)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="775.0" y="1390.0">Overcurrent IED F2</text></a><rect class="slot empty-slot mount-2d" data-mm-per-px="0.5" data-mount-pk="53" data-origin-x="20.0" data-origin-y="20.0" fill-opacity="0" height="4320.0" width="1520.0" x="20.0" y="20.0" /><text class="mount-label" clip-path="url(#clip-mount-53-lbl)" x="24.0" y="34.0">Back plate</text></svg>

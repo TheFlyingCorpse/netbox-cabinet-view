@@ -10,6 +10,16 @@ All notable changes to this project will be documented in this file. The format 
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
 
+## [0.7.1] — 2026-04-12
+
+### Fixed
+
+- **Dark/light theme propagation into SVGs.** NetBox controls its theme via `data-bs-theme` on `<html>` and `localStorage`, which does NOT propagate `prefers-color-scheme` into `<object>`-embedded SVG documents. The SVGs were stuck on the OS preference regardless of the NetBox toggle. Fix: server-side `?theme=dark|light` query parameter on the SVG endpoint. The renderer adds `class="dark"` or `class="light"` to the root `<svg>` element. CSS uses `svg.dark` selectors with a fallback `@media (prefers-color-scheme: dark)` gated behind `:not(.dark):not(.light)` for standalone SVG viewing. Template JS reads the active theme on page load and appends `&theme=<mode>` to every `<object>` data URL. Live toggle updates the URL (works in Chrome; Safari may need a manual page refresh).
+
+### Known issues
+
+- **Safari**: theme toggle does not reliably update already-loaded SVGs. Safari aggressively caches `<object>` content and does not re-fetch when the `data` attribute changes. Workaround: refresh the page after toggling. Initial page loads are correct. Chrome and Firefox work without issues.
+
 ## [0.7.0] — 2026-04-12
 
 ### Added

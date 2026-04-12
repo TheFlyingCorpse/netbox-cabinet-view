@@ -52,30 +52,95 @@ a:hover > .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -103,7 +168,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -204,30 +273,95 @@ a:hover &gt; .slot.empty-slot,
   stroke-dasharray: 3 2;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to &lt;object&gt; documents. */
+/* v0.7.0: port/connector overlay pins */
+.port-pin {
+  stroke: #222;
+  stroke-width: 0.4;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.port-pin:hover {
+  opacity: 1;
+  stroke-width: 1;
+}
+.port-pin.protruding {
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+}
+.module-bay-outline {
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 3: management IP LCD overlay */
+.lcd-bg {
+  fill: #1a1a1a;
+  stroke: #333;
+  stroke-width: 0.5;
+  rx: 1;
+}
+.lcd-text {
+  fill: #33ff33;
+  font-family: monospace;
+  font-size: 8px;
+  pointer-events: none;
+}
+
+/* v0.7.0 Feature 2: drag-to-place cursor */
+.slot[data-placement-pk] {
+  cursor: grab;
+}
+
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on &lt;html&gt; and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into &lt;object&gt;-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root &lt;svg&gt;.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover &gt; .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover &gt; .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.
@@ -255,7 +389,11 @@ svg.thumbnail .cabinet-label,
 svg.thumbnail .mount-label,
 svg.thumbnail .label,
 svg.thumbnail .device-image-label,
-svg.thumbnail .slot.empty-slot {
+svg.thumbnail .slot.empty-slot,
+svg.thumbnail .port-pin,
+svg.thumbnail .module-bay-outline,
+svg.thumbnail .lcd-bg,
+svg.thumbnail .lcd-text {
   display: none;
 }
 svg.thumbnail .mount,
@@ -304,10 +442,10 @@ svg.thumbnail .slot {
 }
 </ns0:style><ns0:clipPath id="n1-d245-clip-placement-185"><ns0:rect height="70" width="160.0" x="78.0" y="52.0" /></ns0:clipPath><ns0:clipPath id="n1-d245-clip-placement-186"><ns0:rect height="70" width="90.0" x="278.0" y="52.0" /></ns0:clipPath><ns0:clipPath id="n1-d245-clip-placement-187"><ns0:rect height="70" width="90.0" x="398.0" y="52.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="200.0" width="840.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="160.0" width="800.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">VFD aux DIN strip</ns0:text><ns0:rect class="mount din-rail" height="14" width="760.0" x="40.0" y="80.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/246/"><ns0:title>Name: 24 V PSU #1
 Role: Relay
-Type: 24 V DIN-mount PSU</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="78.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-185)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="158.0" y="87.0">24 V PSU #1</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/247/"><ns0:title>Name: VFD contactor KM1
+Type: 24 V DIN-mount PSU</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="49" data-mount-type="din_rail" data-orig-position="20" data-placement-pk="185" height="70" style="fill: #2196f3" width="160.0" x="78.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-185)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="158.0" y="87.0">24 V PSU #1</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/247/"><ns0:title>Name: VFD contactor KM1
 Role: Relay
-Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="278.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-186)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="323.0" y="87.0">VFD contacto…</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/248/"><ns0:title>Name: VFD contactor KM2
+Type: Motor contactor</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="49" data-mount-type="din_rail" data-orig-position="120" data-placement-pk="186" height="70" style="fill: #2196f3" width="90.0" x="278.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-186)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="323.0" y="87.0">VFD contacto…</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/248/"><ns0:title>Name: VFD contactor KM2
 Role: Relay
-Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="398.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-187)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="443.0" y="87.0">VFD contacto…</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="38.0" x="40.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=100"><ns0:title>Add placement at position 100</ns0:title><ns0:rect class="slot empty-slot" height="70" width="40.0" x="238.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=165"><ns0:title>Add placement at position 165</ns0:title><ns0:rect class="slot empty-slot" height="70" width="30.0" x="368.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=225"><ns0:title>Add placement at position 225</ns0:title><ns0:rect class="slot empty-slot" height="70" width="312.0" x="488.0" y="52.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="76.0">Aux rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/dcim/devices/244/"><title>Name: VFD-M1
+Type: Motor contactor</ns0:title><ns0:rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="49" data-mount-type="din_rail" data-orig-position="180" data-placement-pk="187" height="70" style="fill: #2196f3" width="90.0" x="398.0" y="52.0" /><ns0:text class="label" clip-path="url(#n1-d245-clip-placement-187)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="443.0" y="87.0">VFD contacto…</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=1"><ns0:title>Add placement at position 1</ns0:title><ns0:rect class="slot empty-slot" height="70" width="38.0" x="40.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=100"><ns0:title>Add placement at position 100</ns0:title><ns0:rect class="slot empty-slot" height="70" width="40.0" x="238.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=165"><ns0:title>Add placement at position 165</ns0:title><ns0:rect class="slot empty-slot" height="70" width="30.0" x="368.0" y="52.0" /></ns0:a><ns0:a target="_parent" ns1:href="/plugins/cabinet-view/placements/add/?mount=49&amp;position=225"><ns0:title>Add placement at position 225</ns0:title><ns0:rect class="slot empty-slot" height="70" width="312.0" x="488.0" y="52.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="76.0">Aux rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/dcim/devices/244/"><title>Name: VFD-M1
 Role: IPC
-Type: Variable frequency drive</title><rect class="slot" height="800.0" style="fill: #9c27b0" width="500.0" x="320.0" y="220.0" /><image class="device-image" clip-path="url(#clip-placement-183)" height="800.0" preserveAspectRatio="xMidYMid slice" width="500.0" x="320.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCAxMDAiPgogIDwhLS0gR2VuZXJpYyBESU4tcmFpbCAyNFYgREMgcG93ZXIgc3VwcGx5IOKAlCBkZS1icmFuZGVkIC0tPgogIDxyZWN0IHg9IjAuNSIgeT0iMC41IiB3aWR0aD0iMzkiIGhlaWdodD0iOTkiIHJ4PSIxIiBmaWxsPSIjM2EzYTNhIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPCEtLSBMYWJlbCBhcmVhIC0tPgogIDx0ZXh0IHg9IjIwIiB5PSIxMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0IiBmaWxsPSIjY2NjIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiPjI0ViBEQzwvdGV4dD4KICA8IS0tIFN0YXR1cyBMRUQgLS0+CiAgPGNpcmNsZSBjeD0iMjAiIGN5PSIxNyIgcj0iMiIgZmlsbD0iIzBhMCIgc3Ryb2tlPSIjMDgwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDx0ZXh0IHg9IjIwIiB5PSIyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiM4ODgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5QV1IgT0s8L3RleHQ+CiAgPCEtLSBPdXRwdXQgaW5kaWNhdG9yIGJhciAtLT4KICA8cmVjdCB4PSI4IiB5PSIyNyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjMiIHJ4PSIwLjUiIGZpbGw9IiMyMjIiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8cmVjdCB4PSI4IiB5PSIyNyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjMiIHJ4PSIwLjUiIGZpbGw9IiMwYTAiIG9wYWNpdHk9IjAuNiIvPgogIDwhLS0gVm9sdGFnZSBhZGp1c3RtZW50IHBvdCAtLT4KICA8Y2lyY2xlIGN4PSIzMyIgY3k9IjM3IiByPSIyLjUiIGZpbGw9IiM1NTUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMzMiIHkxPSIzNSIgeDI9IjMzIiB5Mj0iMzciIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8dGV4dCB4PSIyOCIgeT0iMzgiIHRleHQtYW5jaG9yPSJlbmQiIGZvbnQtc2l6ZT0iMiIgZmlsbD0iIzg4OCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkFESjwvdGV4dD4KICA8IS0tIE91dHB1dCB0ZXJtaW5hbHMgLS0+CiAgPHRleHQgeD0iMjAiIHk9IjQ3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuNSIgZmlsbD0iIzg4OCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk9VVFBVVDwvdGV4dD4KICA8cmVjdCB4PSI0IiB5PSI1MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIwLjUiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8dGV4dCB4PSI5IiB5PSI1NC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuNSIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPlYrPC90ZXh0PgogIDxyZWN0IHg9IjE2IiB5PSI1MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIwLjUiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8dGV4dCB4PSIyMSIgeT0iNTQuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5WLTwvdGV4dD4KICA8cmVjdCB4PSIyOCIgeT0iNTAiIHdpZHRoPSI4IiBoZWlnaHQ9IjYiIHJ4PSIwLjUiIGZpbGw9IiNjYzAiIHN0cm9rZT0iI2FhMCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8dGV4dCB4PSIzMiIgeT0iNTQuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5QRTwvdGV4dD4KICA8IS0tIElucHV0IHRlcm1pbmFscyAtLT4KICA8dGV4dCB4PSIyMCIgeT0iNjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMi41IiBmaWxsPSIjODg4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+SU5QVVQ8L3RleHQ+CiAgPHJlY3QgeD0iNCIgeT0iNjgiIHdpZHRoPSIxMCIgaGVpZ2h0PSI2IiByeD0iMC41IiBmaWxsPSIjYzBjMGMwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPHRleHQgeD0iOSIgeT0iNzIuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5MPC90ZXh0PgogIDxyZWN0IHg9IjE2IiB5PSI2OCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjYiIHJ4PSIwLjUiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8dGV4dCB4PSIyMSIgeT0iNzIuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyLjUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5OPC90ZXh0PgogIDxyZWN0IHg9IjI4IiB5PSI2OCIgd2lkdGg9IjgiIGhlaWdodD0iNiIgcng9IjAuNSIgZmlsbD0iI2NjMCIgc3Ryb2tlPSIjYWEwIiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDx0ZXh0IHg9IjMyIiB5PSI3Mi41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIuNSIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPlBFPC90ZXh0PgogIDwhLS0gRElOIHJhaWwgY2xpcCAtLT4KICA8cmVjdCB4PSI4IiB5PSI5MCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjYiIHJ4PSIxIiBmaWxsPSIjNTU1IiBzdHJva2U9IiM0NDQiIHN0cm9rZS13aWR0aD0iMC4zIi8+CiAgPGxpbmUgeDE9IjEwIiB5MT0iOTMiIHgyPSIzMCIgeTI9IjkzIiBzdHJva2U9IiM0NDQiIHN0cm9rZS13aWR0aD0iMC4zIi8+Cjwvc3ZnPg==" y="220.0" /><text class="device-image-label" clip-path="url(#clip-placement-183)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="570.0" y="620.0">VFD-M1</text><text class="device-image-label" clip-path="url(#clip-placement-183)" dominant-baseline="central" fill="white" text-anchor="middle" x="570.0" y="620.0">VFD-M1</text></a><rect class="slot empty-slot mount-2d" data-mm-per-px="0.5" data-mount-pk="48" data-origin-x="20.0" data-origin-y="20.0" fill-opacity="0" height="3520.0" width="1120.0" x="20.0" y="20.0" /><text class="mount-label" clip-path="url(#clip-mount-48-lbl)" x="24.0" y="34.0">Back plate</text></svg>
+Type: Variable frequency drive</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="48" data-mount-type="mounting_plate" data-orig-position-x="150" data-orig-position-y="100" data-placement-pk="183" height="800.0" style="fill: #9c27b0" width="500.0" x="320.0" y="220.0" /><image class="device-image" clip-path="url(#clip-placement-183)" height="800.0" preserveAspectRatio="xMidYMid slice" width="500.0" x="320.0" xlink:href="/media/devicetype-images/din-rail-devices-psu_3SzpGmr.svg" y="220.0" /><text class="device-image-label" clip-path="url(#clip-placement-183)" dominant-baseline="central" stroke="black" stroke-linejoin="round" stroke-width="0.2em" text-anchor="middle" x="570.0" y="620.0">VFD-M1</text><text class="device-image-label" clip-path="url(#clip-placement-183)" dominant-baseline="central" fill="white" text-anchor="middle" x="570.0" y="620.0">VFD-M1</text></a><rect class="slot empty-slot mount-2d" data-mm-per-px="0.5" data-mount-pk="48" data-origin-x="20.0" data-origin-y="20.0" fill-opacity="0" height="3520.0" width="1120.0" x="20.0" y="20.0" /><text class="mount-label" clip-path="url(#clip-mount-48-lbl)" x="24.0" y="34.0">Back plate</text></svg>
