@@ -18,13 +18,13 @@ The embedded interiors are rendered in thumbnail mode (diminished contrast, no p
 
 ### Industrial switch with port overlay — status-coloured interface pins
 
-![Industrial switch shelf with port overlay](docs/screenshots/E-industrial-switch.svg)
+![Industrial switch shelf with port overlay](docs/screenshots/E-industrial-switch.png)
 
 An 8-port managed switch on a DIN rail, with the v0.7.0 **port/connector overlay** rendering each `dcim.Interface` as a clickable pin. Green = connected + enabled, grey = unconnected, dark grey = disabled, amber = connected + disabled. Click a pin to jump to the interface detail page.
 
 ### Modular IED chassis — two-level module-bay overlay
 
-![Protection IED chassis with module bays](docs/screenshots/J-grid-ied.svg)
+![Protection IED chassis with module bays](docs/screenshots/J-grid-ied.png)
 
 A 2-row × 12-slot protection IED with PSU, CPU, binary I/O, analog I/O, Ethernet, and fibre comms modules. The host device's `port_map` defines where each module bay sits; each installed module's own `port_map` defines its pin positions. Protruding spring-cage terminals (DI/DO/AI) extend beyond the module bounds.
 

@@ -53,26 +53,26 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 
 | Scenario | Rendering |
 |---|---|
-| **1. Standalone DIN rail** | ![](screenshots/01-din-rail.svg) |
-| **2. Mounting plate + IPC** | ![](screenshots/02-mounting-plate.svg) |
-| **3. WDM 8-slot shelf (DeviceBay)** | ![](screenshots/03-wdm-8slot.svg) |
-| **4. WDM 2-slot shelf** | ![](screenshots/04-wdm-2slot.svg) |
-| **5. LV distribution busbar** | ![](screenshots/05-busbar.svg) |
-| **6. Modular PLC (ModuleBay)** | ![](screenshots/06-modular-plc.svg) |
-| **7. 2U rack DIN shelf** | ![](screenshots/07-din-shelf-2u.svg) |
-| **8. 4U rack DIN shelf — two stacked rails** | ![](screenshots/08-din-shelf-4u-two-rail.svg) |
-| **9. 4U rack DIN shelf — ISP single-rail** | ![](screenshots/09-din-shelf-4u-isp.svg) |
-| **A. Marshalling cabinet (20 terminal blocks)** | ![](screenshots/A-marshalling.svg) |
-| **B. MCC with withdrawable buckets** | ![](screenshots/B-mcc-cabinet.svg) |
-| **C. VFD control cabinet** | ![](screenshots/C-vfd-cabinet.svg) |
-| **D. Fieldbus remote I/O station** | ![](screenshots/D-fieldbus-remote-io.svg) |
-| **E. Industrial Ethernet switch** | ![](screenshots/E-industrial-switch.svg) |
-| **F. Safety relay panel** | ![](screenshots/F-safety-panel.svg) |
-| **G. Substation protection panel** | ![](screenshots/G-protection-panel.svg) |
-| **H. Vertical DIN wall box** | ![](screenshots/H-vertical-din-wall-box.svg) |
-| **I. Vertical Eurocard subrack** | ![](screenshots/I-vertical-subrack.svg) |
-| **J. Grid-mounted IED (multi-row span)** | ![](screenshots/J-grid-ied.svg) |
-| **K. ISP ODF (12-cassette grid)** | ![](screenshots/K-odf-chassis.svg) |
+| **1. Standalone DIN rail** | ![](screenshots/01-din-rail.png) |
+| **2. Mounting plate + IPC** | ![](screenshots/02-mounting-plate.png) |
+| **3. WDM 8-slot shelf (DeviceBay)** | ![](screenshots/03-wdm-8slot.png) |
+| **4. WDM 2-slot shelf** | ![](screenshots/04-wdm-2slot.png) |
+| **5. LV distribution busbar** | ![](screenshots/05-busbar.png) |
+| **6. Modular PLC (ModuleBay)** | ![](screenshots/06-modular-plc.png) |
+| **7. 2U rack DIN shelf** | ![](screenshots/07-din-shelf-2u.png) |
+| **8. 4U rack DIN shelf — two stacked rails** | ![](screenshots/08-din-shelf-4u-two-rail.png) |
+| **9. 4U rack DIN shelf — ISP single-rail** | ![](screenshots/09-din-shelf-4u-isp.png) |
+| **A. Marshalling cabinet (20 terminal blocks)** | ![](screenshots/A-marshalling.png) |
+| **B. MCC with withdrawable buckets** | ![](screenshots/B-mcc-cabinet.png) |
+| **C. VFD control cabinet** | ![](screenshots/C-vfd-cabinet.png) |
+| **D. Fieldbus remote I/O station** | ![](screenshots/D-fieldbus-remote-io.png) |
+| **E. Industrial Ethernet switch** | ![](screenshots/E-industrial-switch.png) |
+| **F. Safety relay panel** | ![](screenshots/F-safety-panel.png) |
+| **G. Substation protection panel** | ![](screenshots/G-protection-panel.png) |
+| **H. Vertical DIN wall box** | ![](screenshots/H-vertical-din-wall-box.png) |
+| **I. Vertical Eurocard subrack** | ![](screenshots/I-vertical-subrack.png) |
+| **J. Grid-mounted IED (multi-row span)** | ![](screenshots/J-grid-ied.png) |
+| **K. ISP ODF (12-cassette grid)** | ![](screenshots/K-odf-chassis.png) |
 
 ## OT/ICS coverage
 
