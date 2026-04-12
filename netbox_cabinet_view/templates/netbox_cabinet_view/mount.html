@@ -34,6 +34,10 @@
             <td>{{ object.get_unit_display }}</td>
           </tr>
           <tr>
+            <th scope="row">Face</th>
+            <td>{{ object.get_face_display|default:"Both" }}</td>
+          </tr>
+          <tr>
             <th scope="row">Description</th>
             <td>{{ object.description|default:"—" }}</td>
           </tr>

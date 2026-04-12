@@ -117,7 +117,7 @@ class CabinetLayoutSVG:
     """
 
     def __init__(self, host_device, user=None, base_url='', include_images=True,
-                 fit_width=None, fit_height=None, thumbnail=False):
+                 fit_width=None, fit_height=None, thumbnail=False, face=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -136,22 +136,30 @@ class CabinetLayoutSVG:
         # interior reads as "preview — zoom in to interact" instead of
         # pretending each module is a live click target.
         self.thumbnail = thumbnail
+        # Feature 1 (v0.5.0): per-face filtering. When set to 'front' or
+        # 'rear', only mounts with face=='' (both) or face==face_value are
+        # included. Used by the rack elevation patch so front-face rendering
+        # only draws front-face mounts, and rear only draws rear mounts.
+        self.face = face
 
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
 
         self.profile = getattr(host_device.device_type, 'cabinet_profile', None)
 
-        self.mounts = list(
-            host_device.cabinet_mounts.all().prefetch_related(
-                'placements__device__device_type',
-                'placements__device__role',
-                'placements__device_bay__installed_device__device_type',
-                'placements__device_bay__installed_device__role',
-                'placements__module_bay__installed_module__module_type',
-                'placements__module_bay__device__role',
-            )
+        mounts_qs = host_device.cabinet_mounts.all().prefetch_related(
+            'placements__device__device_type',
+            'placements__device__role',
+            'placements__device_bay__installed_device__device_type',
+            'placements__device_bay__installed_device__role',
+            'placements__module_bay__installed_module__module_type',
+            'placements__module_bay__device__role',
         )
+        # Feature 1: filter mounts by face when requested.
+        if face:
+            from django.db.models import Q
+            mounts_qs = mounts_qs.filter(Q(face='') | Q(face=face))
+        self.mounts = list(mounts_qs)
 
     # ------------------------------------------------------------------
     # Geometry helpers

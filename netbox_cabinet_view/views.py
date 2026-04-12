@@ -214,6 +214,9 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'ledger_sections': ledger_sections,
             # Feature 3 (v0.5.0): auto-provision button visibility.
             'has_bays': instance.devicebays.exists() or instance.modulebays.exists(),
+            # Feature 1 (v0.5.0): if any mount has an explicit face, the
+            # template renders two SVGs (front + rear) side by side.
+            'has_face_specific': any(m.face in ('front', 'rear') for m in mounts),
         }
 
 
@@ -325,6 +328,9 @@ class DeviceCabinetLayoutSVGView(View):
       labels, desaturated role colours). Used by the rack elevation
       patch so the embedded cabinet reads as a preview, not a live
       click target. Finding E, v0.4.0.
+    * ``?face=front|rear`` — render only mounts assigned to this face
+      (plus mounts with face='' which appear on both). Feature 1,
+      v0.5.0.
     """
 
     def get(self, request, pk):
@@ -335,6 +341,9 @@ class DeviceCabinetLayoutSVGView(View):
         except (ValueError, TypeError):
             fit_w = fit_h = None
         thumbnail = request.GET.get('thumb') in ('1', 'true', 'yes')
+        face = request.GET.get('face') or None
+        if face not in ('front', 'rear', None):
+            face = None
         svg = CabinetLayoutSVG(
             host_device=device,
             user=request.user,
@@ -343,5 +352,6 @@ class DeviceCabinetLayoutSVGView(View):
             fit_width=fit_w,
             fit_height=fit_h,
             thumbnail=thumbnail,
+            face=face,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')

@@ -111,7 +111,9 @@ def _make_face_patch(original, face_name: str):
                 # wrapper (they aren't — clicking lands on the HOST
                 # device via the core rack-elevation hyperlink, which
                 # is a click-target lie without the diminishment).
-                href = f'{url}?w={slot_w}&h={slot_h}&v={version}&thumb=1'
+                # Feature 1 (v0.5.0): pass the current face so the
+                # renderer only draws mounts assigned to this face.
+                href = f'{url}?w={slot_w}&h={slot_h}&v={version}&thumb=1&face={face_name}'
                 color = device.role.color if device.role_id else None
                 self._draw_device(
                     device, coords, size,

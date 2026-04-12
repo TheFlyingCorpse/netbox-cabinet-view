@@ -5,6 +5,7 @@ from dcim.models import Device, DeviceType, ModuleType
 from netbox.filtersets import NetBoxModelFilterSet
 
 from .choices import (
+    MountFaceChoices,
     MountSubtypeChoices,
     MountTypeChoices,
     OrientationChoices,
@@ -62,12 +63,13 @@ class MountFilterSet(NetBoxModelFilterSet):
     subtype = django_filters.MultipleChoiceFilter(choices=MountSubtypeChoices)
     orientation = django_filters.MultipleChoiceFilter(choices=OrientationChoices)
     unit = django_filters.MultipleChoiceFilter(choices=UnitChoices)
+    face = django_filters.MultipleChoiceFilter(choices=MountFaceChoices)
 
     class Meta:
         model = Mount
         fields = (
             'id', 'name', 'host_device_id',
-            'mount_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit', 'face',
         )
 
     def search(self, queryset, name, value):
