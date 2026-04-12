@@ -23,7 +23,8 @@
           </div>
           <div class="border rounded p-2 text-center">
             <object type="image/svg+xml"
-                    data="{% url 'dcim:device_cabinet_layout_svg' pk=host.pk %}"
+                    class="cabinet-svg-embed"
+                    data-src="{% url 'dcim:device_cabinet_layout_svg' pk=host.pk %}"
                     style="max-width: 100%; height: auto;"
                     aria-label="Cabinet layout for {{ host }}">
               Cabinet layout for {{ host }}
@@ -35,4 +36,37 @@
     </div>
   </div>
 </div>
+{# v0.7.1: propagate NetBox theme into <object>-embedded SVGs #}
+<script>
+(function() {
+  function getTheme() {
+    return localStorage.getItem('netbox-color-mode') ||
+           document.documentElement.getAttribute('data-bs-theme') || 'light';
+  }
+  function buildUrl(baseSrc, mode) {
+    var sep = baseSrc.indexOf('?') >= 0 ? '&' : '?';
+    return baseSrc + sep + 'theme=' + mode + '&_t=' + Date.now();
+  }
+  function initSVGs() {
+    var mode = getTheme();
+    document.querySelectorAll('.cabinet-svg-embed').forEach(function(obj) {
+      if (obj.getAttribute('data')) return;
+      var baseSrc = obj.getAttribute('data-src');
+      if (baseSrc) obj.setAttribute('data', buildUrl(baseSrc, mode));
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSVGs);
+  } else {
+    initSVGs();
+  }
+  window.addEventListener('netbox.colorModeChanged', function(evt) {
+    var newMode = (evt.detail && evt.detail.netboxColorMode) || getTheme();
+    document.querySelectorAll('.cabinet-svg-embed').forEach(function(obj) {
+      var baseSrc = obj.getAttribute('data-src');
+      if (baseSrc) obj.setAttribute('data', buildUrl(baseSrc, newMode));
+    });
+  });
+})();
+</script>
 {% endif %}

@@ -397,6 +397,9 @@ class DeviceCabinetLayoutSVGView(View):
         except (ValueError, TypeError):
             fit_w = fit_h = None
         thumbnail = request.GET.get('thumb') in ('1', 'true', 'yes')
+        theme = request.GET.get('theme') or None
+        if theme not in ('dark', 'light', None):
+            theme = None
         face = request.GET.get('face') or None
         if face not in ('front', 'rear', None):
             face = None
@@ -424,5 +427,6 @@ class DeviceCabinetLayoutSVGView(View):
             face=face,
             mount_only_pk=mount_only_pk,
             highlight=highlight or None,
+            theme=theme,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')

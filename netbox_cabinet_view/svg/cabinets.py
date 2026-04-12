@@ -148,7 +148,7 @@ class CabinetLayoutSVG:
     def __init__(self, host_device, user=None, base_url='', include_images=True,
                  fit_width=None, fit_height=None, thumbnail=False, face=None,
                  _depth=0, _visited=None,
-                 mount_only_pk=None, highlight=None):
+                 mount_only_pk=None, highlight=None, theme=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -167,6 +167,11 @@ class CabinetLayoutSVG:
         # interior reads as "preview — zoom in to interact" instead of
         # pretending each module is a live click target.
         self.thumbnail = thumbnail
+        # v0.7.1: explicit theme ('dark' or 'light'). When set, the root
+        # <svg> gets a 'dark' class and the CSS uses `svg.dark` selectors
+        # instead of relying on `@media (prefers-color-scheme: dark)` which
+        # doesn't see NetBox's data-bs-theme inside <object> embeds.
+        self.theme = theme
         # Feature 1 (v0.5.0): per-face filtering. When set to 'front' or
         # 'rear', only mounts with face=='' (both) or face==face_value are
         # included. Used by the rack elevation patch so front-face rendering
@@ -574,9 +579,16 @@ class CabinetLayoutSVG:
 
         # Finding E (v0.4.0): expose self.thumbnail on the root <svg>
         # element so the embedded stylesheet's `svg.thumbnail` rules
-        # take effect.
+        # take effect. v0.7.1: also add 'dark' class for theme.
+        classes = []
         if self.thumbnail:
-            dwg['class'] = 'thumbnail'
+            classes.append('thumbnail')
+        if self.theme == 'dark':
+            classes.append('dark')
+        elif self.theme == 'light':
+            classes.append('light')
+        if classes:
+            dwg['class'] = ' '.join(classes)
 
         dwg.defs.add(dwg.style(_EMBEDDED_CSS))
 
@@ -1123,6 +1135,7 @@ class CabinetLayoutSVG:
                     face=self.face,
                     _depth=nested_depth,
                     _visited=set(self._visited),  # copy to avoid cross-branch pollution
+                    theme=self.theme,
                 )
                 nested_svg = nested.render()
                 # Embed as a nested <svg> element inside the parent drawing,
@@ -1627,34 +1640,58 @@ a:hover > .slot.empty-slot,
   cursor: grab;
 }
 
-/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
- * which the embedding page propagates to <object> documents. */
+/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+ * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
+ * `data-bs-theme` on <html> and localStorage, which does NOT propagate
+ * `prefers-color-scheme` into <object>-embedded SVG documents.  The
+ * template JS reads the active theme and appends `?theme=dark` to the
+ * SVG URL so the renderer adds `class="dark"` to the root <svg>.
+ * A fallback `@media (prefers-color-scheme: dark)` block is kept for
+ * standalone SVG viewing (e.g. downloaded files, curl, direct URL). */
+svg.dark .svg-bg          { fill: #141619; }
+svg.dark .cabinet-outline { stroke: #6c7078; }
+svg.dark .cabinet-label   { fill: #c8ccd4; }
+
+svg.dark .mount                { stroke: #9aa2ad; }
+svg.dark .mount.din-rail       { fill: #4b5460; }
+svg.dark .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+svg.dark .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+svg.dark .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+svg.dark .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+svg.dark .mount-label          { fill: #c8ccd4; }
+
+svg.dark .slot        { stroke: #101114; }
+svg.dark .slot.empty  { fill: none; stroke: #5a6070; }
+svg.dark .label       { fill: #f3f3f3; }
+svg.dark .label.empty { fill: #7a8696; }
+
+svg.dark .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+svg.dark a:hover > .slot.empty-slot,
+svg.dark .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+
+svg.dark .port-pin { stroke: #888; }
+svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+
+/* Fallback for standalone SVG viewing (downloaded files, direct URL).
+ * Only applies when no explicit theme class is set by the server. */
 @media (prefers-color-scheme: dark) {
-  .svg-bg          { fill: #141619; }
-  .cabinet-outline { stroke: #6c7078; }
-  .cabinet-label   { fill: #c8ccd4; }
-
-  .mount                { stroke: #9aa2ad; }
-  .mount.din-rail       { fill: #4b5460; }
-  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
-  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
-  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
-  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
-  .mount-label          { fill: #c8ccd4; }
-
-  .slot        { stroke: #101114; }
-  .slot.empty  { fill: none; stroke: #5a6070; }
-  .label       { fill: #f3f3f3; }
-  .label.empty { fill: #7a8696; }
-
-  /* Finding C empty-slot affordance, dark-mode contrast. */
-  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
-  a:hover > .slot.empty-slot,
-  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
-
-  /* v0.7.0: dark-mode port pins and LCD */
-  .port-pin { stroke: #888; }
-  .lcd-bg   { fill: #0a0a0a; stroke: #555; }
+  svg:not(.dark):not(.light) .svg-bg          { fill: #141619; }
+  svg:not(.dark):not(.light) .cabinet-outline { stroke: #6c7078; }
+  svg:not(.dark):not(.light) .cabinet-label   { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .mount           { stroke: #9aa2ad; }
+  svg:not(.dark):not(.light) .mount.din-rail  { fill: #4b5460; }
+  svg:not(.dark):not(.light) .mount.subrack   { fill: #3b4451; stroke: #7a8696; }
+  svg:not(.dark):not(.light) .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  svg:not(.dark):not(.light) .mount.busbar    { fill: #a0661f; stroke: #f5b06a; }
+  svg:not(.dark):not(.light) .mount.grid.grid-row { fill: #454034; stroke: #a09777; }
+  svg:not(.dark):not(.light) .mount-label     { fill: #c8ccd4; }
+  svg:not(.dark):not(.light) .slot            { stroke: #101114; }
+  svg:not(.dark):not(.light) .slot.empty      { fill: none; stroke: #5a6070; }
+  svg:not(.dark):not(.light) .label           { fill: #f3f3f3; }
+  svg:not(.dark):not(.light) .label.empty     { fill: #7a8696; }
+  svg:not(.dark):not(.light) .slot.empty-slot { fill: rgba(129, 199, 132, 0.08); }
+  svg:not(.dark):not(.light) .port-pin        { stroke: #888; }
+  svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
 /* Thumbnail mode — Finding E, v0.4.0.

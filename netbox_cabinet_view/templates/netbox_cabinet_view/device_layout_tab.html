@@ -30,12 +30,14 @@
         {% if has_mounts %}
           {% if has_face_specific %}
             {# Feature 1 (v0.5.0): dual-SVG rendering when mounts have explicit faces. #}
+            {# v0.7.1: data-src instead of data — JS populates data with ?theme= appended. #}
             <div class="row g-0">
               <div class="col-6 border-end">
                 <div class="small text-muted py-1 border-bottom">Front</div>
                 <object type="image/svg+xml"
                         id="cabinet-layout-svg-embed"
-                        data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=front"
+                        class="cabinet-svg-embed"
+                        data-src="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=front"
                         style="max-width: 100%; height: auto;">
                   Cabinet layout (front) for {{ object }}
                 </object>
@@ -43,7 +45,8 @@
               <div class="col-6">
                 <div class="small text-muted py-1 border-bottom">Rear</div>
                 <object type="image/svg+xml"
-                        data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=rear"
+                        class="cabinet-svg-embed"
+                        data-src="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=rear"
                         style="max-width: 100%; height: auto;">
                   Cabinet layout (rear) for {{ object }}
                 </object>
@@ -52,7 +55,8 @@
           {% else %}
             <object type="image/svg+xml"
                     id="cabinet-layout-svg-embed"
-                    data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
+                    class="cabinet-svg-embed"
+                    data-src="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
                     style="max-width: 100%; height: auto;">
               Cabinet layout for {{ object }}
             </object>
@@ -120,6 +124,59 @@
 </div>
 
 {% if has_mounts %}
+{# =================================================================== #}
+{# v0.7.1: propagate NetBox dark/light theme into <object>-embedded    #}
+{# SVGs via a server-side `?theme=dark|light` query param.  The        #}
+{# <object> elements use `data-src` (not `data`) so the SVG never      #}
+{# loads without the theme param.  This script reads the active theme  #}
+{# from localStorage/data-bs-theme and sets the real `data` attribute  #}
+{# with `&theme=<mode>` appended, triggering the initial load.  On     #}
+{# theme toggle, it reloads all SVGs with the new theme.               #}
+{# =================================================================== #}
+<script>
+(function() {
+  function getTheme() {
+    return localStorage.getItem('netbox-color-mode') ||
+           document.documentElement.getAttribute('data-bs-theme') || 'light';
+  }
+
+  function buildUrl(baseSrc, mode) {
+    var sep = baseSrc.indexOf('?') >= 0 ? '&' : '?';
+    return baseSrc + sep + 'theme=' + mode + '&_t=' + Date.now();
+  }
+
+  // Initial load: set `data` from `data-src` + theme.  Deferred to
+  // DOMContentLoaded so NetBox's own colorMode init has run first
+  // (it writes localStorage on `window.load`, but data-bs-theme is
+  // set synchronously during its inline script).
+  function initSVGs() {
+    var mode = getTheme();
+    document.querySelectorAll('.cabinet-svg-embed').forEach(function(obj) {
+      if (obj.getAttribute('data')) return;  // already initialized
+      var baseSrc = obj.getAttribute('data-src');
+      if (baseSrc) obj.setAttribute('data', buildUrl(baseSrc, mode));
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSVGs);
+  } else {
+    initSVGs();
+  }
+
+  // On theme toggle, update SVG URLs. The browser may or may not
+  // re-fetch — if it doesn't, the user can refresh manually.  We
+  // avoid page-reload (causes infinite loops) and DOM replacement
+  // (unreliable in Safari).
+  window.addEventListener('netbox.colorModeChanged', function(evt) {
+    var newMode = (evt.detail && evt.detail.netboxColorMode) || getTheme();
+    document.querySelectorAll('.cabinet-svg-embed').forEach(function(obj) {
+      var baseSrc = obj.getAttribute('data-src');
+      if (baseSrc) obj.setAttribute('data', buildUrl(baseSrc, newMode));
+    });
+  });
+})();
+</script>
+
 {# =================================================================== #}
 {# Finding C (v0.4.0): 2D click-anywhere handler for mounting plates.  #}
 {#                                                                      #}
