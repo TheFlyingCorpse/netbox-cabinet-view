@@ -146,7 +146,8 @@ class CabinetLayoutSVG:
 
     def __init__(self, host_device, user=None, base_url='', include_images=True,
                  fit_width=None, fit_height=None, thumbnail=False, face=None,
-                 _depth=0, _visited=None):
+                 _depth=0, _visited=None,
+                 mount_only_pk=None, highlight=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -194,7 +195,12 @@ class CabinetLayoutSVG:
         if face:
             from django.db.models import Q
             mounts_qs = mounts_qs.filter(Q(face='') | Q(face=face))
+        # Feature 6: filter to a single mount for preview rendering.
+        if mount_only_pk:
+            mounts_qs = mounts_qs.filter(pk=mount_only_pk)
         self.mounts = list(mounts_qs)
+        # Feature 6: highlight dict for the live preview chip.
+        self.highlight = highlight
 
     # ------------------------------------------------------------------
     # Geometry helpers
@@ -1038,6 +1044,31 @@ class CabinetLayoutSVG:
         for mount, (ox, oy, cw, ch) in mount_bounds:
             self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
 
+        # Pass 4 (Feature 6, v0.5.0): highlight overlay for the live
+        # preview chip on the PlacementForm. Draws a green semi-
+        # transparent dashed rectangle at the proposed position.
+        if self.highlight and len(self.mounts) >= 1:
+            mount = self.mounts[0]
+            stub = _PlacementStub(
+                mount=mount,
+                position=self.highlight.get('position'),
+                size=self.highlight.get('size', 1),
+                row=self.highlight.get('row'),
+                row_span=self.highlight.get('row_span', 1),
+                position_x=self.highlight.get('position_x'),
+                position_y=self.highlight.get('position_y'),
+                size_x=self.highlight.get('size_x'),
+                size_y=self.highlight.get('size_y'),
+            )
+            try:
+                (hx, hy), (hw, hh) = self._placement_box_px(stub, mount)
+                dwg.add(Rect(
+                    insert=(hx, hy), size=(hw, hh),
+                    class_='highlight-placement',
+                ))
+            except (TypeError, ValueError, ZeroDivisionError):
+                pass  # invalid highlight params — skip silently
+
         return dwg.tostring()
 
 
@@ -1063,6 +1094,19 @@ _EMBEDDED_CSS = """
 .label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.

@@ -1,0 +1,77 @@
+{% extends 'generic/object_edit.html' %}
+
+{% block form %}
+  {{ block.super }}
+
+  {# ================================================================ #}
+  {# Feature 6 (v0.5.0): live preview chip.                           #}
+  {#                                                                   #}
+  {# Shows a small inline SVG below the form that updates when the     #}
+  {# user changes position/size fields. The green dashed rectangle     #}
+  {# shows where the proposed placement will land relative to          #}
+  {# existing placements on the mount.                                 #}
+  {#                                                                   #}
+  {# Only renders when a mount is selected (preview_base_url is set).  #}
+  {# Uses vanilla JS (not HTMX) to avoid content-type issues: the     #}
+  {# SVG endpoint returns image/svg+xml which <img> handles natively.  #}
+  {# ================================================================ #}
+  {% if preview_base_url %}
+  <div class="card mt-3">
+    <h5 class="card-header">Placement Preview</h5>
+    <div class="card-body text-center">
+      <img id="placement-preview"
+           data-preview-url="{{ preview_base_url }}"
+           style="display:none; max-width:100%; height:auto; max-height:120px;"
+           alt="Placement preview">
+      <div id="placement-preview-hint" class="text-muted small py-3">
+        Enter position values above to see a preview.
+      </div>
+    </div>
+  </div>
+  <script>
+  (function() {
+    var img = document.getElementById('placement-preview');
+    var hint = document.getElementById('placement-preview-hint');
+    if (!img) return;
+    var baseUrl = img.dataset.previewUrl;
+    var timer;
+
+    function updatePreview() {
+      var params = new URLSearchParams();
+      var fields = ['position', 'size', 'row', 'row_span',
+                    'position_x', 'position_y', 'size_x', 'size_y'];
+      var hasValue = false;
+      fields.forEach(function(name) {
+        var el = document.querySelector('[name="' + name + '"]');
+        if (el && el.value) {
+          params.set('highlight_' + name, el.value);
+          hasValue = true;
+        }
+      });
+      if (hasValue) {
+        img.src = baseUrl + '&' + params.toString();
+        img.style.display = 'block';
+        hint.style.display = 'none';
+      } else {
+        img.style.display = 'none';
+        hint.style.display = 'block';
+      }
+    }
+
+    // Debounced update on numeric input change.
+    document.querySelectorAll('input[type="number"], input[type="text"]').forEach(function(el) {
+      if (['position', 'size', 'row', 'row_span',
+           'position_x', 'position_y', 'size_x', 'size_y'].indexOf(el.name) >= 0) {
+        el.addEventListener('input', function() {
+          clearTimeout(timer);
+          timer = setTimeout(updatePreview, 300);
+        });
+      }
+    });
+
+    // Initial preview if fields are pre-filled (e.g. from GET params).
+    setTimeout(updatePreview, 200);
+  })();
+  </script>
+  {% endif %}
+{% endblock %}

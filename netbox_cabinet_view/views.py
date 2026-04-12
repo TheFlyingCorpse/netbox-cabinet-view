@@ -135,6 +135,32 @@ class PlacementView(generic.ObjectView):
 class PlacementEditView(generic.ObjectEditView):
     queryset = models.Placement.objects.all()
     form = forms.PlacementForm
+    template_name = 'netbox_cabinet_view/placement_edit.html'
+
+    def get_extra_context(self, request, instance):
+        # Feature 6 (v0.5.0): compute the preview base URL from the
+        # selected mount so the template's JS can build SVG URLs.
+        mount_pk = None
+        if instance and instance.mount_id:
+            mount_pk = instance.mount_id
+        elif 'mount' in request.GET:
+            mount_pk = request.GET.get('mount')
+        elif request.method == 'POST' and 'mount' in request.POST:
+            mount_pk = request.POST.get('mount')
+
+        preview_base_url = ''
+        if mount_pk:
+            try:
+                mount = models.Mount.objects.select_related('host_device').get(pk=mount_pk)
+                svg_url = reverse(
+                    'dcim:device_cabinet_layout_svg',
+                    kwargs={'pk': mount.host_device.pk},
+                )
+                preview_base_url = f'{svg_url}?mount_only={mount.pk}'
+            except (models.Mount.DoesNotExist, ValueError):
+                pass
+
+        return {'preview_base_url': preview_base_url}
 
 
 class PlacementDeleteView(generic.ObjectDeleteView):
@@ -344,6 +370,19 @@ class DeviceCabinetLayoutSVGView(View):
         face = request.GET.get('face') or None
         if face not in ('front', 'rear', None):
             face = None
+
+        # Feature 6 (v0.5.0): optional mount_only + highlight params
+        # for the live preview chip on the PlacementForm.
+        mount_only_pk = request.GET.get('mount_only') or None
+        highlight = {}
+        for key in ('position', 'size', 'row', 'position_x', 'position_y', 'size_x', 'size_y'):
+            val = request.GET.get(f'highlight_{key}')
+            if val:
+                try:
+                    highlight[key] = int(val)
+                except (ValueError, TypeError):
+                    pass
+
         svg = CabinetLayoutSVG(
             host_device=device,
             user=request.user,
@@ -353,5 +392,7 @@ class DeviceCabinetLayoutSVGView(View):
             fit_height=fit_h,
             thumbnail=thumbnail,
             face=face,
+            mount_only_pk=mount_only_pk,
+            highlight=highlight or None,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')
