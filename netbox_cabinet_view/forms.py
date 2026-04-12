@@ -86,6 +86,15 @@ class ModuleMountProfileForm(NetBoxModelForm):
         FieldSet('tags', name=_('Details')),
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['front_image'].help_text = _(
+            'Upload a front-panel image (SVG or PNG). The plugin ships bundled '
+            'line-art — run <code>manage.py cabinetview_assign_lineart --list</code> '
+            'to see available images, or <code>manage.py cabinetview_assign_lineart</code> '
+            'to auto-assign matching images to all profiles.'
+        )
+
     class Meta:
         model = ModuleMountProfile
         fields = (

@@ -66,6 +66,16 @@ menu = PluginMenu(
                 ),
             ),
         ),
+        (
+            'Resources',
+            (
+                PluginMenuItem(
+                    link='plugins:netbox_cabinet_view:line_art_gallery',
+                    link_text='Line-Art Gallery',
+                    permissions=[],
+                ),
+            ),
+        ),
     ),
     icon_class='mdi mdi-cabinet',
 )
