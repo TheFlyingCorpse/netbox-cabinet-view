@@ -23,6 +23,25 @@ from utilities.html import foreground_color
 from ..choices import MountTypeChoices, OrientationChoices
 
 
+class _RawSVGElement:
+    """
+    Wrapper that satisfies svgwrite's ``Drawing.add()`` interface
+    (which requires a ``get_xml()`` method returning an ElementTree
+    element) for raw XML strings. Used by Feature 2 (v0.5.0) to
+    embed a pre-rendered nested SVG string into the parent drawing
+    without parsing it through svgwrite's object model.
+    """
+
+    __slots__ = ('_xml_str',)
+
+    def __init__(self, xml_str):
+        self._xml_str = xml_str
+
+    def get_xml(self):
+        from xml.etree.ElementTree import fromstring
+        return fromstring(self._xml_str)
+
+
 def _fit_label(text: str, width_px: float, font_size: int = 11) -> str:
     """
     Return a version of ``text`` that fits horizontally in ``width_px``.
@@ -76,6 +95,9 @@ class PlacementTarget:
     color: str           # hex color without leading '#', or ''
     description: str
     empty: bool = False  # True for unpopulated device/module bays
+    # Feature 2 (v0.5.0): nested SVG recursion.
+    hosts_mounts: bool = False   # True if the resolved device itself hosts mounts
+    resolved_device: object = None  # The Device that is itself a mount-host (for recursion)
 
 
 @dataclass
@@ -116,8 +138,15 @@ class CabinetLayoutSVG:
         If False, only colored rectangles are drawn (useful for debugging).
     """
 
+    # Feature 2 (v0.5.0): max nesting depth for recursive cabinet-in-
+    # cabinet rendering. 3 levels covers the deepest real-world OT/ICS
+    # case: MCC cabinet → withdrawable bucket → DIN rail → (device
+    # that itself hosts something).
+    MAX_NESTING_DEPTH = 3
+
     def __init__(self, host_device, user=None, base_url='', include_images=True,
-                 fit_width=None, fit_height=None, thumbnail=False, face=None):
+                 fit_width=None, fit_height=None, thumbnail=False, face=None,
+                 _depth=0, _visited=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -141,6 +170,12 @@ class CabinetLayoutSVG:
         # included. Used by the rack elevation patch so front-face rendering
         # only draws front-face mounts, and rear only draws rear mounts.
         self.face = face
+        # Feature 2 (v0.5.0): recursion depth tracking. The top-level
+        # renderer has _depth=0. Each nested renderer increments by 1.
+        # Rendering stops when _depth >= MAX_NESTING_DEPTH.
+        self._depth = _depth
+        self._visited = _visited if _visited is not None else set()
+        self._visited.add(host_device.pk)
 
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
@@ -224,6 +259,14 @@ class CabinetLayoutSVG:
     # Target resolution
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _is_mount_host(device):
+        """Return True if the device itself hosts cabinet mounts."""
+        if device is None:
+            return False
+        profile = getattr(device.device_type, 'cabinet_profile', None)
+        return bool(profile and profile.hosts_mounts and device.cabinet_mounts.exists())
+
     def _resolve_target(self, placement) -> PlacementTarget:
         if placement.device_id:
             dev = placement.device
@@ -233,6 +276,8 @@ class CabinetLayoutSVG:
                 url=dev.get_absolute_url(),
                 color=getattr(dev.role, 'color', '') or '',
                 description=self._device_description(dev),
+                hosts_mounts=self._is_mount_host(dev),
+                resolved_device=dev,
             )
 
         if placement.device_bay_id:
@@ -253,6 +298,8 @@ class CabinetLayoutSVG:
                 url=child.get_absolute_url(),
                 color=getattr(child.role, 'color', '') or '',
                 description=self._device_description(child),
+                hosts_mounts=self._is_mount_host(child),
+                resolved_device=child,
             )
 
         if placement.module_bay_id:
@@ -611,6 +658,76 @@ class CabinetLayoutSVG:
     def _draw_placement(self, dwg, mount, placement):
         target = self._resolve_target(placement)
         (x, y), (w, h) = self._placement_box_px(placement, mount)
+
+        # Feature 2 (v0.5.0): nested SVG recursion. If the placed device
+        # is itself a mount-host with actual placements AND we haven't
+        # exceeded the nesting depth AND the device isn't already in
+        # our visited-hosts chain (circular-reference guard), render its
+        # interior inline as a miniature cabinet layout inside this
+        # placement's rectangle.
+        if (
+            target.hosts_mounts
+            and not self.thumbnail
+            and self._depth < self.MAX_NESTING_DEPTH
+            and target.resolved_device.pk not in self._visited
+        ):
+            try:
+                nested = CabinetLayoutSVG(
+                    host_device=target.resolved_device,
+                    user=self.user,
+                    base_url=self.base_url,
+                    include_images=False,     # no images in nested views
+                    fit_width=int(w),
+                    fit_height=int(h),
+                    thumbnail=True,           # visual diminishment
+                    face=self.face,
+                    _depth=self._depth + 1,
+                    _visited=set(self._visited),  # copy to avoid cross-branch pollution
+                )
+                nested_svg = nested.render()
+                # Embed as a nested <svg> element inside the parent drawing,
+                # positioned at this placement's bounding box.
+                import re as _re
+                # Extract the viewBox from the nested SVG.
+                vb_m = _re.search(r'viewBox="([^"]+)"', nested_svg)
+                vb = vb_m.group(1) if vb_m else f'0 0 {int(w)} {int(h)}'
+                # Strip the outer <svg>...</svg> wrapper.
+                inner = _re.sub(r'^.*?<svg\b[^>]*>', '', nested_svg, count=1, flags=_re.DOTALL)
+                inner = _re.sub(r'</svg>\s*$', '', inner, count=1, flags=_re.DOTALL)
+                # Namespace clipPath IDs to avoid collision with the parent.
+                dev_pk = target.resolved_device.pk
+                prefix = f'n{self._depth + 1}-d{dev_pk}-'
+                inner = _re.sub(
+                    r'\bid="([^"]*)"',
+                    lambda m: f'id="{prefix}{m.group(1)}"',
+                    inner,
+                )
+                inner = _re.sub(
+                    r'\bclip-path="url\(#([^)]*)\)"',
+                    lambda m: f'clip-path="url(#{prefix}{m.group(1)})"',
+                    inner,
+                )
+                # Build the nested <svg> element manually as raw XML.
+                # Must declare xlink namespace because the inner SVG
+                # may contain xlink:href attributes on <image> and
+                # <a> elements (svgwrite emits these for compatibility).
+                nested_tag = (
+                    f'<svg x="{x}" y="{y}" width="{w}" height="{h}" '
+                    f'viewBox="{vb}" preserveAspectRatio="xMidYMid meet" '
+                    f'overflow="hidden" '
+                    f'xmlns="http://www.w3.org/2000/svg" '
+                    f'xmlns:xlink="http://www.w3.org/1999/xlink" '
+                    f'xmlns:ev="http://www.w3.org/2001/xml-events">'
+                    f'{inner}</svg>'
+                )
+                # svgwrite's Drawing.add() requires objects with a
+                # get_xml() method; raw ET elements don't have it.
+                # _RawSVGElement wraps the XML string to satisfy the
+                # interface.
+                dwg.add(_RawSVGElement(nested_tag))
+                return  # skip the normal image/label drawing
+            except Exception:
+                pass  # fall through to normal rendering on any error
 
         href = (f'{self.base_url}{target.url}') if target.url.startswith('/') else target.url
         link = Hyperlink(href=href, target='_parent')
