@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 88">
+  <!-- Generic 2U DIN-rail shelf — de-branded -->
+  <!-- Light bezel -->
+  <rect x="0.5" y="0.5" width="439" height="87" rx="2" fill="#d0d0d0" stroke="#888" stroke-width="1"/>
+  <rect x="4" y="4" width="432" height="80" rx="1" fill="#e0e0e0" stroke="#aaa" stroke-width="0.5"/>
+  <!-- Vents above rail -->
+  <rect x="40" y="10" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="120" y="10" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="200" y="10" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="280" y="10" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="360" y="10" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <!-- DIN rail (center) -->
+  <rect x="20" y="36" width="400" height="16" rx="0.5" fill="#999" stroke="#777" stroke-width="0.5"/>
+  <line x1="20" y1="39" x2="420" y2="39" stroke="#aaa" stroke-width="0.3"/>
+  <line x1="20" y1="49" x2="420" y2="49" stroke="#888" stroke-width="0.3"/>
+  <path d="M20 36 L24 32 L416 32 L420 36" fill="none" stroke="#888" stroke-width="0.4"/>
+  <path d="M20 52 L24 56 L416 56 L420 52" fill="none" stroke="#888" stroke-width="0.4"/>
+  <!-- Vents below rail -->
+  <rect x="40" y="64" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="120" y="64" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="200" y="64" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="280" y="64" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="360" y="64" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <!-- Cable entry knockouts on sides -->
+  <circle cx="10" cy="44" r="4" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+  <circle cx="430" cy="44" r="4" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+</svg>

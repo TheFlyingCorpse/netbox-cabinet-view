@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 50">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg>

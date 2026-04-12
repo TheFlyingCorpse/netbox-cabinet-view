@@ -1,0 +1,455 @@
+{
+  "version": "0.6.0",
+  "categories": [
+    {
+      "id": "ied-type-a",
+      "name": "IED modules (Type A)",
+      "mount_type": "grid",
+      "inspired_by": "GE Multilin UR-series",
+      "form_factor": "Narrow vertical backplane cards",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "ied-type-a/psu.svg",
+          "name": "Power supply module",
+          "description": "48V DC PSU with status LEDs and backplane connector"
+        },
+        {
+          "file": "ied-type-a/cpu.svg",
+          "name": "CPU module",
+          "description": "Main processor with LCD, keypad, and status LEDs"
+        },
+        {
+          "file": "ied-type-a/analog-io.svg",
+          "name": "Analog I/O module",
+          "description": "CT/PT analog inputs with terminal block and status LEDs"
+        },
+        {
+          "file": "ied-type-a/binary-io.svg",
+          "name": "Binary I/O module",
+          "description": "Digital input/output with LED indicators and screw terminals"
+        },
+        {
+          "file": "ied-type-a/comms-2slot.svg",
+          "name": "Communications module (2-slot)",
+          "description": "Double-wide Ethernet and fibre comms with SFP cages"
+        }
+      ]
+    },
+    {
+      "id": "ied-type-b",
+      "name": "IED modules (Type B)",
+      "mount_type": "grid",
+      "inspired_by": "Siemens SIPROTEC-series",
+      "form_factor": "Narrow vertical backplane cards",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "ied-type-b/cpu.svg",
+          "name": "CPU module",
+          "description": "Processor with horizontal LCD strip, pushbuttons, and vertical LED column"
+        },
+        {
+          "file": "ied-type-b/analog-io.svg",
+          "name": "Analog I/O module",
+          "description": "CT/PT inputs with bar-graph indicators and screw terminals"
+        },
+        {
+          "file": "ied-type-b/binary-io.svg",
+          "name": "Binary I/O module",
+          "description": "Digital I/O with vertical LED bars and screw terminals"
+        },
+        {
+          "file": "ied-type-b/eth-plugin.svg",
+          "name": "Ethernet plug-in module",
+          "description": "Ethernet communications plug-in card"
+        }
+      ]
+    },
+    {
+      "id": "ied-type-c",
+      "name": "IED modules (Type C)",
+      "mount_type": "grid",
+      "inspired_by": "ABB Relion-series",
+      "form_factor": "Narrow vertical backplane cards, warm tones",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "ied-type-c/cpu.svg",
+          "name": "CPU module",
+          "description": "Processor with warm-tone body and heavier terminal blocks"
+        },
+        {
+          "file": "ied-type-c/comms.svg",
+          "name": "Communications module",
+          "description": "Dual RJ45, DB9, and SFP cage in warm-tone enclosure"
+        },
+        {
+          "file": "ied-type-c/ct-pt.svg",
+          "name": "CT/PT module",
+          "description": "Current/voltage transformer input module with heavy terminals"
+        }
+      ]
+    },
+    {
+      "id": "ied-type-d",
+      "name": "IED modules (Type D)",
+      "mount_type": "grid",
+      "inspired_by": "Compact protection relay platform",
+      "form_factor": "Narrow vertical backplane cards, grey-blue tones",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "ied-type-d/cpu.svg",
+          "name": "CPU module",
+          "description": "Compact processor with dot-matrix display and grey-blue body"
+        },
+        {
+          "file": "ied-type-d/io.svg",
+          "name": "I/O module",
+          "description": "Mixed input/output with LEDs and spring-cage terminals"
+        }
+      ]
+    },
+    {
+      "id": "rtu-type-a",
+      "name": "RTU modules (Type A)",
+      "mount_type": "grid",
+      "inspired_by": "ABB RTU520 / Sprecher MC-series",
+      "form_factor": "DIN-mount RTU I/O cards",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "rtu-type-a/cpu.svg",
+          "name": "CPU/gateway module",
+          "description": "RTU main processor with Ethernet, serial, and status LEDs"
+        },
+        {
+          "file": "rtu-type-a/ai-4ch.svg",
+          "name": "4-channel analog input",
+          "description": "4-20mA/voltage analog input module with DIN mount"
+        },
+        {
+          "file": "rtu-type-a/di-8ch.svg",
+          "name": "8-channel digital input",
+          "description": "Compact digital input module with LED indicators"
+        },
+        {
+          "file": "rtu-type-a/do-4ch.svg",
+          "name": "4-channel digital output",
+          "description": "Relay digital output module with DIN mount"
+        }
+      ]
+    },
+    {
+      "id": "rtu-type-b",
+      "name": "RTU modules (Type B)",
+      "mount_type": "grid",
+      "inspired_by": "Siemens SICAM-series",
+      "form_factor": "Wider industrial grey DIN-mount cards",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "rtu-type-b/cpu.svg",
+          "name": "CPU module",
+          "description": "Wide industrial grey processor with LCD and network ports"
+        },
+        {
+          "file": "rtu-type-b/comms.svg",
+          "name": "Communications module",
+          "description": "Dual RJ45, SFP, and DB9 serial in industrial grey body"
+        },
+        {
+          "file": "rtu-type-b/di.svg",
+          "name": "Digital input module",
+          "description": "16-channel DI with two columns of green LEDs and spring-cage terminals"
+        },
+        {
+          "file": "rtu-type-b/do.svg",
+          "name": "Digital output module",
+          "description": "8-channel DO with red LED column and relay terminals"
+        }
+      ]
+    },
+    {
+      "id": "rtu-type-c",
+      "name": "RTU modules (Type C)",
+      "mount_type": "grid",
+      "inspired_by": "Beige/cream RTU platform",
+      "form_factor": "Beige DIN-mount cards with colored band accents",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "rtu-type-c/cpu.svg",
+          "name": "CPU module",
+          "description": "Beige/cream processor with blue accent band"
+        },
+        {
+          "file": "rtu-type-c/comms.svg",
+          "name": "Communications module",
+          "description": "Beige comms with blue band, dual Ethernet, SFP, and serial"
+        },
+        {
+          "file": "rtu-type-c/di.svg",
+          "name": "Digital input module",
+          "description": "Beige DI with green accent band and DIN mount"
+        },
+        {
+          "file": "rtu-type-c/ao.svg",
+          "name": "Analog output module",
+          "description": "Beige AO with yellow accent band and bar indicators"
+        }
+      ]
+    },
+    {
+      "id": "rtu-type-d",
+      "name": "RTU modules (Type D)",
+      "mount_type": "grid",
+      "inspired_by": "Nordic RTU platform",
+      "form_factor": "Light grey DIN-mount cards with colored band accents",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "rtu-type-d/cpu.svg",
+          "name": "CPU module",
+          "description": "Light grey processor with blue accent band"
+        },
+        {
+          "file": "rtu-type-d/comms.svg",
+          "name": "Communications module",
+          "description": "Light grey comms with teal band, Ethernet, serial, and SFP"
+        },
+        {
+          "file": "rtu-type-d/di.svg",
+          "name": "Digital input module",
+          "description": "Light grey DI with orange band and two-column LEDs"
+        },
+        {
+          "file": "rtu-type-d/do.svg",
+          "name": "Digital output module",
+          "description": "Light grey DO with red band and relay LEDs"
+        }
+      ]
+    },
+    {
+      "id": "plc-fieldbus",
+      "name": "PLC/fieldbus I/O modules",
+      "mount_type": "grid",
+      "inspired_by": "Generic fieldbus I/O platform",
+      "form_factor": "Narrow DIN-mount fieldbus slices",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "plc-fieldbus/coupler.svg",
+          "name": "Bus coupler",
+          "description": "Fieldbus coupler head-station with network ports and bus connector"
+        },
+        {
+          "file": "plc-fieldbus/ai-4ch.svg",
+          "name": "4-channel analog input",
+          "description": "Narrow analog input slice with LED indicators"
+        },
+        {
+          "file": "plc-fieldbus/di-8ch.svg",
+          "name": "8-channel digital input",
+          "description": "Narrow digital input slice with 8 status LEDs"
+        },
+        {
+          "file": "plc-fieldbus/do-4ch.svg",
+          "name": "4-channel digital output",
+          "description": "Narrow digital output (relay) slice with 4 status LEDs"
+        }
+      ]
+    },
+    {
+      "id": "din-rail-devices",
+      "name": "DIN-rail standalone devices",
+      "mount_type": "din_rail",
+      "inspired_by": "Generic industrial DIN-rail components",
+      "form_factor": "Standard DIN-rail mounted devices and accessories",
+      "image_for": "DeviceMountProfile.front_image",
+      "items": [
+        {
+          "file": "din-rail-devices/mcb.svg",
+          "name": "Miniature circuit breaker",
+          "description": "Single-pole MCB with toggle lever, trip indicator, and screw terminals"
+        },
+        {
+          "file": "din-rail-devices/contactor.svg",
+          "name": "Contactor",
+          "description": "DIN-rail contactor with coil terminals and power contacts"
+        },
+        {
+          "file": "din-rail-devices/relay.svg",
+          "name": "Relay",
+          "description": "DIN-rail relay with indicator LED and 4 screw terminals"
+        },
+        {
+          "file": "din-rail-devices/psu.svg",
+          "name": "DIN-rail power supply",
+          "description": "24V DC DIN-rail power supply unit"
+        },
+        {
+          "file": "din-rail-devices/terminal.svg",
+          "name": "Terminal block",
+          "description": "2.5mm2 screw terminal block with bridge slot"
+        },
+        {
+          "file": "din-rail-devices/surge-protector.svg",
+          "name": "Surge protection device",
+          "description": "SPD with yellow-green earth stripe, status window, and two terminals"
+        },
+        {
+          "file": "din-rail-devices/fuse-terminal.svg",
+          "name": "Fuse terminal block",
+          "description": "Fuse holder terminal block with visible fuse slot and screw terminals"
+        },
+        {
+          "file": "din-rail-devices/ground-terminal.svg",
+          "name": "Ground/earth terminal",
+          "description": "Yellow-green PE terminal block with bolt terminal and earth symbol"
+        },
+        {
+          "file": "din-rail-devices/end-stop.svg",
+          "name": "End stop",
+          "description": "DIN-rail end stop clip with L-shaped profile"
+        },
+        {
+          "file": "din-rail-devices/blanking-plate.svg",
+          "name": "Blanking plate",
+          "description": "Empty slot cover plate for unused DIN-rail positions"
+        }
+      ]
+    },
+    {
+      "id": "host-chassis",
+      "name": "Host chassis and enclosures",
+      "mount_type": "rack",
+      "inspired_by": "Generic industrial enclosures and rack shelves",
+      "form_factor": "Rack-mount chassis, cabinets, and DIN-rail shelves",
+      "image_for": "DeviceType.front_image",
+      "items": [
+        {
+          "file": "host-chassis/din-shelf-2u.svg",
+          "name": "2U DIN-rail shelf",
+          "description": "2U rack-mount shelf with DIN rail, vents, and cable entry knockouts"
+        },
+        {
+          "file": "host-chassis/din-shelf-4u.svg",
+          "name": "4U DIN-rail shelf",
+          "description": "4U rack-mount shelf with DIN rail and ventilation"
+        },
+        {
+          "file": "host-chassis/ied-2row.svg",
+          "name": "IED 2-row chassis",
+          "description": "Wide-body IED chassis with 2-row backplane for protection relay modules"
+        },
+        {
+          "file": "host-chassis/mcc-panel.svg",
+          "name": "MCC panel",
+          "description": "Full-height motor control center cabinet front panel"
+        },
+        {
+          "file": "host-chassis/odf-1u.svg",
+          "name": "1U ODF frame",
+          "description": "1U optical distribution frame for fibre patching"
+        },
+        {
+          "file": "host-chassis/rtu-din.svg",
+          "name": "RTU DIN enclosure",
+          "description": "DIN-rail shelf enclosure sized for RTU module stacks"
+        },
+        {
+          "file": "host-chassis/vfd-cabinet.svg",
+          "name": "VFD cabinet",
+          "description": "Full-height variable frequency drive cabinet"
+        },
+        {
+          "file": "host-chassis/wdm-1u.svg",
+          "name": "1U WDM shelf",
+          "description": "1U wavelength-division multiplexing shelf for optical networking"
+        }
+      ]
+    },
+    {
+      "id": "transceivers",
+      "name": "Transceivers and port modules",
+      "mount_type": "grid",
+      "inspired_by": "Standard SFP/QSFP form factors",
+      "form_factor": "Small pluggable transceiver front faces",
+      "image_for": "ModuleMountProfile.front_image",
+      "items": [
+        {
+          "file": "transceivers/sfp-fibre.svg",
+          "name": "SFP fibre transceiver",
+          "description": "SFP module front face with dual LC fibre ports"
+        },
+        {
+          "file": "transceivers/sfp-rj45.svg",
+          "name": "SFP RJ45 transceiver",
+          "description": "SFP copper module front face with RJ45 port"
+        },
+        {
+          "file": "transceivers/qsfp28-fibre.svg",
+          "name": "QSFP28 fibre transceiver",
+          "description": "QSFP28 module front face with MPO fibre connector"
+        },
+        {
+          "file": "transceivers/empty-cage.svg",
+          "name": "Empty SFP cage",
+          "description": "Empty transceiver cage slot with no module installed"
+        }
+      ]
+    },
+    {
+      "id": "busbar-components",
+      "name": "Busbar components",
+      "mount_type": "fixed",
+      "inspired_by": "Generic copper busbar distribution systems",
+      "form_factor": "Copper busbars, supports, and distribution blocks",
+      "image_for": "DeviceMountProfile.front_image",
+      "items": [
+        {
+          "file": "busbar-components/busbar-segment.svg",
+          "name": "Busbar segment",
+          "description": "Copper busbar segment with mounting holes and cross-section profile"
+        },
+        {
+          "file": "busbar-components/busbar-support.svg",
+          "name": "Busbar support insulator",
+          "description": "Grey insulator block with busbar channel slot and mounting bolt"
+        },
+        {
+          "file": "busbar-components/busbar-tap.svg",
+          "name": "Busbar tap-off bracket",
+          "description": "Copper L-shaped tap-off with bolt hole and cable lug terminal"
+        },
+        {
+          "file": "busbar-components/power-distribution-block.svg",
+          "name": "Power distribution block",
+          "description": "125A distribution block with one input and four output terminals"
+        }
+      ]
+    },
+    {
+      "id": "cable-management",
+      "name": "Cable management",
+      "mount_type": "fixed",
+      "inspired_by": "Generic cable management accessories",
+      "form_factor": "Cable routing and entry components",
+      "image_for": "DeviceMountProfile.front_image",
+      "items": [
+        {
+          "file": "cable-management/cable-gland.svg",
+          "name": "Cable gland",
+          "description": "Top-view cable gland with hexagonal nut and center cable hole"
+        },
+        {
+          "file": "cable-management/cable-duct.svg",
+          "name": "Slotted cable duct",
+          "description": "Cross-section of slotted cable duct with finger slots on both sides"
+        }
+      ]
+    }
+  ]
+}

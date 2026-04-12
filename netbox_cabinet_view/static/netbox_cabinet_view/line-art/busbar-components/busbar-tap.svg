@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
+  <!-- Generic busbar tap-off bracket — de-branded -->
+  <!-- L-shaped copper bracket -->
+  <path d="M2 2 L28 2 L28 8 L8 8 L8 28 L2 28 Z" fill="#c47a2c" stroke="#8a5520" stroke-width="0.5"/>
+  <!-- Surface highlight -->
+  <path d="M3 3 L27 3 L27 7 L7 7 L7 27 L3 27 Z" fill="none" stroke="#d89040" stroke-width="0.3" opacity="0.5"/>
+  <!-- Bolt hole on horizontal arm -->
+  <circle cx="20" cy="5" r="2" fill="none" stroke="#8a5520" stroke-width="0.4"/>
+  <circle cx="20" cy="5" r="0.6" fill="#8a5520"/>
+  <!-- Cable lug terminal on vertical arm -->
+  <circle cx="5" cy="20" r="3" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <circle cx="5" cy="20" r="1" fill="none" stroke="#666" stroke-width="0.3"/>
+</svg>

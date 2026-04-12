@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Type B CPU — wider horizontal LCD, inspired by SIPROTEC-style layout -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#2a2a30" stroke="#555" stroke-width="0.5"/>
+  <!-- Label strip (top) -->
+  <rect x="2" y="2" width="26" height="8" rx="0.5" fill="#3a3a44" stroke="#555" stroke-width="0.3"/>
+  <text x="15" y="8" text-anchor="middle" font-size="3.5" fill="#aab" font-family="sans-serif">CPU</text>
+  <!-- Horizontal LCD strip -->
+  <rect x="3" y="14" width="24" height="8" rx="1" fill="#0a0a12" stroke="#446" stroke-width="0.4"/>
+  <text x="15" y="20" text-anchor="middle" font-size="2.8" fill="#5577aa" font-family="monospace">ONLINE</text>
+  <!-- 4 pushbuttons in a row -->
+  <rect x="4" y="26" width="5" height="4" rx="0.5" fill="#333" stroke="#555" stroke-width="0.2"/>
+  <rect x="10.5" y="26" width="5" height="4" rx="0.5" fill="#333" stroke="#555" stroke-width="0.2"/>
+  <rect x="17" y="26" width="5" height="4" rx="0.5" fill="#333" stroke="#555" stroke-width="0.2"/>
+  <rect x="23.5" y="26" width="3" height="4" rx="0.5" fill="#444" stroke="#555" stroke-width="0.2"/>
+  <!-- 6 LEDs vertical column -->
+  <circle cx="8" cy="37" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="8" cy="42" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="8" cy="47" r="1.2" fill="#4a4a1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="8" cy="52" r="1.2" fill="#4a1e1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="8" cy="57" r="1.2" fill="#1e1e4a" stroke="#444" stroke-width="0.2"/>
+  <circle cx="8" cy="62" r="1.2" fill="#1e1e4a" stroke="#444" stroke-width="0.2"/>
+  <!-- LED labels -->
+  <text x="15" y="38" font-size="2" fill="#666" font-family="sans-serif">RUN</text>
+  <text x="15" y="43" font-size="2" fill="#666" font-family="sans-serif">COMM</text>
+  <text x="15" y="48" font-size="2" fill="#666" font-family="sans-serif">WARN</text>
+  <text x="15" y="53" font-size="2" fill="#666" font-family="sans-serif">ERR</text>
+  <text x="15" y="58" font-size="2" fill="#666" font-family="sans-serif">I/O A</text>
+  <text x="15" y="63" font-size="2" fill="#666" font-family="sans-serif">I/O B</text>
+  <!-- USB port -->
+  <rect x="10" y="70" width="10" height="5" rx="0.5" fill="#111" stroke="#555" stroke-width="0.3"/>
+  <text x="15" y="80" text-anchor="middle" font-size="2" fill="#555" font-family="sans-serif">USB</text>
+  <!-- Backplane -->
+  <rect x="3" y="85" width="24" height="12" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="87" width="20" height="8" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

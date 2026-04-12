@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14">
+  <!-- SFP RJ45 copper — front face only -->
+  <rect x="0.5" y="0.5" width="13" height="13" rx="0.5" fill="#888" stroke="#666" stroke-width="0.4"/>
+  <!-- RJ45 jack opening -->
+  <rect x="2.5" y="2.5" width="9" height="9" rx="1" fill="#222" stroke="#555" stroke-width="0.3"/>
+  <rect x="3.5" y="3.5" width="7" height="6" rx="0.5" fill="#111" stroke="#4a6a4a" stroke-width="0.3"/>
+  <!-- Link/activity LEDs -->
+  <circle cx="4" cy="11.5" r="0.7" fill="#2a6a2a" stroke="#444" stroke-width="0.15"/>
+  <circle cx="10" cy="11.5" r="0.7" fill="#6a6a2a" stroke="#444" stroke-width="0.15"/>
+</svg>

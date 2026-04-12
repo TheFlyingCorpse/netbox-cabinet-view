@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 70">
+  <!-- Generic surge protection device — de-branded -->
+  <rect x="0.5" y="0.5" width="17" height="69" rx="1" fill="#e0e0e0" stroke="#999" stroke-width="0.5"/>
+  <!-- Yellow-green earth stripe at top -->
+  <rect x="0.5" y="0.5" width="17" height="8" rx="1" fill="#bfca44" stroke="#999" stroke-width="0.5"/>
+  <rect x="2" y="2" width="5" height="5" fill="#bfca44"/>
+  <rect x="7" y="2" width="4" height="5" fill="#e0c030"/>
+  <rect x="11" y="2" width="5" height="5" fill="#bfca44"/>
+  <!-- Status indicator window -->
+  <rect x="5" y="14" width="8" height="6" rx="1" fill="#0a0" stroke="#888" stroke-width="0.3"/>
+  <text x="9" y="18.5" text-anchor="middle" font-size="2.5" fill="#fff" font-family="sans-serif">OK</text>
+  <!-- Rating label -->
+  <text x="9" y="28" text-anchor="middle" font-size="4" fill="#333" font-family="sans-serif" font-weight="bold">SPD</text>
+  <!-- Top terminal -->
+  <circle cx="9" cy="36" r="2.5" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="7.5" y1="34.5" x2="10.5" y2="37.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Bottom terminal -->
+  <circle cx="9" cy="48" r="2.5" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="7.5" y1="46.5" x2="10.5" y2="49.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip -->
+  <rect x="3" y="61" width="12" height="5" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <line x1="5" y1="63.5" x2="13" y2="63.5" stroke="#777" stroke-width="0.3"/>
+</svg>

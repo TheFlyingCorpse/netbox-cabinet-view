@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 14" width="20" height="14">
+  <!-- QSFP28 fibre — front face only (wider than SFP) -->
+  <rect x="0.5" y="0.5" width="19" height="13" rx="0.5" fill="#777" stroke="#555" stroke-width="0.4"/>
+  <!-- MPO/MTP aperture -->
+  <rect x="3" y="2" width="14" height="8" rx="1" fill="#1a1a1a" stroke="#444" stroke-width="0.3"/>
+  <rect x="5" y="3.5" width="10" height="5" rx="0.5" fill="#111" stroke="#333" stroke-width="0.2"/>
+  <!-- Pull tab color stripe -->
+  <rect x="2" y="11" width="16" height="2" rx="0.3" fill="#5a8abf" stroke="#4a7aaf" stroke-width="0.2"/>
+</svg>

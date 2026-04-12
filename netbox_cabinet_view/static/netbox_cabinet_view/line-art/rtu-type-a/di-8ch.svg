@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 100" width="24" height="100">
+  <!-- RTU/PLC DI module — DIN-mount form factor, narrower body -->
+  <!-- Inspired by compact fieldbus I/O (WAGO/Sprecher-style) -->
+  <rect x="0.5" y="0.5" width="23" height="99" rx="0.5" fill="#e8e4d8" stroke="#999" stroke-width="0.5"/>
+  <!-- Top color band (orange = digital input convention) -->
+  <rect x="0.5" y="0.5" width="23" height="8" rx="0.5" fill="#d4722a" stroke="#999" stroke-width="0.5"/>
+  <text x="12" y="6" text-anchor="middle" font-size="3.5" fill="#fff" font-family="sans-serif" font-weight="bold">DI</text>
+  <!-- Channel status LEDs (8 channels, 2 columns) -->
+  <circle cx="6" cy="14" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="14" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="6" cy="19" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="19" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="6" cy="24" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="24" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="6" cy="29" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="29" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <!-- Channel numbers -->
+  <text x="18" y="15" font-size="2" fill="#666" font-family="sans-serif">1-2</text>
+  <text x="18" y="20" font-size="2" fill="#666" font-family="sans-serif">3-4</text>
+  <text x="18" y="25" font-size="2" fill="#666" font-family="sans-serif">5-6</text>
+  <text x="18" y="30" font-size="2" fill="#666" font-family="sans-serif">7-8</text>
+  <!-- Bus/power status LEDs -->
+  <rect x="3" y="34" width="18" height="6" rx="0.5" fill="#ddd8cc" stroke="#aaa" stroke-width="0.3"/>
+  <circle cx="7" cy="37" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="37" r="1" fill="#6a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="37" r="1" fill="#6a2a2a" stroke="#888" stroke-width="0.2"/>
+  <!-- Spring-cage terminals (top group) -->
+  <rect x="2" y="44" width="20" height="24" rx="0.5" fill="#ccc8bc" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="46" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="9" y="46" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="14" y="46" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="19" y="46" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="4" y="53" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="9" y="53" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="14" y="53" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="19" y="53" width="3" height="4" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <!-- Label area -->
+  <rect x="3" y="72" width="18" height="10" rx="0.5" fill="#fff" stroke="#bbb" stroke-width="0.3"/>
+  <text x="12" y="79" text-anchor="middle" font-size="2.8" fill="#555" font-family="sans-serif">8×DI 24VDC</text>
+  <!-- DIN rail clip (bottom) -->
+  <rect x="2" y="86" width="20" height="12" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="5" y="89" width="14" height="6" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

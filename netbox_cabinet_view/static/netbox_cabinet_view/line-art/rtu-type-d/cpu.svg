@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 100" width="40" height="100">
+  <!-- RTU Type D CPU — light grey, blue band, Nordic RTU style -->
+  <rect x="0.5" y="0.5" width="39" height="99" rx="1" fill="#ccc8bc" stroke="#999" stroke-width="0.5"/>
+  <!-- Blue band at top -->
+  <rect x="0.5" y="0.5" width="39" height="10" rx="1" fill="#2a6a7a" stroke="#999" stroke-width="0.5"/>
+  <text x="20" y="7.5" text-anchor="middle" font-size="4" fill="#fff" font-family="sans-serif" font-weight="bold">RTU</text>
+  <!-- Small LCD -->
+  <rect x="5" y="14" width="30" height="10" rx="1" fill="#0a1a0a" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="20" y="21" text-anchor="middle" font-size="3" fill="#4a8a4a" font-family="monospace">IEC 104</text>
+  <!-- Status LEDs -->
+  <rect x="5" y="28" width="30" height="7" rx="0.5" fill="#c4c0b4" stroke="#aaa" stroke-width="0.3"/>
+  <circle cx="10" cy="31.5" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="31.5" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="24" cy="31.5" r="1.2" fill="#6a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="31" cy="31.5" r="1.2" fill="#6a2a2a" stroke="#888" stroke-width="0.2"/>
+  <text x="10" y="29" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">RUN</text>
+  <text x="17" y="29" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">COM</text>
+  <text x="24" y="29" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">WRN</text>
+  <text x="31" y="29" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">ERR</text>
+  <!-- Ethernet port -->
+  <text x="14" y="42" text-anchor="middle" font-size="2" fill="#777" font-family="sans-serif">ETH</text>
+  <rect x="5" y="44" width="14" height="8" rx="1" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <circle cx="21" cy="47" r="0.8" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <!-- Serial port -->
+  <text x="32" y="42" text-anchor="middle" font-size="2" fill="#777" font-family="sans-serif">SER</text>
+  <rect x="24" y="44" width="14" height="6" rx="1" fill="#111" stroke="#888" stroke-width="0.3"/>
+  <rect x="26" y="46" width="10" height="2" rx="1" fill="#1a1a1a" stroke="#666" stroke-width="0.2"/>
+  <!-- Label area -->
+  <rect x="5" y="58" width="30" height="6" rx="0.5" fill="#fff" stroke="#bbb" stroke-width="0.3"/>
+  <text x="20" y="63" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">IEC 61850 / 104</text>
+  <!-- DIN rail clip -->
+  <rect x="5" y="82" width="30" height="14" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="8" y="85" width="24" height="8" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

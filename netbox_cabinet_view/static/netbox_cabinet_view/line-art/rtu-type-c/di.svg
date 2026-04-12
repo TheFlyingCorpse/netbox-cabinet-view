@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 100" width="24" height="100">
+  <!-- RTU Type C DI — beige, green band, DIN-mount -->
+  <rect x="0.5" y="0.5" width="23" height="99" rx="1" fill="#d0ccc0" stroke="#999" stroke-width="0.5"/>
+  <!-- Green band at top -->
+  <rect x="0.5" y="0.5" width="23" height="10" rx="1" fill="#2a6a3a" stroke="#999" stroke-width="0.5"/>
+  <text x="12" y="7.5" text-anchor="middle" font-size="3.5" fill="#fff" font-family="sans-serif" font-weight="bold">DI</text>
+  <!-- 8 channel LEDs -->
+  <circle cx="7" cy="16" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="21" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="26" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="31" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="36" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="41" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="46" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="51" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <text x="14" y="17" font-size="1.5" fill="#777" font-family="sans-serif">1</text>
+  <text x="14" y="22" font-size="1.5" fill="#777" font-family="sans-serif">2</text>
+  <text x="14" y="27" font-size="1.5" fill="#777" font-family="sans-serif">3</text>
+  <text x="14" y="32" font-size="1.5" fill="#777" font-family="sans-serif">4</text>
+  <text x="14" y="37" font-size="1.5" fill="#777" font-family="sans-serif">5</text>
+  <text x="14" y="42" font-size="1.5" fill="#777" font-family="sans-serif">6</text>
+  <text x="14" y="47" font-size="1.5" fill="#777" font-family="sans-serif">7</text>
+  <text x="14" y="52" font-size="1.5" fill="#777" font-family="sans-serif">8</text>
+  <!-- Spring-cage terminals -->
+  <rect x="3" y="56" width="18" height="20" rx="1" fill="#bbb8a8" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="58" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="58" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="62" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="62" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="66" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="66" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="70" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="70" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <!-- Bus status LED strip -->
+  <rect x="3" y="78" width="18" height="4" rx="0.5" fill="#c8c4b8" stroke="#aaa" stroke-width="0.3"/>
+  <circle cx="8" cy="80" r="0.8" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="16" cy="80" r="0.8" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <!-- DIN rail clip -->
+  <rect x="3" y="85" width="18" height="12" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="5" y="87" width="14" height="8" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

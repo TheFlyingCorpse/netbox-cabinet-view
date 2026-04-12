@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Type D CPU — compact, grey-blue, dot-matrix display -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#25252e" stroke="#556" stroke-width="0.5"/>
+  <!-- Label strip -->
+  <rect x="2" y="2" width="26" height="8" rx="0.5" fill="#2e2e38" stroke="#556" stroke-width="0.3"/>
+  <text x="15" y="8" text-anchor="middle" font-size="3.5" fill="#99a" font-family="sans-serif">CPU</text>
+  <!-- Dot-matrix display area -->
+  <rect x="5" y="14" width="20" height="12" rx="1" fill="#0a0a12" stroke="#446" stroke-width="0.4"/>
+  <!-- Grid pattern suggesting dot-matrix -->
+  <g fill="#334" opacity="0.6">
+    <rect x="7" y="16" width="1" height="1" rx="0.2"/><rect x="9" y="16" width="1" height="1" rx="0.2"/>
+    <rect x="11" y="16" width="1" height="1" rx="0.2"/><rect x="13" y="16" width="1" height="1" rx="0.2"/>
+    <rect x="15" y="16" width="1" height="1" rx="0.2"/><rect x="17" y="16" width="1" height="1" rx="0.2"/>
+    <rect x="19" y="16" width="1" height="1" rx="0.2"/><rect x="21" y="16" width="1" height="1" rx="0.2"/>
+    <rect x="7" y="18" width="1" height="1" rx="0.2"/><rect x="9" y="18" width="1" height="1" rx="0.2"/>
+    <rect x="11" y="18" width="1" height="1" rx="0.2"/><rect x="13" y="18" width="1" height="1" rx="0.2"/>
+    <rect x="15" y="18" width="1" height="1" rx="0.2"/><rect x="17" y="18" width="1" height="1" rx="0.2"/>
+    <rect x="19" y="18" width="1" height="1" rx="0.2"/><rect x="21" y="18" width="1" height="1" rx="0.2"/>
+    <rect x="7" y="20" width="1" height="1" rx="0.2"/><rect x="9" y="20" width="1" height="1" rx="0.2"/>
+    <rect x="11" y="20" width="1" height="1" rx="0.2"/><rect x="13" y="20" width="1" height="1" rx="0.2"/>
+    <rect x="15" y="20" width="1" height="1" rx="0.2"/><rect x="17" y="20" width="1" height="1" rx="0.2"/>
+    <rect x="19" y="20" width="1" height="1" rx="0.2"/><rect x="21" y="20" width="1" height="1" rx="0.2"/>
+    <rect x="7" y="22" width="1" height="1" rx="0.2"/><rect x="9" y="22" width="1" height="1" rx="0.2"/>
+    <rect x="11" y="22" width="1" height="1" rx="0.2"/><rect x="13" y="22" width="1" height="1" rx="0.2"/>
+    <rect x="15" y="22" width="1" height="1" rx="0.2"/><rect x="17" y="22" width="1" height="1" rx="0.2"/>
+    <rect x="19" y="22" width="1" height="1" rx="0.2"/><rect x="21" y="22" width="1" height="1" rx="0.2"/>
+  </g>
+  <!-- 2 pushbuttons -->
+  <rect x="7" y="30" width="6" height="4" rx="1" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <rect x="17" y="30" width="6" height="4" rx="1" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <!-- 4 LEDs -->
+  <circle cx="8" cy="40" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="41" font-size="1.8" fill="#667" font-family="sans-serif">RUN</text>
+  <circle cx="8" cy="46" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="47" font-size="1.8" fill="#667" font-family="sans-serif">COM</text>
+  <circle cx="8" cy="52" r="1.2" fill="#4a4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="53" font-size="1.8" fill="#667" font-family="sans-serif">WRN</text>
+  <circle cx="8" cy="58" r="1.2" fill="#4a1e1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="59" font-size="1.8" fill="#667" font-family="sans-serif">ERR</text>
+  <!-- USB port -->
+  <rect x="9" y="65" width="12" height="5" rx="0.5" fill="#111" stroke="#555" stroke-width="0.3"/>
+  <text x="15" y="74" text-anchor="middle" font-size="2" fill="#556" font-family="sans-serif">USB</text>
+  <!-- Backplane connector -->
+  <rect x="3" y="84" width="24" height="13" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="86" width="20" height="9" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Type B Ethernet plug-in comms module -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#1a2a2a" stroke="#555" stroke-width="0.5"/>
+  <!-- Label strip -->
+  <rect x="2" y="2" width="26" height="8" rx="0.5" fill="#1a3a3a" stroke="#556" stroke-width="0.3"/>
+  <text x="15" y="8" text-anchor="middle" font-size="3.5" fill="#8cc" font-family="sans-serif">ETH</text>
+  <!-- RJ45 port 1 -->
+  <text x="15" y="20" text-anchor="middle" font-size="2" fill="#667" font-family="sans-serif">P1</text>
+  <rect x="7" y="22" width="16" height="10" rx="1" fill="#0a0a0a" stroke="#4a6a6a" stroke-width="0.4"/>
+  <rect x="9" y="24" width="12" height="6" rx="0.5" fill="#111" stroke="#333" stroke-width="0.2"/>
+  <!-- P1 LEDs -->
+  <circle cx="8" cy="36" r="1" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="22" cy="36" r="1" fill="#1e3a3a" stroke="#444" stroke-width="0.2"/>
+  <text x="8" y="40" text-anchor="middle" font-size="1.5" fill="#556" font-family="sans-serif">LNK</text>
+  <text x="22" y="40" text-anchor="middle" font-size="1.5" fill="#556" font-family="sans-serif">ACT</text>
+  <!-- RJ45 port 2 -->
+  <text x="15" y="47" text-anchor="middle" font-size="2" fill="#667" font-family="sans-serif">P2</text>
+  <rect x="7" y="49" width="16" height="10" rx="1" fill="#0a0a0a" stroke="#4a6a6a" stroke-width="0.4"/>
+  <rect x="9" y="51" width="12" height="6" rx="0.5" fill="#111" stroke="#333" stroke-width="0.2"/>
+  <!-- P2 LEDs -->
+  <circle cx="8" cy="63" r="1" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <circle cx="22" cy="63" r="1" fill="#1e3a3a" stroke="#444" stroke-width="0.2"/>
+  <text x="8" y="67" text-anchor="middle" font-size="1.5" fill="#556" font-family="sans-serif">LNK</text>
+  <text x="22" y="67" text-anchor="middle" font-size="1.5" fill="#556" font-family="sans-serif">ACT</text>
+  <!-- Backplane connector -->
+  <rect x="3" y="84" width="24" height="13" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="86" width="20" height="9" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

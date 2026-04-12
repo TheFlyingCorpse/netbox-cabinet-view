@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 50">
+  <!-- Generic fuse terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="11.4" height="49.4" rx="0.5" fill="#d8d0b8" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="6" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="4.5" y1="5.5" x2="7.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Fuse holder slot -->
+  <rect x="3" y="17" width="6" height="10" rx="1" fill="#c8c0a8" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="19.5" width="4" height="5" rx="2" fill="#e0d8c0" stroke="#aaa" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="6" y="33" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif" font-weight="bold">FU</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="6" cy="39" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="4.5" y1="37.5" x2="7.5" y2="40.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip -->
+  <rect x="2" y="44" width="8" height="3.5" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg>
