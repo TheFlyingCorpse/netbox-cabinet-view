@@ -15,6 +15,7 @@ class CabinetViewConfig(PluginConfig):
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
+    graphql_schema = 'graphql.schema.schema'
     # All APIs used (NetBoxModel, ViewTab, register_model_view, get_model_urls,
     # PluginTemplateExtension `models` list) are present in 4.4.0. Active
     # development and testing happens against 4.5.x.

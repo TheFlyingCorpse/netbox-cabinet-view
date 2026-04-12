@@ -90,6 +90,7 @@ The sections below live in [`docs/`](docs/) to keep this README scannable:
 - [`docs/scenarios.md`](docs/scenarios.md) — the full 20-scenario demo gallery with tables describing each scenario, plus OT/ICS coverage and ISP-specific notes.
 - [`docs/certification-ratings.md`](docs/certification-ratings.md) — why environmental / certification metadata (IP, NEMA, Ex, temperature, SIL, fire, seismic, …) lives in NetBox custom fields instead of plugin models, with a recommended baseline of fields to create on `dcim.rack` and `dcim.devicetype`.
 - [`docs/offline.md`](docs/offline.md) — how the plugin is fully offline-safe at runtime (no CDNs, no external fonts, no runtime HTTP calls) for OT/ICS / air-gapped / classified deployments.
+- [`docs/line-art.md`](docs/line-art.md) — the bundled library of generic, de-branded front-panel SVGs that ship as ready-to-use placeholder images for modules and host devices.
 - [`docs/roadmap.md`](docs/roadmap.md) — what's not in v0.4.0 and why (Krone LSA, strut channel, nested SVG recursion, Okabe-Ito palette, drag-to-place UI, …) and what is explicitly NOT on the roadmap (environmental custom fields, standard 19″ patch cabling).
 
 ## Security & supply chain
