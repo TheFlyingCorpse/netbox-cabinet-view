@@ -221,42 +221,342 @@ svg.thumbnail .slot {
 }
 ]]></style><clipPath id="clip-placement-154"><rect height="70" width="12.0" x="58.0" y="168.0" /></clipPath><clipPath id="clip-placement-155"><rect height="70" width="12.0" x="70.0" y="168.0" /></clipPath><clipPath id="clip-placement-156"><rect height="70" width="12.0" x="82.0" y="168.0" /></clipPath><clipPath id="clip-placement-157"><rect height="70" width="12.0" x="94.0" y="168.0" /></clipPath><clipPath id="clip-placement-158"><rect height="70" width="12.0" x="106.0" y="168.0" /></clipPath><clipPath id="clip-placement-159"><rect height="70" width="12.0" x="118.0" y="168.0" /></clipPath><clipPath id="clip-placement-160"><rect height="70" width="12.0" x="130.0" y="168.0" /></clipPath><clipPath id="clip-placement-161"><rect height="70" width="12.0" x="142.0" y="168.0" /></clipPath><clipPath id="clip-placement-162"><rect height="70" width="12.0" x="154.0" y="168.0" /></clipPath><clipPath id="clip-placement-163"><rect height="70" width="12.0" x="166.0" y="168.0" /></clipPath><clipPath id="clip-placement-164"><rect height="70" width="12.0" x="178.0" y="168.0" /></clipPath><clipPath id="clip-placement-165"><rect height="70" width="12.0" x="190.0" y="168.0" /></clipPath><clipPath id="clip-placement-166"><rect height="70" width="12.0" x="202.0" y="168.0" /></clipPath><clipPath id="clip-placement-167"><rect height="70" width="12.0" x="214.0" y="168.0" /></clipPath><clipPath id="clip-placement-168"><rect height="70" width="12.0" x="226.0" y="168.0" /></clipPath><clipPath id="clip-placement-169"><rect height="70" width="12.0" x="238.0" y="168.0" /></clipPath><clipPath id="clip-placement-170"><rect height="70" width="12.0" x="250.0" y="168.0" /></clipPath><clipPath id="clip-placement-171"><rect height="70" width="12.0" x="262.0" y="168.0" /></clipPath><clipPath id="clip-placement-172"><rect height="70" width="12.0" x="274.0" y="168.0" /></clipPath><clipPath id="clip-placement-173"><rect height="70" width="12.0" x="286.0" y="168.0" /></clipPath></defs><rect class="svg-bg" height="390.0" width="920.0" x="0" y="0" /><rect class="cabinet-outline" height="350.0" width="880.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Marshalling Cabinet #1</text><rect class="mount din-rail" height="14" width="840.0" x="40.0" y="196.0" /><a target="_parent" xlink:href="/dcim/devices/213/"><title>Name: TB01
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="10" data-placement-pk="154" height="70" style="fill: #607d8b" width="12.0" x="58.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-154)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="58.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/214/"><title>Name: TB02
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="10" data-placement-pk="154" height="70" style="fill: #607d8b" width="12.0" x="58.0" y="168.0" /><svg x="58.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-154)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/214/"><title>Name: TB02
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="16" data-placement-pk="155" height="70" style="fill: #607d8b" width="12.0" x="70.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-155)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="70.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/215/"><title>Name: TB03
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="16" data-placement-pk="155" height="70" style="fill: #607d8b" width="12.0" x="70.0" y="168.0" /><svg x="70.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-155)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/215/"><title>Name: TB03
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="22" data-placement-pk="156" height="70" style="fill: #607d8b" width="12.0" x="82.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-156)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="82.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/216/"><title>Name: TB04
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="22" data-placement-pk="156" height="70" style="fill: #607d8b" width="12.0" x="82.0" y="168.0" /><svg x="82.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-156)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/216/"><title>Name: TB04
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="28" data-placement-pk="157" height="70" style="fill: #607d8b" width="12.0" x="94.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-157)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="94.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/217/"><title>Name: TB05
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="28" data-placement-pk="157" height="70" style="fill: #607d8b" width="12.0" x="94.0" y="168.0" /><svg x="94.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-157)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/217/"><title>Name: TB05
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="34" data-placement-pk="158" height="70" style="fill: #607d8b" width="12.0" x="106.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-158)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="106.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/218/"><title>Name: TB06
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="34" data-placement-pk="158" height="70" style="fill: #607d8b" width="12.0" x="106.0" y="168.0" /><svg x="106.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-158)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/218/"><title>Name: TB06
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="40" data-placement-pk="159" height="70" style="fill: #607d8b" width="12.0" x="118.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-159)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="118.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/219/"><title>Name: TB07
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="40" data-placement-pk="159" height="70" style="fill: #607d8b" width="12.0" x="118.0" y="168.0" /><svg x="118.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-159)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/219/"><title>Name: TB07
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="46" data-placement-pk="160" height="70" style="fill: #607d8b" width="12.0" x="130.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-160)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="130.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/220/"><title>Name: TB08
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="46" data-placement-pk="160" height="70" style="fill: #607d8b" width="12.0" x="130.0" y="168.0" /><svg x="130.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-160)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/220/"><title>Name: TB08
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="52" data-placement-pk="161" height="70" style="fill: #607d8b" width="12.0" x="142.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-161)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="142.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/221/"><title>Name: TB09
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="52" data-placement-pk="161" height="70" style="fill: #607d8b" width="12.0" x="142.0" y="168.0" /><svg x="142.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-161)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/221/"><title>Name: TB09
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="58" data-placement-pk="162" height="70" style="fill: #607d8b" width="12.0" x="154.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-162)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="154.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/222/"><title>Name: TB10
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="58" data-placement-pk="162" height="70" style="fill: #607d8b" width="12.0" x="154.0" y="168.0" /><svg x="154.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-162)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/222/"><title>Name: TB10
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="64" data-placement-pk="163" height="70" style="fill: #607d8b" width="12.0" x="166.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-163)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="166.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/223/"><title>Name: TB11
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="64" data-placement-pk="163" height="70" style="fill: #607d8b" width="12.0" x="166.0" y="168.0" /><svg x="166.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-163)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/223/"><title>Name: TB11
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="70" data-placement-pk="164" height="70" style="fill: #607d8b" width="12.0" x="178.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-164)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="178.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/224/"><title>Name: TB12
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="70" data-placement-pk="164" height="70" style="fill: #607d8b" width="12.0" x="178.0" y="168.0" /><svg x="178.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-164)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/224/"><title>Name: TB12
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="76" data-placement-pk="165" height="70" style="fill: #607d8b" width="12.0" x="190.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-165)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="190.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/225/"><title>Name: TB13
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="76" data-placement-pk="165" height="70" style="fill: #607d8b" width="12.0" x="190.0" y="168.0" /><svg x="190.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-165)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/225/"><title>Name: TB13
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="82" data-placement-pk="166" height="70" style="fill: #607d8b" width="12.0" x="202.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-166)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="202.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/226/"><title>Name: TB14
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="82" data-placement-pk="166" height="70" style="fill: #607d8b" width="12.0" x="202.0" y="168.0" /><svg x="202.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-166)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/226/"><title>Name: TB14
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="88" data-placement-pk="167" height="70" style="fill: #607d8b" width="12.0" x="214.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-167)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="214.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/227/"><title>Name: TB15
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="88" data-placement-pk="167" height="70" style="fill: #607d8b" width="12.0" x="214.0" y="168.0" /><svg x="214.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-167)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/227/"><title>Name: TB15
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="94" data-placement-pk="168" height="70" style="fill: #607d8b" width="12.0" x="226.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-168)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="226.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/228/"><title>Name: TB16
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="94" data-placement-pk="168" height="70" style="fill: #607d8b" width="12.0" x="226.0" y="168.0" /><svg x="226.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-168)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/228/"><title>Name: TB16
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="100" data-placement-pk="169" height="70" style="fill: #607d8b" width="12.0" x="238.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-169)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="238.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/229/"><title>Name: TB17
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="100" data-placement-pk="169" height="70" style="fill: #607d8b" width="12.0" x="238.0" y="168.0" /><svg x="238.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-169)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/229/"><title>Name: TB17
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="106" data-placement-pk="170" height="70" style="fill: #607d8b" width="12.0" x="250.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-170)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="250.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/230/"><title>Name: TB18
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="106" data-placement-pk="170" height="70" style="fill: #607d8b" width="12.0" x="250.0" y="168.0" /><svg x="250.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-170)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/230/"><title>Name: TB18
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="112" data-placement-pk="171" height="70" style="fill: #607d8b" width="12.0" x="262.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-171)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="262.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/231/"><title>Name: TB19
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="112" data-placement-pk="171" height="70" style="fill: #607d8b" width="12.0" x="262.0" y="168.0" /><svg x="262.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-171)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/231/"><title>Name: TB19
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="118" data-placement-pk="172" height="70" style="fill: #607d8b" width="12.0" x="274.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-172)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="274.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/dcim/devices/232/"><title>Name: TB20
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="118" data-placement-pk="172" height="70" style="fill: #607d8b" width="12.0" x="274.0" y="168.0" /><svg x="274.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-172)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/dcim/devices/232/"><title>Name: TB20
 Role: Rail
-Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="124" data-placement-pk="173" height="70" style="fill: #607d8b" width="12.0" x="286.0" y="168.0" /><image class="device-image" clip-path="url(#clip-placement-173)" height="70" preserveAspectRatio="xMidYMid slice" width="12.0" x="286.0" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUwIj4KICA8IS0tIEdlbmVyaWMgRElOLXJhaWwgdGVybWluYWwgYmxvY2sg4oCUIGRlLWJyYW5kZWQgLS0+CiAgPHJlY3QgeD0iMC4zIiB5PSIwLjMiIHdpZHRoPSI3LjQiIGhlaWdodD0iNDkuNCIgcng9IjAuNSIgZmlsbD0iI2Q4ZDBjMCIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjAuMyIvPgogIDwhLS0gVG9wIHNjcmV3IHRlcm1pbmFsIC0tPgogIDxjaXJjbGUgY3g9IjQiIGN5PSI3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iNS41IiB4Mj0iNS41IiB5Mj0iOC41IiBzdHJva2U9IiM2NjYiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDb25uZWN0aW9uIGJyaWRnZSBzbG90IC0tPgogIDxyZWN0IHg9IjIiIHk9IjE5IiB3aWR0aD0iNCIgaGVpZ2h0PSIyLjUiIHJ4PSIwLjMiIGZpbGw9IiNiMGE4OTAiIHN0cm9rZT0iIzk5OSIgc3Ryb2tlLXdpZHRoPSIwLjIiLz4KICA8IS0tIExhYmVsIC0tPgogIDx0ZXh0IHg9IjQiIHk9IjI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMiIGZpbGw9IiM1NTUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4yLjU8L3RleHQ+CiAgPCEtLSBCb3R0b20gc2NyZXcgdGVybWluYWwgLS0+CiAgPGNpcmNsZSBjeD0iNCIgY3k9IjM3IiByPSIyLjIiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIwLjMiLz4KICA8bGluZSB4MT0iMi41IiB5MT0iMzUuNSIgeDI9IjUuNSIgeTI9IjM4LjUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8IS0tIERJTiBjbGlwIChtaW5pbWFsKSAtLT4KICA8cmVjdCB4PSIxLjUiIHk9IjQ0IiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMC41IiBmaWxsPSIjOTk5IiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMC4yIi8+Cjwvc3ZnPg==" y="168.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=43&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="70" width="18.0" x="40.0" y="168.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=43&amp;position=130"><title>Add placement at position 130</title><rect class="slot empty-slot" height="70" width="582.0" x="298.0" y="168.0" /></a><text class="mount-label" x="44.0" y="192.0">Terminal rail</text></svg>
+Type: DIN-mount terminal block</title><rect class="slot" data-mm-per-px="0.5" data-mm-per-unit="1.0" data-mount-pk="43" data-mount-type="din_rail" data-orig-position="124" data-placement-pk="173" height="70" style="fill: #607d8b" width="12.0" x="286.0" y="168.0" /><svg x="286.0" y="168.0" width="12.0" height="70" viewBox="0 0 8 50" preserveAspectRatio="xMidYMid slice" overflow="hidden" clip-path="url(#clip-placement-173)" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic DIN-rail terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#d8d0c0" stroke="#999" stroke-width="0.3"/>
+  <!-- Top screw terminal -->
+  <circle cx="4" cy="7" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="5.5" x2="5.5" y2="8.5" stroke="#666" stroke-width="0.4"/>
+  <!-- Connection bridge slot -->
+  <rect x="2" y="19" width="4" height="2.5" rx="0.3" fill="#b0a890" stroke="#999" stroke-width="0.2"/>
+  <!-- Label -->
+  <text x="4" y="28" text-anchor="middle" font-size="3" fill="#555" font-family="sans-serif">2.5</text>
+  <!-- Bottom screw terminal -->
+  <circle cx="4" cy="37" r="2.2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="35.5" x2="5.5" y2="38.5" stroke="#666" stroke-width="0.4"/>
+  <!-- DIN clip (minimal) -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=43&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="70" width="18.0" x="40.0" y="168.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=43&amp;position=130"><title>Add placement at position 130</title><rect class="slot empty-slot" height="70" width="582.0" x="298.0" y="168.0" /></a><text class="mount-label" x="44.0" y="192.0">Terminal rail</text></svg>
