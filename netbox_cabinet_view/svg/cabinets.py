@@ -273,12 +273,33 @@ class CabinetLayoutSVG:
         profile = getattr(device.device_type, 'cabinet_profile', None)
         return bool(profile and profile.hosts_mounts and device.cabinet_mounts.exists())
 
+    def _resolve_device_image(self, dev):
+        """
+        Resolve the front-panel image for a Device, checking three sources:
+        1. Core DeviceType.front_image (the standard NetBox field)
+        2. Plugin DeviceMountProfile.front_image (Feature C, v0.6.0 fallback)
+        3. None (falls back to colored rectangle with text label)
+        """
+        if not self.include_images:
+            return None
+        # Core field first
+        img = getattr(dev.device_type, 'front_image', None) or None
+        if img:
+            return img
+        # Plugin fallback
+        profile = getattr(dev.device_type, 'cabinet_profile', None)
+        if profile:
+            img = getattr(profile, 'front_image', None) or None
+            if img:
+                return img
+        return None
+
     def _resolve_target(self, placement) -> PlacementTarget:
         if placement.device_id:
             dev = placement.device
             return PlacementTarget(
                 name=dev.name or str(dev.device_type),
-                image=(dev.device_type.front_image if self.include_images else None) or None,
+                image=self._resolve_device_image(dev),
                 url=dev.get_absolute_url(),
                 color=getattr(dev.role, 'color', '') or '',
                 description=self._device_description(dev),
@@ -300,7 +321,7 @@ class CabinetLayoutSVG:
                 )
             return PlacementTarget(
                 name=child.name or str(child.device_type),
-                image=(child.device_type.front_image if self.include_images else None) or None,
+                image=self._resolve_device_image(child),
                 url=child.get_absolute_url(),
                 color=getattr(child.role, 'color', '') or '',
                 description=self._device_description(child),
@@ -692,6 +713,13 @@ class CabinetLayoutSVG:
             and target.resolved_device.pk not in self._visited
         ):
             try:
+                # Feature 3 (v0.6.0): at depth 1, render with
+                # thumbnail=False so empty-slot affordances (click
+                # targets for SFP cages, etc.) are drawn inside the
+                # nested view. At depth ≥ 2, switch to thumbnail to
+                # avoid visual clutter and performance cost.
+                nested_depth = self._depth + 1
+                nested_thumbnail = nested_depth >= 2
                 nested = CabinetLayoutSVG(
                     host_device=target.resolved_device,
                     user=self.user,
@@ -699,9 +727,9 @@ class CabinetLayoutSVG:
                     include_images=False,     # no images in nested views
                     fit_width=int(w),
                     fit_height=int(h),
-                    thumbnail=True,           # visual diminishment
+                    thumbnail=nested_thumbnail,
                     face=self.face,
-                    _depth=self._depth + 1,
+                    _depth=nested_depth,
                     _visited=set(self._visited),  # copy to avoid cross-branch pollution
                 )
                 nested_svg = nested.render()

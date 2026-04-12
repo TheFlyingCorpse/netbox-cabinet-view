@@ -92,6 +92,17 @@ class DeviceMountProfile(NetBoxModel):
         help_text='Height in mount units. Used only for 2D mounts (mounting plate).',
     )
 
+    # Feature C (v0.6.0): front-panel image for the host device itself.
+    # NetBox core already has DeviceType.front_image, but this provides a
+    # plugin-level fallback so users can set an image via the plugin's own
+    # form without touching the DeviceType admin. The renderer checks
+    # DeviceType.front_image first (core), then this field as fallback.
+    front_image = models.ImageField(
+        upload_to='devicetype-images',
+        blank=True,
+        help_text='Front-panel image for this device type. Used as a fallback when DeviceType.front_image is not set.',
+    )
+
     class Meta:
         ordering = ('device_type',)
         verbose_name = 'Device Mount Profile'

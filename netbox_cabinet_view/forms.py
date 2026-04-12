@@ -37,6 +37,7 @@ class DeviceMountProfileForm(NetBoxModelForm):
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             name=_('Mountable on mounts'),
         ),
+        FieldSet('front_image', name=_('Front-panel image')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -46,6 +47,7 @@ class DeviceMountProfileForm(NetBoxModelForm):
             'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'front_image',
             'tags',
         )
 
