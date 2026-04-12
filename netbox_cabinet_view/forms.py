@@ -80,6 +80,7 @@ class ModuleMountProfileForm(NetBoxModelForm):
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             name=_('Mountable on mounts'),
         ),
+        FieldSet('front_image', name=_('Front-panel image')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -88,6 +89,7 @@ class ModuleMountProfileForm(NetBoxModelForm):
         fields = (
             'module_type',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
+            'front_image',
             'tags',
         )
 

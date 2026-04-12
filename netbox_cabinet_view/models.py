@@ -179,6 +179,17 @@ class ModuleMountProfile(NetBoxModel):
         help_text='Height in mount units. 2D mounts (mounting plate) only.',
     )
 
+    # Feature 1 (v0.6.0): front-panel image for modules. NetBox 4.5's
+    # core ModuleType doesn't have a front_image field (only DeviceType
+    # does). This field fills that gap so module placements render with
+    # their actual front-panel image instead of a plain colored rectangle.
+    # Users can upload the bundled line-art SVGs or real manufacturer photos.
+    front_image = models.ImageField(
+        upload_to='moduletype-images',
+        blank=True,
+        help_text='Front-panel image for this module type. Rendered inside the placement rectangle on the Layout tab SVG.',
+    )
+
     class Meta:
         ordering = ('module_type',)
         verbose_name = 'Module Mount Profile'

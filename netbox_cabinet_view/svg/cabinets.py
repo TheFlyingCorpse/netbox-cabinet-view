@@ -323,10 +323,18 @@ class CabinetLayoutSVG:
                     empty=True,
                 )
             mt = module.module_type
-            # ModuleType in NetBox 4.5 does not expose a front_image field,
-            # so we use getattr() with a None fallback. When/if a later NetBox
-            # version adds one, this picks it up automatically.
-            mt_image = getattr(mt, 'front_image', None) if self.include_images else None
+            # NetBox 4.5's core ModuleType has no front_image field.
+            # Check three sources in order:
+            #   1. Our own ModuleMountProfile.front_image (v0.6.0)
+            #   2. Core ModuleType.front_image (future NetBox versions)
+            #   3. None (falls back to colored rectangle with text label)
+            mt_image = None
+            if self.include_images:
+                profile = getattr(mt, 'cabinet_profile', None)
+                if profile:
+                    mt_image = getattr(profile, 'front_image', None) or None
+                if not mt_image:
+                    mt_image = getattr(mt, 'front_image', None) or None
             return PlacementTarget(
                 name=str(mt),
                 image=mt_image or None,
