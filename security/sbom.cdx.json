@@ -1,6 +1,44 @@
 {
   "components": [
     {
+      "bom-ref": "pip==26.0",
+      "description": "The PyPA recommended tool for installing Python packages.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://pip.pypa.io"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/pypa/pip"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://pip.pypa.io/en/stable/news/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://pip.pypa.io/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "pip",
+      "purl": "pkg:pypi/pip@26.0",
+      "type": "library",
+      "version": "26.0"
+    },
+    {
       "bom-ref": "svgwrite==1.4.3",
       "description": "A Python library to create SVG drawings.",
       "externalReferences": [
@@ -31,6 +69,9 @@
   ],
   "dependencies": [
     {
+      "ref": "pip==26.0"
+    },
+    {
       "dependsOn": [
         "svgwrite==1.4.3"
       ],
@@ -43,7 +84,7 @@
   "metadata": {
     "component": {
       "bom-ref": "root-component",
-      "description": "NetBox plugin: DIN rails, subracks, mounting plates and busbars with SVG visualization of cabinet interiors, including chassis/parent-child devices and modular PLC chassis.",
+      "description": "NetBox plugin: DIN rails, subracks, mounting plates, busbars, and multi-row grids with SVG visualization of cabinet interiors, chassis/parent-child devices, and modular PLC chassis. OT/ICS focus.",
       "externalReferences": [
         {
           "comment": "from pyproject urls: Issues",
@@ -82,7 +123,7 @@
       ],
       "name": "netbox-cabinet-view",
       "type": "library",
-      "version": "0.3.0"
+      "version": "0.4.1"
     },
     "properties": [
       {
