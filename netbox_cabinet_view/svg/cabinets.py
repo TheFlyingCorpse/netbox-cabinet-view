@@ -192,6 +192,9 @@ class CabinetLayoutSVG:
         cfg_colors = plugin_settings.get('PORT_STATUS_COLORS', {})
         self._port_colors = {**default_port_colors, **cfg_colors}
 
+        # v0.7.0: global port overlay master switch.
+        self._enable_port_overlay = plugin_settings.get('ENABLE_PORT_OVERLAY', True)
+
         # v0.7.0 Feature 3: management IP LCD overlay (opt-in).
         self._show_mgmt_ip = plugin_settings.get('SHOW_MANAGEMENT_IP', False)
 
@@ -845,11 +848,13 @@ class CabinetLayoutSVG:
         draws coloured rects for each matched interface/port.  Protruding
         pins are drawn outside the clip path.
         """
-        if self.thumbnail:
+        if self.thumbnail or not self._enable_port_overlay:
             return
 
         profile = placement.effective_profile
         if not profile:
+            return
+        if not getattr(profile, 'enable_port_overlay', True):
             return
         port_map = getattr(profile, 'port_map', None)
         if not port_map:

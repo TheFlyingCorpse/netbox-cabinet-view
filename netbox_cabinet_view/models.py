@@ -221,6 +221,15 @@ class DeviceMountProfile(NetBoxModel):
             'clickable status-coloured hotspots.'
         ),
     )
+    enable_port_overlay = models.BooleanField(
+        default=True,
+        help_text=(
+            'Render the port/connector overlay on this device type\'s '
+            'front-panel image. Disable to suppress overlay rendering for '
+            'this device type even when port_map is defined. Also controlled '
+            'globally via ENABLE_PORT_OVERLAY in PLUGINS_CONFIG.'
+        ),
+    )
 
     class Meta:
         ordering = ('device_type',)
@@ -332,6 +341,14 @@ class ModuleMountProfile(NetBoxModel):
             'the module is installed in a device module bay whose device has '
             'a module_bay entry in its own port_map, the module\'s pin '
             'positions are offset by the bay position on the parent device.'
+        ),
+    )
+    enable_port_overlay = models.BooleanField(
+        default=True,
+        help_text=(
+            'Render the port/connector overlay on this module type\'s '
+            'front-panel image. Disable to suppress overlay rendering for '
+            'this module type even when port_map is defined.'
         ),
     )
 

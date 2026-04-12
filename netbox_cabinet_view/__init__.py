@@ -41,6 +41,12 @@ class CabinetViewConfig(PluginConfig):
         #       'netbox_cabinet_view': {'SLOT_LEDGER_ENABLED': True},
         #   }
         'SLOT_LEDGER_ENABLED': False,
+        # v0.7.0: master switch for the port/connector overlay. When False,
+        # the overlay is never rendered regardless of per-profile settings.
+        # When True (default), each profile's own enable_port_overlay flag
+        # is checked. Set to False to disable globally for performance or
+        # if the overlay is not wanted on any device type.
+        'ENABLE_PORT_OVERLAY': True,
         # v0.7.0: port/connector overlay status colours (hex, no '#' prefix).
         # Keys: connected_enabled, connected_disabled, unconnected_enabled,
         # unconnected_disabled. Override in PLUGINS_CONFIG to customise.

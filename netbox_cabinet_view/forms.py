@@ -38,7 +38,7 @@ class DeviceMountProfileForm(NetBoxModelForm):
             name=_('Mountable on mounts'),
         ),
         FieldSet('front_image', name=_('Front-panel image')),
-        FieldSet('port_map', name=_('Port / connector overlay')),
+        FieldSet('enable_port_overlay', 'port_map', name=_('Port / connector overlay')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -49,7 +49,7 @@ class DeviceMountProfileForm(NetBoxModelForm):
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             'front_image',
-            'port_map',
+            'enable_port_overlay', 'port_map',
             'tags',
         )
         widgets = {
@@ -88,7 +88,7 @@ class ModuleMountProfileForm(NetBoxModelForm):
             name=_('Mountable on mounts'),
         ),
         FieldSet('front_image', name=_('Front-panel image')),
-        FieldSet('port_map', name=_('Port / connector overlay')),
+        FieldSet('enable_port_overlay', 'port_map', name=_('Port / connector overlay')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -107,7 +107,7 @@ class ModuleMountProfileForm(NetBoxModelForm):
             'module_type',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             'front_image',
-            'port_map',
+            'enable_port_overlay', 'port_map',
             'tags',
         )
         widgets = {
