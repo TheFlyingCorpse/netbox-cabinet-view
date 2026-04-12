@@ -19,6 +19,19 @@
 .d258-label.d258-empty { fill: #888; font-style: italic; }
 .d258-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
 
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d258-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
  * Nearly invisible at rest so it doesn't clutter the normal view;
@@ -158,6 +171,19 @@ svg.d258-thumbnail .d258-slot {
 .d249-label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .d249-label.d249-empty { fill: #888; font-style: italic; }
 .d249-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d249-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
@@ -299,6 +325,19 @@ svg.d249-thumbnail .d249-slot {
 .d212-label.d212-empty { fill: #888; font-style: italic; }
 .d212-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
 
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d212-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
  * Nearly invisible at rest so it doesn't clutter the normal view;
@@ -438,6 +477,19 @@ svg.d212-thumbnail .d212-slot {
 .d206-label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .d206-label.d206-empty { fill: #888; font-style: italic; }
 .d206-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d206-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
@@ -579,6 +631,19 @@ svg.d206-thumbnail .d206-slot {
 .d200-label.d200-empty { fill: #888; font-style: italic; }
 .d200-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
 
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d200-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
  * Nearly invisible at rest so it doesn't clutter the normal view;
@@ -718,6 +783,19 @@ svg.d200-thumbnail .d200-slot {
 .d196-label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .d196-label.d196-empty { fill: #888; font-style: italic; }
 .d196-device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.d196-highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.

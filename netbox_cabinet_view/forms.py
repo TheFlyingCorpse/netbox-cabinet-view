@@ -8,6 +8,7 @@ from utilities.forms.rendering import FieldSet
 from utilities.forms.utils import get_field_value
 
 from .choices import (
+    MountFaceChoices,
     MountSubtypeChoices,
     MountTypeChoices,
     OrientationChoices,
@@ -118,7 +119,7 @@ class MountForm(NetBoxModelForm):
     fieldsets = (
         FieldSet('host_device', 'name', 'description', name=_('Mount')),
         FieldSet(
-            'mount_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit', 'face',
             name=_('Type'),
         ),
         FieldSet(
@@ -136,7 +137,7 @@ class MountForm(NetBoxModelForm):
         model = Mount
         fields = (
             'host_device', 'name', 'description',
-            'mount_type', 'subtype', 'orientation', 'unit',
+            'mount_type', 'subtype', 'orientation', 'unit', 'face',
             'offset_x_mm', 'offset_y_mm',
             'length_mm', 'width_mm', 'height_mm',
             'rows', 'row_height_mm',
@@ -162,10 +163,13 @@ class MountFilterForm(NetBoxModelFilterSetForm):
     unit = forms.MultipleChoiceField(
         choices=UnitChoices, required=False, label='Unit',
     )
+    face = forms.MultipleChoiceField(
+        choices=MountFaceChoices, required=False, label='Face',
+    )
 
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', name=_('Search')),
-        FieldSet('host_device_id', 'mount_type', 'subtype', 'orientation', 'unit', name=_('Attributes')),
+        FieldSet('host_device_id', 'mount_type', 'subtype', 'orientation', 'unit', 'face', name=_('Attributes')),
     )
 
 

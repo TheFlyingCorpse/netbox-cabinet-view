@@ -19,7 +19,7 @@ python -m cyclonedx_py environment <venv>/bin/python \
   --output-reproducible
 ```
 
-### Current contents at v0.4.1
+### Current contents at v0.5.0
 
 The runtime dependency graph is intentionally tiny — the plugin is packaged as pure Python and only requires one third-party library beyond NetBox itself (which is installed by the user, not as a Python dependency).
 
@@ -40,7 +40,7 @@ osv-scanner --sbom=security/sbom.cdx.json
 
 An [OpenVEX 0.2.0](https://openvex.dev/) document that tells consumers which CVEs actually affect the running code, distinct from "my SBOM mentions a component that has a CVE somewhere". Complementary to the SBOM: the SBOM says *what's in the box*, the VEX says *which alerts are relevant*.
 
-The current document contains a single `not_affected` floor statement — at the v0.4.1 release timestamp the maintainer is not aware of any CVE affecting either the plugin or `svgwrite`. As new vulnerabilities are reported and triaged, per-CVE statements will be appended to `statements[]`.
+The current document contains a single `not_affected` floor statement — at the v0.5.0 release timestamp the maintainer is not aware of any CVE affecting either the plugin or `svgwrite`. As new vulnerabilities are reported and triaged, per-CVE statements will be appended to `statements[]`.
 
 Consumers requiring continuously-updated VEX should subscribe to this repository's [GitHub Security Advisories](https://github.com/TheFlyingCorpse/netbox-cabinet-view/security/advisories).
 

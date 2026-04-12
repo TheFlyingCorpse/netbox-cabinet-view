@@ -7,6 +7,7 @@ from netbox.models import NetBoxModel
 
 from .choices import (
     MOUNT_TYPE_SUBTYPES,
+    MountFaceChoices,
     MountSubtypeChoices,
     MountTypeChoices,
     GRID_MOUNT_TYPES,
@@ -298,6 +299,19 @@ class Mount(NetBoxModel):
     )
 
     description = models.CharField(max_length=500, blank=True)
+
+    # Feature 1 (v0.5.0): per-face mounting. Blank = both faces
+    # (default, backward-compatible). 'front' / 'rear' restricts the
+    # mount to one face of the parent device, so the SVG renderer can
+    # draw different layouts depending on which face of the rack
+    # elevation is being rendered.
+    face = models.CharField(
+        max_length=10,
+        blank=True,
+        default='',
+        choices=MountFaceChoices,
+        help_text='Which device face this mount renders on. Blank = both faces.',
+    )
 
     class Meta:
         ordering = ('host_device', 'name')

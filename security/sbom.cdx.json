@@ -123,7 +123,7 @@
       ],
       "name": "netbox-cabinet-view",
       "type": "library",
-      "version": "0.4.1"
+      "version": "0.5.0"
     },
     "properties": [
       {

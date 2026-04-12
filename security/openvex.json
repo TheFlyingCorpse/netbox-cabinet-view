@@ -1,6 +1,6 @@
 {
   "@context": "https://openvex.dev/ns/v0.2.0",
-  "@id": "https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.4.1/openvex.json",
+  "@id": "https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.5.0/openvex.json",
   "author": "Rune Darrud <theflyingcorpse@gmail.com>",
   "role": "Project Maintainer",
   "timestamp": "2026-04-12T00:00:00Z",
@@ -14,9 +14,9 @@
       "timestamp": "2026-04-12T00:00:00Z",
       "products": [
         {
-          "@id": "pkg:pypi/netbox-cabinet-view@0.4.1",
+          "@id": "pkg:pypi/netbox-cabinet-view@0.5.0",
           "identifiers": {
-            "purl": "pkg:pypi/netbox-cabinet-view@0.4.1"
+            "purl": "pkg:pypi/netbox-cabinet-view@0.5.0"
           }
         }
       ],

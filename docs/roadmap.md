@@ -1,4 +1,4 @@
-# Roadmap — what's not in v0.4 (and why)
+# Roadmap — deferred features and future work
 
 ## Carrier types still deferred
 
@@ -9,6 +9,29 @@
 - **Pneumatic / hydraulic manifolds** — different physics, but the same "here's a block with N ports at known positions" shape.
 
 None of these are in the current release because they'd need their own carrier-type enum values and their own validation rules, and v0.4.0 already had a large scope. They're tracked under "Planned" in [CHANGELOG.md](../CHANGELOG.md).
+
+## Bundled placeholder line-art (v0.6.0 exploration)
+
+When a DeviceType or ModuleType has no uploaded `front_image`, the renderer falls back to a plain colored rectangle with a text label. A future release should bundle **generic line-art SVGs** that ship with the plugin as fallback images, so out-of-the-box rendering looks realistic without requiring users to upload manufacturer photos.
+
+Explored art families (prototyped in `/tmp/module-art/` during the v0.5.0 cycle, OpSec-cleared for the GE-inspired set):
+
+- **IED backplane modules** — PSU, CPU (two form factors), binary I/O, analog I/O (CT/PT), comms (ETH + SFP + serial). Narrow vertical cards with backplane connectors. GE UR-inspired and Siemens SIPROTEC-inspired variants.
+- **RTU/PLC DIN-mount modules** — CPU/gateway (wider body), 8×DI 24VDC, 4×DO relay, 4×AI 4-20mA. Light-body with color-coded top bands and spring-cage terminals. WAGO/Sprecher/Netcontrol/ABB RTU inspired.
+- **Transceiver face plates** — SFP fibre (LC duplex), SFP RJ45 (copper), QSFP28 (MPO/MTP), empty cage. Front-face-only views (the body is inside the cage; you only see the face plate when plugged in).
+- **IED/RTU chassis** — 2-row backplane enclosure with dashed slot positions.
+
+Still to explore:
+- **Rack-mount shelves** — 1U/2U/4U front panels with blank plates, DIN rail cutouts visible, or fibre patch panel faceplates
+- **DIN-rail mounted devices** — generic relay, MCB, contactor, terminal block, PSU, fieldbus coupler (light/dark body variants)
+- **Mounting plate devices** — VFD drive, safety relay, IPC, generic panel instrument
+- **WDM/OLT line cards** — wider subrack cards with fibre ports
+- **Siemens SIPROTEC plug-in modules** — ETH-BB, BIN-IO, and similar proprietary slot form factors that aren't SFP-shaped
+- **Front panel overlays** — LCD displays, keypads, indicator lamp clusters, HMI cutouts
+
+Implementation path: add `ModuleMountProfile.front_image` ImageField (decided, migration ready) + optionally `DeviceMountProfile.default_front_image` for a profile-level fallback. Bundle the SVGs under `static/netbox_cabinet_view/module-art/`. The renderer checks `module_type.cabinet_profile.front_image` → bundled fallback → colored rectangle, in that order.
+
+Related: **management IP easter egg** — render `device.primary_ip4` on the CPU module's LCD area as an SVG text overlay on top of the composited front_image. Cute and genuinely useful for ops engineers glancing at the Layout tab.
 
 ## UX features deferred
 

@@ -18,6 +18,19 @@
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
 
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
  * Nearly invisible at rest so it doesn't clutter the normal view;

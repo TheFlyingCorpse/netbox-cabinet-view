@@ -51,20 +51,21 @@ class MountTable(NetBoxTable):
     subtype = ChoiceFieldColumn()
     orientation = ChoiceFieldColumn()
     unit = ChoiceFieldColumn()
+    face = ChoiceFieldColumn()
     placement_count = tables.Column(verbose_name='Placements', orderable=False)
 
     class Meta(NetBoxTable.Meta):
         model = Mount
         fields = (
             'pk', 'id', 'name', 'host_device', 'mount_type', 'subtype',
-            'orientation', 'unit',
+            'orientation', 'unit', 'face',
             'offset_x_mm', 'offset_y_mm', 'length_mm', 'width_mm', 'height_mm',
             'rows', 'row_height_mm',
             'placement_count', 'description', 'actions',
         )
         default_columns = (
             'name', 'host_device', 'mount_type', 'subtype', 'orientation',
-            'length_mm', 'placement_count', 'actions',
+            'face', 'length_mm', 'placement_count', 'actions',
         )
 
 

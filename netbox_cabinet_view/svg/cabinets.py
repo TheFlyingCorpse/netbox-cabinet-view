@@ -23,6 +23,25 @@ from utilities.html import foreground_color
 from ..choices import MountTypeChoices, OrientationChoices
 
 
+class _RawSVGElement:
+    """
+    Wrapper that satisfies svgwrite's ``Drawing.add()`` interface
+    (which requires a ``get_xml()`` method returning an ElementTree
+    element) for raw XML strings. Used by Feature 2 (v0.5.0) to
+    embed a pre-rendered nested SVG string into the parent drawing
+    without parsing it through svgwrite's object model.
+    """
+
+    __slots__ = ('_xml_str',)
+
+    def __init__(self, xml_str):
+        self._xml_str = xml_str
+
+    def get_xml(self):
+        from xml.etree.ElementTree import fromstring
+        return fromstring(self._xml_str)
+
+
 def _fit_label(text: str, width_px: float, font_size: int = 11) -> str:
     """
     Return a version of ``text`` that fits horizontally in ``width_px``.
@@ -76,6 +95,9 @@ class PlacementTarget:
     color: str           # hex color without leading '#', or ''
     description: str
     empty: bool = False  # True for unpopulated device/module bays
+    # Feature 2 (v0.5.0): nested SVG recursion.
+    hosts_mounts: bool = False   # True if the resolved device itself hosts mounts
+    resolved_device: object = None  # The Device that is itself a mount-host (for recursion)
 
 
 @dataclass
@@ -116,8 +138,16 @@ class CabinetLayoutSVG:
         If False, only colored rectangles are drawn (useful for debugging).
     """
 
+    # Feature 2 (v0.5.0): max nesting depth for recursive cabinet-in-
+    # cabinet rendering. 3 levels covers the deepest real-world OT/ICS
+    # case: MCC cabinet → withdrawable bucket → DIN rail → (device
+    # that itself hosts something).
+    MAX_NESTING_DEPTH = 3
+
     def __init__(self, host_device, user=None, base_url='', include_images=True,
-                 fit_width=None, fit_height=None, thumbnail=False):
+                 fit_width=None, fit_height=None, thumbnail=False, face=None,
+                 _depth=0, _visited=None,
+                 mount_only_pk=None, highlight=None):
         self.host_device = host_device
         self.user = user
         self.base_url = base_url.rstrip('/') if base_url else ''
@@ -136,22 +166,41 @@ class CabinetLayoutSVG:
         # interior reads as "preview — zoom in to interact" instead of
         # pretending each module is a live click target.
         self.thumbnail = thumbnail
+        # Feature 1 (v0.5.0): per-face filtering. When set to 'front' or
+        # 'rear', only mounts with face=='' (both) or face==face_value are
+        # included. Used by the rack elevation patch so front-face rendering
+        # only draws front-face mounts, and rear only draws rear mounts.
+        self.face = face
+        # Feature 2 (v0.5.0): recursion depth tracking. The top-level
+        # renderer has _depth=0. Each nested renderer increments by 1.
+        # Rendering stops when _depth >= MAX_NESTING_DEPTH.
+        self._depth = _depth
+        self._visited = _visited if _visited is not None else set()
+        self._visited.add(host_device.pk)
 
         plugin_settings = getattr(settings, 'PLUGINS_CONFIG', {}).get('netbox_cabinet_view', {})
         self.mm_to_px = plugin_settings.get('MM_TO_PX', DEFAULT_MM_TO_PX)
 
         self.profile = getattr(host_device.device_type, 'cabinet_profile', None)
 
-        self.mounts = list(
-            host_device.cabinet_mounts.all().prefetch_related(
-                'placements__device__device_type',
-                'placements__device__role',
-                'placements__device_bay__installed_device__device_type',
-                'placements__device_bay__installed_device__role',
-                'placements__module_bay__installed_module__module_type',
-                'placements__module_bay__device__role',
-            )
+        mounts_qs = host_device.cabinet_mounts.all().prefetch_related(
+            'placements__device__device_type',
+            'placements__device__role',
+            'placements__device_bay__installed_device__device_type',
+            'placements__device_bay__installed_device__role',
+            'placements__module_bay__installed_module__module_type',
+            'placements__module_bay__device__role',
         )
+        # Feature 1: filter mounts by face when requested.
+        if face:
+            from django.db.models import Q
+            mounts_qs = mounts_qs.filter(Q(face='') | Q(face=face))
+        # Feature 6: filter to a single mount for preview rendering.
+        if mount_only_pk:
+            mounts_qs = mounts_qs.filter(pk=mount_only_pk)
+        self.mounts = list(mounts_qs)
+        # Feature 6: highlight dict for the live preview chip.
+        self.highlight = highlight
 
     # ------------------------------------------------------------------
     # Geometry helpers
@@ -216,6 +265,14 @@ class CabinetLayoutSVG:
     # Target resolution
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _is_mount_host(device):
+        """Return True if the device itself hosts cabinet mounts."""
+        if device is None:
+            return False
+        profile = getattr(device.device_type, 'cabinet_profile', None)
+        return bool(profile and profile.hosts_mounts and device.cabinet_mounts.exists())
+
     def _resolve_target(self, placement) -> PlacementTarget:
         if placement.device_id:
             dev = placement.device
@@ -225,6 +282,8 @@ class CabinetLayoutSVG:
                 url=dev.get_absolute_url(),
                 color=getattr(dev.role, 'color', '') or '',
                 description=self._device_description(dev),
+                hosts_mounts=self._is_mount_host(dev),
+                resolved_device=dev,
             )
 
         if placement.device_bay_id:
@@ -245,6 +304,8 @@ class CabinetLayoutSVG:
                 url=child.get_absolute_url(),
                 color=getattr(child.role, 'color', '') or '',
                 description=self._device_description(child),
+                hosts_mounts=self._is_mount_host(child),
+                resolved_device=child,
             )
 
         if placement.module_bay_id:
@@ -290,8 +351,7 @@ class CabinetLayoutSVG:
     # Placement geometry (1D / 2D / grid)
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _mount_visual_width_px(mount):
+    def _mount_visual_width_px(self, mount):
         """
         Thickness in px of a single-row 1D mount drawn perpendicular to
         its axis (rail line, busbar, subrack body, or grid row). For a
@@ -306,12 +366,15 @@ class CabinetLayoutSVG:
         if ctype == MountTypeChoices.TYPE_SUBRACK:
             return SUBRACK_DEFAULT_HEIGHT_PX
         if ctype == MountTypeChoices.TYPE_GRID:
-            # Grid rows are drawn as DIN-rail-style strips.
-            return DIN_RAIL_PX
+            # Grid row strip thickness = row_height_mm in px, capped
+            # at a minimum of DIN_RAIL_PX so very thin rows still
+            # render visibly. This fixes the ODF bug where 14px strips
+            # were much thinner than the 44px row_height, causing
+            # placements to overflow.
+            return max(DIN_RAIL_PX, self._mm(mount.row_height_mm or 0))
         return DIN_RAIL_PX
 
-    @staticmethod
-    def _placement_visual_thickness_px(mount):
+    def _placement_visual_thickness_px(self, mount):
         """
         Thickness in px of a placement (how much it protrudes from its
         mount perpendicular to the mount's axis). Larger than the mount's
@@ -324,8 +387,12 @@ class CabinetLayoutSVG:
             # Let the placement visually occupy most of the subrack height.
             return SUBRACK_DEFAULT_HEIGHT_PX - 8
         if ctype == MountTypeChoices.TYPE_GRID:
-            # Grid rows get a modest thickness so text fits.
-            return 56
+            # Placement fills the row_height minus a small gap so the
+            # row strip border is still visible. Fixes the ODF bug
+            # where fixed 56px placements overflowed 44px rows and
+            # extended outside the cabinet outline.
+            row_h_px = self._mm(mount.row_height_mm or 0)
+            return max(DIN_RAIL_PX, row_h_px - 4)
         # DIN rail
         return 70  # typical DIN module height ~90 mm — give it real presence
 
@@ -603,6 +670,76 @@ class CabinetLayoutSVG:
     def _draw_placement(self, dwg, mount, placement):
         target = self._resolve_target(placement)
         (x, y), (w, h) = self._placement_box_px(placement, mount)
+
+        # Feature 2 (v0.5.0): nested SVG recursion. If the placed device
+        # is itself a mount-host with actual placements AND we haven't
+        # exceeded the nesting depth AND the device isn't already in
+        # our visited-hosts chain (circular-reference guard), render its
+        # interior inline as a miniature cabinet layout inside this
+        # placement's rectangle.
+        if (
+            target.hosts_mounts
+            and not self.thumbnail
+            and self._depth < self.MAX_NESTING_DEPTH
+            and target.resolved_device.pk not in self._visited
+        ):
+            try:
+                nested = CabinetLayoutSVG(
+                    host_device=target.resolved_device,
+                    user=self.user,
+                    base_url=self.base_url,
+                    include_images=False,     # no images in nested views
+                    fit_width=int(w),
+                    fit_height=int(h),
+                    thumbnail=True,           # visual diminishment
+                    face=self.face,
+                    _depth=self._depth + 1,
+                    _visited=set(self._visited),  # copy to avoid cross-branch pollution
+                )
+                nested_svg = nested.render()
+                # Embed as a nested <svg> element inside the parent drawing,
+                # positioned at this placement's bounding box.
+                import re as _re
+                # Extract the viewBox from the nested SVG.
+                vb_m = _re.search(r'viewBox="([^"]+)"', nested_svg)
+                vb = vb_m.group(1) if vb_m else f'0 0 {int(w)} {int(h)}'
+                # Strip the outer <svg>...</svg> wrapper.
+                inner = _re.sub(r'^.*?<svg\b[^>]*>', '', nested_svg, count=1, flags=_re.DOTALL)
+                inner = _re.sub(r'</svg>\s*$', '', inner, count=1, flags=_re.DOTALL)
+                # Namespace clipPath IDs to avoid collision with the parent.
+                dev_pk = target.resolved_device.pk
+                prefix = f'n{self._depth + 1}-d{dev_pk}-'
+                inner = _re.sub(
+                    r'\bid="([^"]*)"',
+                    lambda m: f'id="{prefix}{m.group(1)}"',
+                    inner,
+                )
+                inner = _re.sub(
+                    r'\bclip-path="url\(#([^)]*)\)"',
+                    lambda m: f'clip-path="url(#{prefix}{m.group(1)})"',
+                    inner,
+                )
+                # Build the nested <svg> element manually as raw XML.
+                # Must declare xlink namespace because the inner SVG
+                # may contain xlink:href attributes on <image> and
+                # <a> elements (svgwrite emits these for compatibility).
+                nested_tag = (
+                    f'<svg x="{x}" y="{y}" width="{w}" height="{h}" '
+                    f'viewBox="{vb}" preserveAspectRatio="xMidYMid meet" '
+                    f'overflow="hidden" '
+                    f'xmlns="http://www.w3.org/2000/svg" '
+                    f'xmlns:xlink="http://www.w3.org/1999/xlink" '
+                    f'xmlns:ev="http://www.w3.org/2001/xml-events">'
+                    f'{inner}</svg>'
+                )
+                # svgwrite's Drawing.add() requires objects with a
+                # get_xml() method; raw ET elements don't have it.
+                # _RawSVGElement wraps the XML string to satisfy the
+                # interface.
+                dwg.add(_RawSVGElement(nested_tag))
+                return  # skip the normal image/label drawing
+            except Exception:
+                pass  # fall through to normal rendering on any error
 
         href = (f'{self.base_url}{target.url}') if target.url.startswith('/') else target.url
         link = Hyperlink(href=href, target='_parent')
@@ -913,6 +1050,31 @@ class CabinetLayoutSVG:
         for mount, (ox, oy, cw, ch) in mount_bounds:
             self._draw_mount_label(dwg, mount, ox, oy, cw, ch)
 
+        # Pass 4 (Feature 6, v0.5.0): highlight overlay for the live
+        # preview chip on the PlacementForm. Draws a green semi-
+        # transparent dashed rectangle at the proposed position.
+        if self.highlight and len(self.mounts) >= 1:
+            mount = self.mounts[0]
+            stub = _PlacementStub(
+                mount=mount,
+                position=self.highlight.get('position'),
+                size=self.highlight.get('size', 1),
+                row=self.highlight.get('row'),
+                row_span=self.highlight.get('row_span', 1),
+                position_x=self.highlight.get('position_x'),
+                position_y=self.highlight.get('position_y'),
+                size_x=self.highlight.get('size_x'),
+                size_y=self.highlight.get('size_y'),
+            )
+            try:
+                (hx, hy), (hw, hh) = self._placement_box_px(stub, mount)
+                dwg.add(Rect(
+                    insert=(hx, hy), size=(hw, hh),
+                    class_='highlight-placement',
+                ))
+            except (TypeError, ValueError, ZeroDivisionError):
+                pass  # invalid highlight params — skip silently
+
         return dwg.tostring()
 
 
@@ -938,6 +1100,19 @@ _EMBEDDED_CSS = """
 .label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.

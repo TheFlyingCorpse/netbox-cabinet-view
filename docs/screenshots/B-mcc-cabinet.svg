@@ -1,4 +1,4 @@
-<svg baseProfile="full" height="4360.0" version="1.1" viewBox="0,0,1560.0,4360.0" width="1560.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+<svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" baseProfile="full" height="4360.0" version="1.1" viewBox="0,0,1560.0,4360.0" width="1560.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
 /* Light theme (default) */
 .svg-bg { fill: #f8f9fc; }
 .cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
@@ -17,6 +17,19 @@
 .label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
@@ -137,10 +150,472 @@ svg.thumbnail .slot {
   .label.empty { fill: #bbb; }
   .device-image-label { fill: #fff; font-weight: 700; }
 }
-]]></style><clipPath id="clip-placement-174"><rect height="600.0" width="24" x="520.0" y="618.0" /></clipPath><clipPath id="clip-placement-175"><rect height="600.0" width="24" x="520.0" y="1418.0" /></clipPath><clipPath id="clip-placement-176"><rect height="600.0" width="24" x="520.0" y="2218.0" /></clipPath></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">MCC Cabinet #1</text><rect class="mount busbar" height="3600.0" width="24" x="520.0" y="420.0" /><a target="_parent" xlink:href="/dcim/devices/234/"><title>Name: MCC Bucket #1
-Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="600.0" style="fill: #3f51b5" width="24" x="520.0" y="618.0" /><text class="label" clip-path="url(#clip-placement-174)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="918.0">MC…</text></a><a target="_parent" xlink:href="/dcim/devices/235/"><title>Name: MCC Bucket #2
-Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="600.0" style="fill: #3f51b5" width="24" x="520.0" y="1418.0" /><text class="label" clip-path="url(#clip-placement-175)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="1718.0">MC…</text></a><a target="_parent" xlink:href="/dcim/devices/236/"><title>Name: MCC Bucket #3
-Role: Shelf
-Type: MCC withdrawable bucket</title><rect class="slot" height="600.0" style="fill: #3f51b5" width="24" x="520.0" y="2218.0" /><text class="label" clip-path="url(#clip-placement-176)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="532.0" y="2518.0">MC…</text></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="198.0" width="24" x="520.0" y="420.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=400"><title>Add placement at position 400</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="1218.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=800"><title>Add placement at position 800</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="2018.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1200"><title>Add placement at position 1200</title><rect class="slot empty-slot" height="1202.0" width="24" x="520.0" y="2818.0" /></a><text class="mount-label" x="524.0" y="416.0">Vertical busbar</text></svg>
+]]></style></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">MCC Cabinet #1</text><rect class="mount busbar" height="3600.0" width="24" x="520.0" y="420.0" /><ns0:svg x="520.0" y="618.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover &gt; .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to &lt;object&gt; documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .mount                { stroke: #9aa2ad; }
+  .mount.din-rail       { fill: #4b5460; }
+  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .mount-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover &gt; .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+}
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * &lt;svg&gt; element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation &lt;image&gt; wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display &amp; Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at &gt;= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
+</ns0:style><ns0:clipPath id="n1-d234-clip-placement-177"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d234-clip-placement-178"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #1</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/237/"><ns0:title>Name: Contactor K01
+Role: Relay
+Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d234-clip-placement-177)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/240/"><ns0:title>Name: Aux relay BR01
+Role: Relay
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="1418.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover &gt; .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to &lt;object&gt; documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .mount                { stroke: #9aa2ad; }
+  .mount.din-rail       { fill: #4b5460; }
+  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .mount-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover &gt; .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+}
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * &lt;svg&gt; element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation &lt;image&gt; wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display &amp; Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at &gt;= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
+</ns0:style><ns0:clipPath id="n1-d235-clip-placement-179"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d235-clip-placement-180"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #2</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/238/"><ns0:title>Name: Contactor K02
+Role: Relay
+Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d235-clip-placement-179)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/241/"><ns0:title>Name: Aux relay BR02
+Role: Relay
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><ns0:svg x="520.0" y="2218.0" width="24" height="600.0" viewBox="0,0,640.0,540.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover &gt; .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to &lt;object&gt; documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .mount                { stroke: #9aa2ad; }
+  .mount.din-rail       { fill: #4b5460; }
+  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .mount-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover &gt; .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+}
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * &lt;svg&gt; element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation &lt;image&gt; wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display &amp; Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at &gt;= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
+</ns0:style><ns0:clipPath id="n1-d236-clip-placement-181"><ns0:rect height="70" width="90.0" x="98.0" y="152.0" /></ns0:clipPath><ns0:clipPath id="n1-d236-clip-placement-182"><ns0:rect height="70" width="2.0" x="238.0" y="152.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="540.0" width="640.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="500.0" width="600.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">MCC Bucket #3</ns0:text><ns0:rect class="mount din-rail" height="14" width="560.0" x="40.0" y="180.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/239/"><ns0:title>Name: Contactor K03
+Role: Relay
+Type: Motor contactor</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="90.0" x="98.0" y="152.0" /><ns0:text class="label" clip-path="url(#n1-d236-clip-placement-181)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="143.0" y="187.0">Contactor K03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/242/"><ns0:title>Name: Aux relay BR03
+Role: Relay
+Type: DIN-mount relay 17.5 mm</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="2.0" x="238.0" y="152.0" /></ns0:a><ns0:text class="mount-label" x="44.0" y="176.0">Bucket rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1"><title>Add placement at position 1</title><rect class="slot empty-slot" height="198.0" width="24" x="520.0" y="420.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=400"><title>Add placement at position 400</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="1218.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=800"><title>Add placement at position 800</title><rect class="slot empty-slot" height="200.0" width="24" x="520.0" y="2018.0" /></a><a target="_parent" xlink:href="/plugins/cabinet-view/placements/add/?mount=44&amp;position=1200"><title>Add placement at position 1200</title><rect class="slot empty-slot" height="1202.0" width="24" x="520.0" y="2818.0" /></a><text class="mount-label" x="524.0" y="416.0">Vertical busbar</text></svg>

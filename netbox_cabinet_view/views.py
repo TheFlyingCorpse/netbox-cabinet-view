@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
@@ -12,6 +14,7 @@ from utilities.views import ViewTab, register_model_view
 
 from . import filtersets, forms, models, tables
 from .ledger import enumerate_ledger
+from .provision import auto_provision_mount_and_placements, auto_provision_placements
 from .svg import CabinetLayoutSVG
 
 
@@ -132,6 +135,32 @@ class PlacementView(generic.ObjectView):
 class PlacementEditView(generic.ObjectEditView):
     queryset = models.Placement.objects.all()
     form = forms.PlacementForm
+    template_name = 'netbox_cabinet_view/placement_edit.html'
+
+    def get_extra_context(self, request, instance):
+        # Feature 6 (v0.5.0): compute the preview base URL from the
+        # selected mount so the template's JS can build SVG URLs.
+        mount_pk = None
+        if instance and instance.mount_id:
+            mount_pk = instance.mount_id
+        elif 'mount' in request.GET:
+            mount_pk = request.GET.get('mount')
+        elif request.method == 'POST' and 'mount' in request.POST:
+            mount_pk = request.POST.get('mount')
+
+        preview_base_url = ''
+        if mount_pk:
+            try:
+                mount = models.Mount.objects.select_related('host_device').get(pk=mount_pk)
+                svg_url = reverse(
+                    'dcim:device_cabinet_layout_svg',
+                    kwargs={'pk': mount.host_device.pk},
+                )
+                preview_base_url = f'{svg_url}?mount_only={mount.pk}'
+            except (models.Mount.DoesNotExist, ValueError):
+                pass
+
+        return {'preview_base_url': preview_base_url}
 
 
 class PlacementDeleteView(generic.ObjectDeleteView):
@@ -209,6 +238,11 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'internal_height_mm': profile.internal_height_mm if profile else None,
             'ledger_enabled': ledger_enabled,
             'ledger_sections': ledger_sections,
+            # Feature 3 (v0.5.0): auto-provision button visibility.
+            'has_bays': instance.devicebays.exists() or instance.modulebays.exists(),
+            # Feature 1 (v0.5.0): if any mount has an explicit face, the
+            # template renders two SVGs (front + rear) side by side.
+            'has_face_specific': any(m.face in ('front', 'rear') for m in mounts),
         }
 
 
@@ -242,6 +276,67 @@ class DiscoveryHintDismissView(LoginRequiredMixin, View):
         return redirect(device.get_absolute_url())
 
 
+# ---------------------------------------------------------------------------
+# Auto-provisioning — Feature 3 (v0.5.0)
+# ---------------------------------------------------------------------------
+
+class AutoProvisionView(LoginRequiredMixin, View):
+    """
+    One-click auto-provisioning of Placements from a device's bays.
+
+    **Mode A** (POST with ``mount_pk`` + ``device_pk``): create
+    sequential Placements on an existing Mount for every unplaced bay.
+
+    **Mode B** (POST with ``device_pk`` only): derive a new Mount
+    from the bays' profiles, then fill it with Placements.
+
+    POST-based because it creates shared data. CSRF token required.
+    """
+
+    def post(self, request):
+        device_pk = request.POST.get('device_pk')
+        mount_pk = request.POST.get('mount_pk')
+        device = get_object_or_404(Device, pk=device_pk)
+
+        if mount_pk:
+            # Mode A — placements only on an existing mount.
+            if not request.user.has_perm('netbox_cabinet_view.add_placement'):
+                messages.error(request, 'You do not have permission to add placements.')
+                return redirect(device.get_absolute_url())
+
+            mount = get_object_or_404(models.Mount, pk=mount_pk, host_device=device)
+            created, skipped = auto_provision_placements(mount)
+            if created:
+                messages.success(
+                    request,
+                    f'Auto-provisioned {created} placement(s) on {mount.name}.'
+                    + (f' {skipped} bay(s) skipped (capacity/validation).' if skipped else ''),
+                )
+            else:
+                messages.info(request, 'No new placements to create (all bays already placed or mount at capacity).')
+            return redirect(mount.get_absolute_url())
+        else:
+            # Mode B — create mount + placements.
+            if not request.user.has_perm('netbox_cabinet_view.add_mount'):
+                messages.error(request, 'You do not have permission to add mounts.')
+                return redirect(device.get_absolute_url())
+            if not request.user.has_perm('netbox_cabinet_view.add_placement'):
+                messages.error(request, 'You do not have permission to add placements.')
+                return redirect(device.get_absolute_url())
+
+            mount, created, skipped = auto_provision_mount_and_placements(device)
+            if mount is None:
+                messages.warning(request, 'No bays found on this device — nothing to provision.')
+                return redirect(device.get_absolute_url())
+            messages.success(
+                request,
+                f'Created mount "{mount.name}" with {created} placement(s).'
+                + (f' {skipped} bay(s) skipped.' if skipped else ''),
+            )
+            # Redirect to the Layout tab.
+            return redirect(reverse('dcim:device_cabinet_layout', kwargs={'pk': device.pk}))
+
+
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')
 class DeviceCabinetLayoutSVGView(View):
     """
@@ -259,6 +354,9 @@ class DeviceCabinetLayoutSVGView(View):
       labels, desaturated role colours). Used by the rack elevation
       patch so the embedded cabinet reads as a preview, not a live
       click target. Finding E, v0.4.0.
+    * ``?face=front|rear`` — render only mounts assigned to this face
+      (plus mounts with face='' which appear on both). Feature 1,
+      v0.5.0.
     """
 
     def get(self, request, pk):
@@ -269,6 +367,22 @@ class DeviceCabinetLayoutSVGView(View):
         except (ValueError, TypeError):
             fit_w = fit_h = None
         thumbnail = request.GET.get('thumb') in ('1', 'true', 'yes')
+        face = request.GET.get('face') or None
+        if face not in ('front', 'rear', None):
+            face = None
+
+        # Feature 6 (v0.5.0): optional mount_only + highlight params
+        # for the live preview chip on the PlacementForm.
+        mount_only_pk = request.GET.get('mount_only') or None
+        highlight = {}
+        for key in ('position', 'size', 'row', 'position_x', 'position_y', 'size_x', 'size_y'):
+            val = request.GET.get(f'highlight_{key}')
+            if val:
+                try:
+                    highlight[key] = int(val)
+                except (ValueError, TypeError):
+                    pass
+
         svg = CabinetLayoutSVG(
             host_device=device,
             user=request.user,
@@ -277,5 +391,8 @@ class DeviceCabinetLayoutSVGView(View):
             fit_width=fit_w,
             fit_height=fit_h,
             thumbnail=thumbnail,
+            face=face,
+            mount_only_pk=mount_only_pk,
+            highlight=highlight or None,
         ).render()
         return HttpResponse(svg, content_type='image/svg+xml')

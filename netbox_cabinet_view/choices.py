@@ -106,6 +106,28 @@ MOUNT_TYPE_SUBTYPES = {
 }
 
 
+class MountFaceChoices(ChoiceSet):
+    """
+    Which device face a Mount renders on — Feature 1, v0.5.0.
+
+    ``''`` (blank) = both faces (default, backward-compatible).
+    ``'front'`` / ``'rear'`` = only on that face. Aligns with
+    NetBox core's ``dcim.choices.DeviceFaceChoices`` values but adds
+    the blank "Both" option that core doesn't have.
+    """
+    key = 'Mount.face'
+
+    BOTH  = ''
+    FRONT = 'front'
+    REAR  = 'rear'
+
+    CHOICES = [
+        (BOTH,  'Both',  'gray'),
+        (FRONT, 'Front', 'blue'),
+        (REAR,  'Rear',  'green'),
+    ]
+
+
 class OrientationChoices(ChoiceSet):
     key = 'Mount.orientation'
 

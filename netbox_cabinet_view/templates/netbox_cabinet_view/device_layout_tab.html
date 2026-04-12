@@ -9,19 +9,54 @@
     <div class="card">
       <h5 class="card-header d-flex justify-content-between align-items-center">
         <span>Cabinet Layout</span>
-        <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
-           class="btn btn-sm btn-primary">
-          <i class="mdi mdi-plus-thick"></i> Add Mount
-        </a>
+        <div class="d-flex gap-2">
+          {% if has_bays %}
+          <form method="post" action="{% url 'plugins:netbox_cabinet_view:auto_provision' %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="device_pk" value="{{ object.pk }}">
+            <button type="submit" class="btn btn-sm btn-outline-success"
+                    title="Auto-create a mount + one placement per bay on this device">
+              <i class="mdi mdi-auto-fix"></i> Auto-provision from bays
+            </button>
+          </form>
+          {% endif %}
+          <a href="{% url 'plugins:netbox_cabinet_view:mount_add' %}?host_device={{ object.pk }}"
+             class="btn btn-sm btn-primary">
+            <i class="mdi mdi-plus-thick"></i> Add Mount
+          </a>
+        </div>
       </h5>
       <div class="card-body text-center p-0">
         {% if has_mounts %}
-          <object type="image/svg+xml"
-                  id="cabinet-layout-svg-embed"
-                  data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
-                  style="max-width: 100%; height: auto;">
-            Cabinet layout for {{ object }}
-          </object>
+          {% if has_face_specific %}
+            {# Feature 1 (v0.5.0): dual-SVG rendering when mounts have explicit faces. #}
+            <div class="row g-0">
+              <div class="col-6 border-end">
+                <div class="small text-muted py-1 border-bottom">Front</div>
+                <object type="image/svg+xml"
+                        id="cabinet-layout-svg-embed"
+                        data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=front"
+                        style="max-width: 100%; height: auto;">
+                  Cabinet layout (front) for {{ object }}
+                </object>
+              </div>
+              <div class="col-6">
+                <div class="small text-muted py-1 border-bottom">Rear</div>
+                <object type="image/svg+xml"
+                        data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}?face=rear"
+                        style="max-width: 100%; height: auto;">
+                  Cabinet layout (rear) for {{ object }}
+                </object>
+              </div>
+            </div>
+          {% else %}
+            <object type="image/svg+xml"
+                    id="cabinet-layout-svg-embed"
+                    data="{% url 'dcim:device_cabinet_layout_svg' pk=object.pk %}"
+                    style="max-width: 100%; height: auto;">
+              Cabinet layout for {{ object }}
+            </object>
+          {% endif %}
         {% else %}
           {# ========================================================== #}
           {# Finding B (v0.4.0): empty-state scale-reference canvas.     #}

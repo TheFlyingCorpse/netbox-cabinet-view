@@ -1,4 +1,4 @@
-<svg baseProfile="full" height="4360.0" version="1.1" viewBox="0,0,1560.0,4360.0" width="1560.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
+<svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" baseProfile="full" height="4360.0" version="1.1" viewBox="0,0,1560.0,4360.0" width="1560.0" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"><![CDATA[
 /* Light theme (default) */
 .svg-bg { fill: #f8f9fc; }
 .cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
@@ -17,6 +17,19 @@
 .label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
 .label.empty { fill: #888; font-style: italic; }
 .device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
 
 /* Finding C (v0.4.0): click-to-add affordance over empty slot
  * ranges on 1D/grid mounts and the whole area of 2D mounts.
@@ -137,9 +150,167 @@ svg.thumbnail .slot {
   .label.empty { fill: #bbb; }
   .device-image-label { fill: #fff; font-weight: 700; }
 }
-]]></style><clipPath id="clip-placement-204"><rect height="120.0" width="1200.0" x="180.0" y="2620.0" /></clipPath><clipPath id="clip-placement-203"><rect height="540.0" width="966.0" x="300.0" y="1820.0" /></clipPath><clipPath id="clip-placement-201"><rect height="540.0" width="430.0" x="560.0" y="420.0" /></clipPath><clipPath id="clip-placement-202"><rect height="540.0" width="430.0" x="560.0" y="1120.0" /></clipPath><clipPath id="clip-mount-53-lbl"><rect height="4320.0" width="1520.0" x="20.0" y="20.0" /></clipPath></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Protection Panel #1</text><rect class="mount mounting-plate" height="4320.0" width="1520.0" x="20.0" y="20.0" /><a target="_parent" xlink:href="/dcim/devices/269/"><title>Name: Test block rail #1
-Role: Rail
-Type: Test block DIN rail 600 mm</title><rect class="slot" height="120.0" style="fill: #607d8b" width="1200.0" x="180.0" y="2620.0" /><text class="label" clip-path="url(#clip-placement-204)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="780.0" y="2680.0">Test block rail #1</text></a><a target="_parent" xlink:href="/dcim/devices/268/"><title>Name: Line distance IED L1
+]]></style><clipPath id="clip-placement-203"><rect height="540.0" width="966.0" x="300.0" y="1820.0" /></clipPath><clipPath id="clip-placement-201"><rect height="540.0" width="430.0" x="560.0" y="420.0" /></clipPath><clipPath id="clip-placement-202"><rect height="540.0" width="430.0" x="560.0" y="1120.0" /></clipPath><clipPath id="clip-mount-53-lbl"><rect height="4320.0" width="1520.0" x="20.0" y="20.0" /></clipPath></defs><rect class="svg-bg" height="4360.0" width="1560.0" x="0" y="0" /><rect class="cabinet-outline" height="4320.0" width="1520.0" x="20" y="20" /><text class="cabinet-label" x="22" y="15">Protection Panel #1</text><rect class="mount mounting-plate" height="4320.0" width="1520.0" x="20.0" y="20.0" /><ns0:svg x="180.0" y="2620.0" width="1200.0" height="120.0" viewBox="0,0,1240.0,160.0" preserveAspectRatio="xMidYMid meet" overflow="hidden"><ns0:defs><ns0:style type="text/css">
+/* Light theme (default) */
+.svg-bg { fill: #f8f9fc; }
+.cabinet-outline { fill: none; stroke: #8a8f9a; stroke-width: 2; stroke-dasharray: 4 3; }
+.cabinet-label   { font: 600 13px sans-serif; fill: #555; }
+
+.mount { stroke: #333; stroke-width: 1; }
+.mount.din-rail       { fill: #c0c7d1; }
+.mount.subrack        { fill: #e3ebf1; stroke: #456; }
+.mount.mounting-plate { fill: #f7f6ef; stroke: #a99; stroke-dasharray: 6 3; }
+.mount.busbar         { fill: #c47a2c; stroke: #6a3c10; stroke-width: 1.5; }
+.mount.grid.grid-row  { fill: #d8d5c4; stroke: #6a6655; }
+.mount-label          { font: 500 11px sans-serif; fill: #444; }
+
+.slot        { stroke: #222; stroke-width: 0.6; }
+.slot.empty  { fill: none; stroke: #aaa; stroke-dasharray: 3 2; }
+.label       { font: 500 11px sans-serif; pointer-events: none; fill: #111; }
+.label.empty { fill: #888; font-style: italic; }
+.device-image-label { font: 600 11px sans-serif; pointer-events: none; }
+
+/* Feature 6 (v0.5.0): highlight overlay for the live preview chip
+ * on the PlacementForm. Green dashed rectangle showing where the
+ * proposed placement will land relative to existing placements.
+ */
+.highlight-placement {
+  fill: #00c853;
+  fill-opacity: 0.35;
+  stroke: #00c853;
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
+/* Finding C (v0.4.0): click-to-add affordance over empty slot
+ * ranges on 1D/grid mounts and the whole area of 2D mounts.
+ * Nearly invisible at rest so it doesn't clutter the normal view;
+ * reveals a dashed green outline on hover, matching the
+ * "unclaimed / available" aesthetic from the B empty-state
+ * canvas. Cursor switches to pointer so the affordance is
+ * discoverable by accident.
+ */
+.slot.empty-slot {
+  fill: rgba(129, 199, 132, 0.05);
+  stroke: none;
+  cursor: pointer;
+}
+a:hover &gt; .slot.empty-slot,
+.slot.empty-slot:hover {
+  fill: rgba(129, 199, 132, 0.22);
+  stroke: #81c784;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+/* Dark theme — follows NetBox's Bootstrap dark mode via prefers-color-scheme,
+ * which the embedding page propagates to &lt;object&gt; documents. */
+@media (prefers-color-scheme: dark) {
+  .svg-bg          { fill: #141619; }
+  .cabinet-outline { stroke: #6c7078; }
+  .cabinet-label   { fill: #c8ccd4; }
+
+  .mount                { stroke: #9aa2ad; }
+  .mount.din-rail       { fill: #4b5460; }
+  .mount.subrack        { fill: #3b4451; stroke: #7a8696; }
+  .mount.mounting-plate { fill: #2a2a26; stroke: #8a7a74; }
+  .mount.busbar         { fill: #a0661f; stroke: #f5b06a; }
+  .mount.grid.grid-row  { fill: #454034; stroke: #a09777; }
+  .mount-label          { fill: #c8ccd4; }
+
+  .slot        { stroke: #101114; }
+  .slot.empty  { fill: none; stroke: #5a6070; }
+  .label       { fill: #f3f3f3; }
+  .label.empty { fill: #7a8696; }
+
+  /* Finding C empty-slot affordance, dark-mode contrast. */
+  .slot.empty-slot         { fill: rgba(129, 199, 132, 0.08); }
+  a:hover &gt; .slot.empty-slot,
+  .slot.empty-slot:hover   { fill: rgba(129, 199, 132, 0.3); stroke: #a5d6a7; }
+}
+
+/* Thumbnail mode — Finding E, v0.4.0.
+ *
+ * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
+ * &lt;svg&gt; element gets `class="thumbnail"`. These rules then apply to
+ * diminish the rendering so users understand it's a preview, not a
+ * live click target.
+ *
+ * Used by the rack elevation monkey-patch so the embedded cabinet
+ * interior inside a rack U slot reads as "zoom in via the Layout tab
+ * to interact" instead of tempting users to click on individual
+ * placement rectangles (whose hyperlinks are unreachable from inside
+ * the core rack-elevation &lt;image&gt; wrapper anyway — clicking them
+ * navigates to the HOST device, not the mounted one, and that's a
+ * click-target lie).
+ *
+ * Strategy: drop contrast + opacity, suppress per-placement labels,
+ * suppress the mount name label, kill the cabinet outline. The mount
+ * geometry is still visible so users can read "here's the shape of
+ * the interior" at a glance.
+ */
+svg.thumbnail .cabinet-outline,
+svg.thumbnail .cabinet-label,
+svg.thumbnail .mount-label,
+svg.thumbnail .label,
+svg.thumbnail .device-image-label,
+svg.thumbnail .slot.empty-slot {
+  display: none;
+}
+svg.thumbnail .mount,
+svg.thumbnail .slot {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+/* High-contrast mode — Finding F, v0.4.0.
+ *
+ * Triggers automatically when the OS asks for increased contrast:
+ *
+ *   * macOS:   System Settings → Accessibility → Display → Increase Contrast
+ *   * Windows: Settings → Accessibility → Contrast themes
+ *   * iOS/iPadOS: Settings → Accessibility → Display &amp; Text Size → Increase Contrast
+ *
+ * Designed for OT/ICS field engineers using tablets in bright substation
+ * sunlight where the default ~4.1:1 ratio washes out. All strokes go to
+ * pure white on pure black, role colors get pulled to saturated primaries
+ * at &gt;= 8.5:1 contrast against the black background, and stroke widths
+ * bump up one notch so nothing dissolves at glancing angles.
+ *
+ * CSS-only; no user preference plumbing, no extra runtime cost. Dark-mode
+ * also-triggering (`prefers-color-scheme: dark`) falls through to these
+ * rules if both media features match, because this block is declared
+ * last and has equal specificity.
+ */
+@media (prefers-contrast: more) {
+  .svg-bg          { fill: #000; }
+  .cabinet-outline { stroke: #fff; stroke-width: 3; stroke-dasharray: 6 4; }
+  .cabinet-label   { fill: #fff; font-weight: 700; }
+
+  .mount                { stroke: #fff; stroke-width: 2; }
+  .mount.din-rail       { fill: #3a5a8a; }
+  .mount.subrack        { fill: #225566; }
+  .mount.mounting-plate { fill: #553366; stroke-dasharray: 6 3; }
+  .mount.busbar         { fill: #a04010; stroke-width: 2.5; }
+  .mount.grid.grid-row  { fill: #554422; }
+  .mount-label          { fill: #fff; font-weight: 700; }
+
+  .slot        { stroke: #fff; stroke-width: 1; }
+  .slot.empty  { fill: none; stroke: #bbb; stroke-width: 1; stroke-dasharray: 3 2; }
+  .label       { fill: #fff; font-weight: 700; }
+  .label.empty { fill: #bbb; }
+  .device-image-label { fill: #fff; font-weight: 700; }
+}
+</ns0:style><ns0:clipPath id="n1-d269-clip-placement-205"><ns0:rect height="70" width="160.0" x="78.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-206"><ns0:rect height="70" width="160.0" x="338.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-207"><ns0:rect height="70" width="160.0" x="598.0" y="32.0" /></ns0:clipPath><ns0:clipPath id="n1-d269-clip-placement-208"><ns0:rect height="70" width="160.0" x="858.0" y="32.0" /></ns0:clipPath></ns0:defs><ns0:rect class="svg-bg" height="160.0" width="1240.0" x="0" y="0" /><ns0:rect class="cabinet-outline" height="120.0" width="1200.0" x="20" y="20" /><ns0:text class="cabinet-label" x="22" y="15">Test block rail #1</ns0:text><ns0:rect class="mount din-rail" height="14" width="1160.0" x="40.0" y="60.0" /><ns0:a target="_parent" ns1:href="/dcim/devices/270/"><ns0:title>Name: Test block F01
+Role: Relay
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="78.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-205)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="158.0" y="67.0">Test block F01</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/271/"><ns0:title>Name: Test block F02
+Role: Relay
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="338.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-206)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="418.0" y="67.0">Test block F02</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/272/"><ns0:title>Name: Test block F03
+Role: Relay
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="598.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-207)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="678.0" y="67.0">Test block F03</ns0:text></ns0:a><ns0:a target="_parent" ns1:href="/dcim/devices/273/"><ns0:title>Name: Test block F04
+Role: Relay
+Type: Test block (8-pole)</ns0:title><ns0:rect class="slot" height="70" style="fill: #2196f3" width="160.0" x="858.0" y="32.0" /><ns0:text class="label" clip-path="url(#n1-d269-clip-placement-208)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="938.0" y="67.0">Test block F04</ns0:text></ns0:a><ns0:text class="mount-label" x="44.0" y="56.0">Test rail</ns0:text></ns0:svg><a target="_parent" xlink:href="/dcim/devices/268/"><title>Name: Line distance IED L1
 Role: PLC
 Type: Line distance protection IED</title><rect class="slot" height="540.0" style="fill: #4caf50" width="966.0" x="300.0" y="1820.0" /><text class="label" clip-path="url(#clip-placement-203)" dominant-baseline="central" fill="#ffffff" text-anchor="middle" x="783.0" y="2090.0">Line distance IED L1</text></a><a target="_parent" xlink:href="/dcim/devices/266/"><title>Name: Overcurrent IED F1
 Role: PLC
