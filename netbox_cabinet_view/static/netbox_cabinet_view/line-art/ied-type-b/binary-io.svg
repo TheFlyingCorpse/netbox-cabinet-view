@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Type B Binary I/O — vertical LED bars, screw terminals -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#2a2a20" stroke="#555" stroke-width="0.5"/>
+  <!-- Label strip -->
+  <rect x="2" y="2" width="26" height="8" rx="0.5" fill="#333320" stroke="#665" stroke-width="0.3"/>
+  <text x="15" y="8" text-anchor="middle" font-size="3.5" fill="#cc8" font-family="sans-serif">BIN I/O</text>
+  <!-- Input indicator bars (left, green) -->
+  <text x="8" y="16" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">IN</text>
+  <rect x="4" y="18" width="4" height="6" rx="0.5" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="4" y="26" width="4" height="6" rx="0.5" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="4" y="34" width="4" height="6" rx="0.5" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="4" y="42" width="4" height="6" rx="0.5" fill="#1e3a1e" stroke="#444" stroke-width="0.2"/>
+  <!-- Output indicator bars (right, red) -->
+  <text x="22" y="16" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">OUT</text>
+  <rect x="22" y="18" width="4" height="6" rx="0.5" fill="#3a1e1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="22" y="26" width="4" height="6" rx="0.5" fill="#3a1e1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="22" y="34" width="4" height="6" rx="0.5" fill="#3a1e1e" stroke="#444" stroke-width="0.2"/>
+  <rect x="22" y="42" width="4" height="6" rx="0.5" fill="#3a1e1e" stroke="#444" stroke-width="0.2"/>
+  <!-- Divider line -->
+  <line x1="3" y1="52" x2="27" y2="52" stroke="#555" stroke-width="0.3"/>
+  <!-- Screw terminal block -->
+  <rect x="3" y="55" width="24" height="24" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <circle cx="8" cy="61" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <circle cx="15" cy="61" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <circle cx="22" cy="61" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <circle cx="8" cy="70" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <circle cx="15" cy="70" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <circle cx="22" cy="70" r="1.8" fill="#444" stroke="#666" stroke-width="0.3"/>
+  <!-- Backplane connector -->
+  <rect x="3" y="84" width="24" height="13" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="86" width="20" height="9" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

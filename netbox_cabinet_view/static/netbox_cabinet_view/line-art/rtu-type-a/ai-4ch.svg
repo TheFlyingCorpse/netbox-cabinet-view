@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 100" width="24" height="100">
+  <!-- RTU analog input module — 4-20mA/voltage inputs -->
+  <!-- Inspired by ABB RTU520 AI module form factor -->
+  <rect x="0.5" y="0.5" width="23" height="99" rx="0.5" fill="#e0dcd0" stroke="#999" stroke-width="0.5"/>
+  <!-- Top color band (green = analog input convention) -->
+  <rect x="0.5" y="0.5" width="23" height="8" rx="0.5" fill="#2a7a3a" stroke="#999" stroke-width="0.5"/>
+  <text x="12" y="6" text-anchor="middle" font-size="3.5" fill="#fff" font-family="sans-serif" font-weight="bold">AI</text>
+  <!-- 4 channel bar indicators -->
+  <text x="12" y="16" text-anchor="middle" font-size="2" fill="#777" font-family="sans-serif">4-20 mA</text>
+  <rect x="4" y="19" width="3" height="18" rx="0.3" fill="#1a1a1a" stroke="#555" stroke-width="0.2"/>
+  <rect x="4" y="28" width="3" height="9" rx="0" fill="#2a7a3a"/>
+  <rect x="10" y="19" width="3" height="18" rx="0.3" fill="#1a1a1a" stroke="#555" stroke-width="0.2"/>
+  <rect x="10" y="31" width="3" height="6" rx="0" fill="#2a7a3a"/>
+  <rect x="16" y="19" width="3" height="18" rx="0.3" fill="#1a1a1a" stroke="#555" stroke-width="0.2"/>
+  <rect x="16" y="25" width="3" height="12" rx="0" fill="#2a7a3a"/>
+  <!-- Bus status -->
+  <rect x="3" y="42" width="18" height="5" rx="0.5" fill="#d5d0c5" stroke="#aaa" stroke-width="0.3"/>
+  <circle cx="7" cy="44.5" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="12" cy="44.5" r="1" fill="#6a6a2a" stroke="#888" stroke-width="0.2"/>
+  <!-- Spring-cage terminals -->
+  <rect x="2" y="52" width="20" height="20" rx="0.5" fill="#ccc8bc" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="54" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="9" y="54" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="14" y="54" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="19" y="54" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="4" y="61" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="9" y="61" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="14" y="61" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <rect x="19" y="61" width="3" height="3.5" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <!-- Label -->
+  <rect x="3" y="76" width="18" height="8" rx="0.5" fill="#fff" stroke="#bbb" stroke-width="0.3"/>
+  <text x="12" y="82" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">4×AI 4-20mA</text>
+  <!-- DIN rail clip -->
+  <rect x="2" y="87" width="20" height="11" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="5" y="89" width="14" height="6" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

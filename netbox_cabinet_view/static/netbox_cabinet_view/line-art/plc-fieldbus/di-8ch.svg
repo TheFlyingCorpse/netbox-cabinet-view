@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 100">
+  <!-- Generic 8-channel digital input module — de-branded -->
+  <rect x="0.5" y="0.5" width="19" height="99" rx="1" fill="#d8d4c8" stroke="#888" stroke-width="0.5"/>
+  <!-- Orange band -->
+  <rect x="1" y="1" width="18" height="7" fill="#e87020"/>
+  <text x="10" y="6" text-anchor="middle" font-size="4" fill="#fff" font-family="sans-serif" font-weight="bold">DI</text>
+  <!-- Bus/power status strip -->
+  <rect x="2" y="10" width="3" height="4" rx="0.3" fill="#0a0"/>
+  <rect x="2" y="15" width="3" height="4" rx="0.3" fill="#e80"/>
+  <!-- 8 channel LEDs -->
+  <circle cx="13" cy="12" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="17" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="22" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="27" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="32" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="37" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="42" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <circle cx="13" cy="47" r="1.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <!-- Channel numbers -->
+  <text x="8" y="13.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">1</text>
+  <text x="8" y="18.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">2</text>
+  <text x="8" y="23.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">3</text>
+  <text x="8" y="28.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">4</text>
+  <text x="8" y="33.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">5</text>
+  <text x="8" y="38.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">6</text>
+  <text x="8" y="43.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">7</text>
+  <text x="8" y="48.5" text-anchor="middle" font-size="2.2" fill="#555" font-family="sans-serif">8</text>
+  <!-- Label -->
+  <text x="10" y="57" text-anchor="middle" font-size="2.5" fill="#444" font-family="sans-serif">8xDI</text>
+  <text x="10" y="60.5" text-anchor="middle" font-size="2.2" fill="#444" font-family="sans-serif">24V</text>
+  <!-- Spring-cage terminals -->
+  <rect x="2" y="65" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="11" y="65" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="70" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="11" y="70" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="75" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="11" y="75" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="80" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="11" y="80" width="7" height="3.5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="85" width="16" height="3.5" rx="0.3" fill="#0a0" stroke="#080" stroke-width="0.2"/>
+  <text x="10" y="87.5" text-anchor="middle" font-size="2" fill="#fff" font-family="sans-serif">GND</text>
+  <!-- DIN rail clip -->
+  <rect x="3" y="92" width="14" height="5" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <line x1="5" y1="94.5" x2="15" y2="94.5" stroke="#777" stroke-width="0.3"/>
+</svg>

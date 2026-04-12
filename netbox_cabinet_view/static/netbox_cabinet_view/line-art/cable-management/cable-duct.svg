@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30">
+  <!-- Generic slotted cable duct (cross-section) — de-branded -->
+  <!-- U-channel body -->
+  <path d="M2 0 L2 28 L38 28 L38 0 L34 0 L34 24 L6 24 L6 0 Z" fill="#b0b0b0" stroke="#888" stroke-width="0.4"/>
+  <!-- Left wall finger slots -->
+  <rect x="2" y="3" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="2" y="8" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="2" y="13" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="2" y="18" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <!-- Right wall finger slots -->
+  <rect x="34" y="3" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="34" y="8" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="34" y="13" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <rect x="34" y="18" width="4" height="2.5" rx="0.3" fill="#999" stroke="#888" stroke-width="0.2"/>
+  <!-- Base floor -->
+  <rect x="6" y="24" width="28" height="4" fill="#b8b8b8" stroke="#888" stroke-width="0.3"/>
+</svg>

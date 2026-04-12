@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 70">
+  <!-- Generic DIN-rail blanking plate — de-branded -->
+  <rect x="0.5" y="0.5" width="17" height="69" rx="1" fill="#d8d8d8" stroke="#999" stroke-width="0.5"/>
+  <!-- Subtle panel edge lines -->
+  <line x1="2" y1="4" x2="2" y2="58" stroke="#ccc" stroke-width="0.3"/>
+  <line x1="16" y1="4" x2="16" y2="58" stroke="#ccc" stroke-width="0.3"/>
+  <!-- DIN clip -->
+  <rect x="3" y="61" width="12" height="5" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <line x1="5" y1="63.5" x2="13" y2="63.5" stroke="#777" stroke-width="0.3"/>
+</svg>

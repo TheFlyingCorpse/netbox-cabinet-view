@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 44">
+  <!-- Generic 1U ODF frame — de-branded -->
+  <!-- Dark panel -->
+  <rect x="0.5" y="0.5" width="439" height="43" rx="2" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
+  <!-- Label -->
+  <text x="20" y="12" font-size="5" fill="#777" font-family="sans-serif" font-weight="bold">ODF FRAME</text>
+  <!-- 12 cassette slots (2 rows of 6) -->
+  <!-- Row 1 -->
+  <rect x="30" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="96" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="162" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="228" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="294" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="360" y="4" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <!-- Row 2 -->
+  <rect x="30" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="96" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="162" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="228" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="294" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <rect x="360" y="24" width="60" height="16" rx="0.5" fill="#222" stroke="#555" stroke-width="0.4"/>
+  <!-- Fibre management tray outline (rear hint) -->
+  <line x1="425" y1="6" x2="425" y2="38" stroke="#444" stroke-width="0.5" stroke-dasharray="2 2"/>
+</svg>

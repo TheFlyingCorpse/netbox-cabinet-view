@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 100" width="24" height="100">
+  <!-- RTU Type D DI — light body, orange band, two-column LEDs -->
+  <rect x="0.5" y="0.5" width="23" height="99" rx="1" fill="#ccc8bc" stroke="#999" stroke-width="0.5"/>
+  <!-- Orange band at top -->
+  <rect x="0.5" y="0.5" width="23" height="10" rx="1" fill="#8a5a2a" stroke="#999" stroke-width="0.5"/>
+  <text x="12" y="7.5" text-anchor="middle" font-size="3.5" fill="#fff" font-family="sans-serif" font-weight="bold">DI</text>
+  <!-- 8 channel LEDs in two columns -->
+  <circle cx="7" cy="16" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="21" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="26" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="7" cy="31" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="16" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="21" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="26" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="17" cy="31" r="1" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <text x="7" y="37" text-anchor="middle" font-size="1.3" fill="#777" font-family="sans-serif">1-4</text>
+  <text x="17" y="37" text-anchor="middle" font-size="1.3" fill="#777" font-family="sans-serif">5-8</text>
+  <!-- Spring-cage terminals -->
+  <rect x="3" y="40" width="18" height="28" rx="1" fill="#bbb8a8" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="42" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="42" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="46" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="46" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="50" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="50" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="54" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="54" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="58" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="58" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <!-- DIN rail clip -->
+  <rect x="3" y="85" width="18" height="12" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="5" y="87" width="14" height="8" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

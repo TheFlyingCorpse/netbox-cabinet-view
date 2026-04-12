@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <!-- Generic cable gland (top view) — de-branded -->
+  <!-- Outer body ring -->
+  <circle cx="10" cy="10" r="9" fill="#a0a0a0" stroke="#777" stroke-width="0.4"/>
+  <!-- Hexagonal nut -->
+  <polygon points="10,2 16.9,5.5 16.9,14.5 10,18 3.1,14.5 3.1,5.5" fill="none" stroke="#666" stroke-width="0.6"/>
+  <!-- Inner body -->
+  <circle cx="10" cy="10" r="5.5" fill="#b0b0b0" stroke="#888" stroke-width="0.4"/>
+  <!-- Cable hole -->
+  <circle cx="10" cy="10" r="2.5" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <!-- Knurling marks on outer ring -->
+  <circle cx="10" cy="10" r="7.5" fill="none" stroke="#999" stroke-width="0.2" stroke-dasharray="1 1.5"/>
+</svg>

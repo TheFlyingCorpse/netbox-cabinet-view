@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 175">
+  <!-- Generic 4U DIN-rail shelf — de-branded -->
+  <!-- Light bezel -->
+  <rect x="0.5" y="0.5" width="439" height="174" rx="2" fill="#d0d0d0" stroke="#888" stroke-width="1"/>
+  <rect x="4" y="4" width="432" height="167" rx="1" fill="#e0e0e0" stroke="#aaa" stroke-width="0.5"/>
+  <!-- Top DIN rail -->
+  <rect x="20" y="25" width="400" height="16" rx="0.5" fill="#999" stroke="#777" stroke-width="0.5"/>
+  <line x1="20" y1="28" x2="420" y2="28" stroke="#aaa" stroke-width="0.3"/>
+  <line x1="20" y1="38" x2="420" y2="38" stroke="#888" stroke-width="0.3"/>
+  <path d="M20 25 L24 21 L416 21 L420 25" fill="none" stroke="#888" stroke-width="0.4"/>
+  <path d="M20 41 L24 45 L416 45 L420 41" fill="none" stroke="#888" stroke-width="0.4"/>
+  <!-- Wire management space between rails -->
+  <rect x="20" y="52" width="400" height="24" rx="0.5" fill="#ddd" stroke="#bbb" stroke-width="0.3"/>
+  <text x="220" y="67" text-anchor="middle" font-size="5" fill="#aaa" font-family="sans-serif">WIRE DUCT</text>
+  <!-- Ventilation slots in wire space -->
+  <rect x="40" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="70" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="100" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="300" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="330" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="360" y="58" width="20" height="1.5" rx="0.3" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <!-- Bottom DIN rail -->
+  <rect x="20" y="84" width="400" height="16" rx="0.5" fill="#999" stroke="#777" stroke-width="0.5"/>
+  <line x1="20" y1="87" x2="420" y2="87" stroke="#aaa" stroke-width="0.3"/>
+  <line x1="20" y1="97" x2="420" y2="97" stroke="#888" stroke-width="0.3"/>
+  <path d="M20 84 L24 80 L416 80 L420 84" fill="none" stroke="#888" stroke-width="0.4"/>
+  <path d="M20 100 L24 104 L416 104 L420 100" fill="none" stroke="#888" stroke-width="0.4"/>
+  <!-- Bottom vents -->
+  <rect x="40" y="115" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="120" y="115" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="200" y="115" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="280" y="115" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <rect x="360" y="115" width="30" height="2" rx="0.5" fill="#ccc" stroke="#bbb" stroke-width="0.2"/>
+  <!-- Cable entry knockouts on sides -->
+  <circle cx="10" cy="55" r="5" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+  <circle cx="430" cy="55" r="5" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+  <circle cx="10" cy="120" r="5" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+  <circle cx="430" cy="120" r="5" fill="none" stroke="#aaa" stroke-width="0.4" stroke-dasharray="1.5 1"/>
+</svg>

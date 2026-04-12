@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 50">
+  <!-- Generic ground/earth terminal block — de-branded -->
+  <rect x="0.3" y="0.3" width="7.4" height="49.4" rx="0.5" fill="#9aab3a" stroke="#778822" stroke-width="0.3"/>
+  <!-- Bolt terminal -->
+  <circle cx="4" cy="10" r="2.5" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="2.5" y1="8.5" x2="5.5" y2="11.5" stroke="#666" stroke-width="0.5"/>
+  <!-- Earth symbol -->
+  <line x1="4" y1="20" x2="4" y2="26" stroke="#334411" stroke-width="0.6"/>
+  <line x1="1.5" y1="26" x2="6.5" y2="26" stroke="#334411" stroke-width="0.6"/>
+  <line x1="2.3" y1="28" x2="5.7" y2="28" stroke="#334411" stroke-width="0.5"/>
+  <line x1="3" y1="30" x2="5" y2="30" stroke="#334411" stroke-width="0.4"/>
+  <!-- DIN clip -->
+  <rect x="1.5" y="44" width="5" height="3" rx="0.5" fill="#999" stroke="#777" stroke-width="0.2"/>
+</svg>

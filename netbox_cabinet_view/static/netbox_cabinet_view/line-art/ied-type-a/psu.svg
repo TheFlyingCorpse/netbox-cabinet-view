@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Generic IED PSU module — line art, no vendor marks -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#2a2a2a" stroke="#555" stroke-width="0.5"/>
+  <!-- Top label area -->
+  <rect x="3" y="3" width="24" height="12" rx="1" fill="#333" stroke="#666" stroke-width="0.3"/>
+  <text x="15" y="11" text-anchor="middle" font-size="4" fill="#aaa" font-family="sans-serif">PSU</text>
+  <!-- Status LEDs -->
+  <circle cx="8" cy="22" r="2" fill="#2d5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="15" cy="22" r="2" fill="#2d5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="22" cy="22" r="2" fill="#5a1e1e" stroke="#444" stroke-width="0.3"/>
+  <!-- Power connector area -->
+  <rect x="5" y="30" width="20" height="14" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <text x="15" y="39" text-anchor="middle" font-size="3" fill="#777" font-family="sans-serif">48V DC</text>
+  <!-- Ventilation slots -->
+  <line x1="6" y1="52" x2="24" y2="52" stroke="#444" stroke-width="0.3"/>
+  <line x1="6" y1="55" x2="24" y2="55" stroke="#444" stroke-width="0.3"/>
+  <line x1="6" y1="58" x2="24" y2="58" stroke="#444" stroke-width="0.3"/>
+  <line x1="6" y1="61" x2="24" y2="61" stroke="#444" stroke-width="0.3"/>
+  <line x1="6" y1="64" x2="24" y2="64" stroke="#444" stroke-width="0.3"/>
+  <!-- Bottom connector -->
+  <rect x="4" y="82" width="22" height="14" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="7" y="85" width="6" height="8" rx="0.5" fill="#222" stroke="#666" stroke-width="0.3"/>
+  <rect x="17" y="85" width="6" height="8" rx="0.5" fill="#222" stroke="#666" stroke-width="0.3"/>
+</svg>

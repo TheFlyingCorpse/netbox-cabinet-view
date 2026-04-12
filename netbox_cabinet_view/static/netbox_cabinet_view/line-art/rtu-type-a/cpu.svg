@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 100" width="40" height="100">
+  <!-- RTU CPU/gateway module — wider body, DIN-mount -->
+  <!-- Inspired by Sprecher MC-33xx / ABB RTU520 CPU form factor -->
+  <rect x="0.5" y="0.5" width="39" height="99" rx="1" fill="#d8d4c8" stroke="#999" stroke-width="0.5"/>
+  <!-- Top color band (blue = CPU/comm convention) -->
+  <rect x="0.5" y="0.5" width="39" height="10" rx="1" fill="#2a5a8a" stroke="#999" stroke-width="0.5"/>
+  <text x="20" y="7.5" text-anchor="middle" font-size="4" fill="#fff" font-family="sans-serif" font-weight="bold">RTU CPU</text>
+  <!-- LCD display -->
+  <rect x="4" y="14" width="32" height="12" rx="1" fill="#0a1a0a" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="20" y="22" text-anchor="middle" font-size="3.5" fill="#4a8a4a" font-family="monospace">192.168.1.1</text>
+  <!-- Status LEDs row -->
+  <rect x="4" y="30" width="32" height="8" rx="0.5" fill="#ccc8bb" stroke="#aaa" stroke-width="0.3"/>
+  <circle cx="9" cy="34" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="14" cy="34" r="1.2" fill="#2a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="19" cy="34" r="1.2" fill="#6a6a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="24" cy="34" r="1.2" fill="#6a2a2a" stroke="#888" stroke-width="0.2"/>
+  <circle cx="29" cy="34" r="1.2" fill="#2a2a6a" stroke="#888" stroke-width="0.2"/>
+  <text x="9" y="31" text-anchor="middle" font-size="1.8" fill="#777" font-family="sans-serif">RUN</text>
+  <text x="14" y="31" text-anchor="middle" font-size="1.8" fill="#777" font-family="sans-serif">COM</text>
+  <text x="19" y="31" text-anchor="middle" font-size="1.8" fill="#777" font-family="sans-serif">WRN</text>
+  <text x="24" y="31" text-anchor="middle" font-size="1.8" fill="#777" font-family="sans-serif">ERR</text>
+  <text x="29" y="31" text-anchor="middle" font-size="1.8" fill="#777" font-family="sans-serif">I/O</text>
+  <!-- Ethernet ports -->
+  <text x="20" y="44" text-anchor="middle" font-size="2.5" fill="#777" font-family="sans-serif">ETHERNET</text>
+  <rect x="5" y="46" width="10" height="8" rx="1" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <rect x="18" y="46" width="10" height="8" rx="1" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="10" y="59" text-anchor="middle" font-size="2" fill="#777" font-family="sans-serif">P1</text>
+  <text x="23" y="59" text-anchor="middle" font-size="2" fill="#777" font-family="sans-serif">P2</text>
+  <!-- Serial port -->
+  <text x="20" y="66" text-anchor="middle" font-size="2.5" fill="#777" font-family="sans-serif">SERIAL</text>
+  <rect x="10" y="68" width="20" height="6" rx="1" fill="#111" stroke="#555" stroke-width="0.3"/>
+  <!-- Label -->
+  <rect x="4" y="78" width="32" height="6" rx="0.5" fill="#fff" stroke="#bbb" stroke-width="0.3"/>
+  <text x="20" y="83" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">CPU · IEC 61850 / 104</text>
+  <!-- DIN rail clip -->
+  <rect x="4" y="87" width="32" height="10" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="8" y="89" width="24" height="6" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

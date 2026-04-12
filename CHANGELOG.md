@@ -5,11 +5,29 @@ All notable changes to this project will be documented in this file. The format 
 ## [Unreleased]
 
 ### Planned
-- **Bundled placeholder line-art** — generic front-panel SVGs for IED modules (PSU, CPU, I/O, comms), RTU/PLC DIN-mount modules (DI, DO, AI, CPU), SFP/QSFP transceiver face plates, chassis enclosures, DIN-rail devices, rack shelves. Ships with the plugin so out-of-the-box rendering looks realistic without requiring users to upload manufacturer photos. Requires `ModuleMountProfile.front_image` ImageField (architecture decided, migration ready).
+- **Drag-to-place UI** — drag existing placements to new positions within the SVG, with ghost rect + grid snapping + PATCH to API. Deferred from v0.6.0 to ship separately for UX iteration.
+- **Seed command auto-uploads line-art** to demo ModuleMountProfile/DeviceType records so the demo scenarios render with images out of the box.
 - **Management IP easter egg** — render `device.primary_ip4` on the CPU module's LCD overlay in the SVG.
 - Multi-depth / swing-frame rack support.
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
+
+## [0.6.0] — 2026-04-12
+
+### Added
+
+- **`ModuleMountProfile.front_image`** — ImageField for module front-panel images. NetBox 4.5's core `ModuleType` has no `front_image` field; this fills the gap. The SVG renderer checks `ModuleMountProfile.front_image` first, then falls back to `ModuleType.front_image` (for future NetBox versions), then colored rectangle. Migration `0006`.
+- **`DeviceMountProfile.front_image`** — ImageField as a plugin-level fallback for host device front-panel images. The SVG renderer checks `DeviceType.front_image` (core) first, then `DeviceMountProfile.front_image`. Migration `0007`.
+- **Bundled placeholder line-art library** — 62 generic, de-branded front-panel SVGs across 14 categories, shipped under `static/netbox_cabinet_view/line-art/`. Covers IED modules (4 manufacturer-inspired form factors), RTU modules (4 variants), PLC/fieldbus I/O, SFP/QSFP transceiver face plates, DIN-rail standalone devices, busbar components, cable management, and host device chassis fronts. Includes `manifest.json` taxonomy mapping each SVG to its category, mount type, and target ImageField. See [`docs/line-art.md`](docs/line-art.md) for the full gallery.
+- **SFP / module coordinate-click** — nested SVG renderers at depth 1 now render with empty-slot affordances enabled (not thumbnail-suppressed), so SFP cage positions on a comms module rendered inside its parent IED chassis are clickable. The existing 2D click-anywhere JS handles nested SVG coordinate conversion via `getScreenCTM()`.
+- **GraphQL API** via Strawberry. All four plugin models (`DeviceMountProfile`, `ModuleMountProfile`, `Mount`, `Placement`) exposed at `/graphql/` with list + detail queries. Uses `@strawberry_django.type` with `fields='__all__'`, inheriting from `NetBoxObjectType`. FK relations to core dcim types use `strawberry.lazy()`. Registered via `PluginConfig.graphql_schema`.
+
+### Migration
+
+- **0006** — `AddField('modulemountprofile', 'front_image', ImageField)`
+- **0007** — `AddField('devicemountprofile', 'front_image', ImageField)`
+
+Both fields are blank by default. No behavioral change for existing users.
 
 ## [0.5.0] — 2026-04-12
 
@@ -195,7 +213,8 @@ Initial public release.
 - Minimal REST API (one `ModelViewSet` per model) — required by NetBox's detail templates even when no public API is intended.
 - `manage.py cabinetview_seed` management command that creates a realistic OT/ICS demo dataset for visually testing the plugin. Not run automatically on install.
 
-[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/TheFlyingCorpse/netbox-cabinet-view/compare/v0.3.0...v0.4.0

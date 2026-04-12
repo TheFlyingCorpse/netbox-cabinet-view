@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 40">
+  <!-- Generic busbar support insulator — de-branded -->
+  <!-- Insulator body -->
+  <rect x="3" y="2" width="14" height="28" rx="1.5" fill="#b0b0b0" stroke="#888" stroke-width="0.4"/>
+  <!-- Channel slot at top for busbar -->
+  <rect x="5" y="2" width="10" height="5" rx="0.5" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <rect x="6" y="3" width="8" height="3" rx="0.3" fill="#888" stroke="#666" stroke-width="0.2"/>
+  <!-- Mounting ribbing -->
+  <line x1="5" y1="12" x2="15" y2="12" stroke="#999" stroke-width="0.3"/>
+  <line x1="5" y1="16" x2="15" y2="16" stroke="#999" stroke-width="0.3"/>
+  <line x1="5" y1="20" x2="15" y2="20" stroke="#999" stroke-width="0.3"/>
+  <!-- Mounting bolt at bottom -->
+  <circle cx="10" cy="34" r="3" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="8" y1="32" x2="12" y2="36" stroke="#666" stroke-width="0.5"/>
+  <line x1="12" y1="32" x2="8" y2="36" stroke="#666" stroke-width="0.5"/>
+</svg>

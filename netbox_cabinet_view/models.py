@@ -92,6 +92,17 @@ class DeviceMountProfile(NetBoxModel):
         help_text='Height in mount units. Used only for 2D mounts (mounting plate).',
     )
 
+    # Feature C (v0.6.0): front-panel image for the host device itself.
+    # NetBox core already has DeviceType.front_image, but this provides a
+    # plugin-level fallback so users can set an image via the plugin's own
+    # form without touching the DeviceType admin. The renderer checks
+    # DeviceType.front_image first (core), then this field as fallback.
+    front_image = models.ImageField(
+        upload_to='devicetype-images',
+        blank=True,
+        help_text='Front-panel image for this device type. Used as a fallback when DeviceType.front_image is not set.',
+    )
+
     class Meta:
         ordering = ('device_type',)
         verbose_name = 'Device Mount Profile'
@@ -177,6 +188,17 @@ class ModuleMountProfile(NetBoxModel):
     footprint_secondary = models.PositiveSmallIntegerField(
         null=True, blank=True,
         help_text='Height in mount units. 2D mounts (mounting plate) only.',
+    )
+
+    # Feature 1 (v0.6.0): front-panel image for modules. NetBox 4.5's
+    # core ModuleType doesn't have a front_image field (only DeviceType
+    # does). This field fills that gap so module placements render with
+    # their actual front-panel image instead of a plain colored rectangle.
+    # Users can upload the bundled line-art SVGs or real manufacturer photos.
+    front_image = models.ImageField(
+        upload_to='moduletype-images',
+        blank=True,
+        help_text='Front-panel image for this module type. Rendered inside the placement rectangle on the Layout tab SVG.',
     )
 
     class Meta:

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 100" width="60" height="100">
+  <!-- Generic IED comms module (2-slot wide) — Ethernet + fibre -->
+  <rect x="0.5" y="0.5" width="59" height="99" rx="1" fill="#1a2a2a" stroke="#555" stroke-width="0.5"/>
+  <!-- Top label -->
+  <rect x="3" y="3" width="54" height="12" rx="1" fill="#223333" stroke="#668" stroke-width="0.3"/>
+  <text x="30" y="11" text-anchor="middle" font-size="4" fill="#8cc" font-family="sans-serif">COMMS</text>
+  <!-- Status LEDs -->
+  <circle cx="10" cy="22" r="1.5" fill="#1e5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="16" cy="22" r="1.5" fill="#1e5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="22" cy="22" r="1.5" fill="#5a5a1e" stroke="#444" stroke-width="0.3"/>
+  <text x="10" y="28" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">LNK</text>
+  <text x="16" y="28" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">ACT</text>
+  <text x="22" y="28" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">ERR</text>
+  <!-- Ethernet RJ45 ports -->
+  <text x="15" y="37" text-anchor="middle" font-size="2.5" fill="#888" font-family="sans-serif">ETHERNET</text>
+  <rect x="5" y="40" width="10" height="8" rx="1" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <rect x="18" y="40" width="10" height="8" rx="1" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="10" y="53" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">P1</text>
+  <text x="23" y="53" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">P2</text>
+  <!-- Fibre SFP ports -->
+  <text x="45" y="37" text-anchor="middle" font-size="2.5" fill="#888" font-family="sans-serif">FIBRE</text>
+  <rect x="37" y="40" width="8" height="6" rx="0.5" fill="#111" stroke="#6a4a6a" stroke-width="0.4"/>
+  <rect x="48" y="40" width="8" height="6" rx="0.5" fill="#111" stroke="#6a4a6a" stroke-width="0.4"/>
+  <text x="41" y="51" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">TX</text>
+  <text x="52" y="51" text-anchor="middle" font-size="2" fill="#666" font-family="sans-serif">RX</text>
+  <!-- Serial port -->
+  <text x="30" y="62" text-anchor="middle" font-size="2.5" fill="#888" font-family="sans-serif">SERIAL</text>
+  <rect x="20" y="64" width="20" height="7" rx="1" fill="#111" stroke="#555" stroke-width="0.3"/>
+  <!-- Bottom backplane connector -->
+  <rect x="3" y="82" width="54" height="15" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="84" width="50" height="11" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

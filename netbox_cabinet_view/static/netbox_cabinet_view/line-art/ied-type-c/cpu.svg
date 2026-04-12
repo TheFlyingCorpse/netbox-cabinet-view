@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Type C CPU — warm tones, heavier terminals, Relion-inspired -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#2a2520" stroke="#665" stroke-width="0.5"/>
+  <!-- Label strip -->
+  <rect x="2" y="2" width="26" height="8" rx="0.5" fill="#3a3530" stroke="#776" stroke-width="0.3"/>
+  <text x="15" y="8" text-anchor="middle" font-size="3.5" fill="#cba" font-family="sans-serif">CPU</text>
+  <!-- Small monochrome LCD -->
+  <rect x="5" y="13" width="20" height="10" rx="1" fill="#0a120a" stroke="#4a5a4a" stroke-width="0.4"/>
+  <text x="15" y="20" text-anchor="middle" font-size="3" fill="#4a8a4a" font-family="monospace">OK</text>
+  <!-- 3 nav buttons -->
+  <circle cx="9" cy="28" r="2" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <circle cx="15" cy="28" r="2" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <circle cx="21" cy="28" r="2" fill="#333" stroke="#555" stroke-width="0.3"/>
+  <!-- 6 status LEDs vertical -->
+  <circle cx="8" cy="36" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="37" font-size="1.8" fill="#776" font-family="sans-serif">RUN</text>
+  <circle cx="8" cy="41" r="1.2" fill="#1e4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="42" font-size="1.8" fill="#776" font-family="sans-serif">COMM</text>
+  <circle cx="8" cy="46" r="1.2" fill="#4a4a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="47" font-size="1.8" fill="#776" font-family="sans-serif">TRIP</text>
+  <circle cx="8" cy="51" r="1.2" fill="#4a3a1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="52" font-size="1.8" fill="#776" font-family="sans-serif">WARN</text>
+  <circle cx="8" cy="56" r="1.2" fill="#4a1e1e" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="57" font-size="1.8" fill="#776" font-family="sans-serif">ERR</text>
+  <circle cx="8" cy="61" r="1.2" fill="#1e1e4a" stroke="#444" stroke-width="0.2"/>
+  <text x="15" y="62" font-size="1.8" fill="#776" font-family="sans-serif">TEST</text>
+  <!-- RJ45 Ethernet port -->
+  <rect x="7" y="67" width="16" height="10" rx="1" fill="#0a0a0a" stroke="#555" stroke-width="0.4"/>
+  <rect x="9" y="69" width="12" height="6" rx="0.5" fill="#111" stroke="#333" stroke-width="0.2"/>
+  <text x="15" y="81" text-anchor="middle" font-size="2" fill="#665" font-family="sans-serif">ETH</text>
+  <!-- Backplane connector -->
+  <rect x="3" y="84" width="24" height="13" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="86" width="20" height="9" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

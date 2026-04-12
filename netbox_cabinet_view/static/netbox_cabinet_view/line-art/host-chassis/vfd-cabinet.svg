@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 1760">
+  <rect x="0" y="0" width="560" height="1760" rx="4" fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+  <rect x="8" y="8" width="544" height="1744" rx="2" fill="#333" stroke="#555" stroke-width="1"/>
+  <!-- Hinges -->
+  <rect x="2" y="200" width="6" height="36" rx="1" fill="#555" stroke="#666" stroke-width="0.5"/>
+  <rect x="2" y="860" width="6" height="36" rx="1" fill="#555" stroke="#666" stroke-width="0.5"/>
+  <rect x="2" y="1520" width="6" height="36" rx="1" fill="#555" stroke="#666" stroke-width="0.5"/>
+  <!-- VFD drive area -->
+  <rect x="30" y="40" width="500" height="780" rx="3" fill="#222" stroke="#666" stroke-width="1"/>
+  <text x="280" y="80" text-anchor="middle" font-size="20" fill="#777" font-family="sans-serif">VFD DRIVE</text>
+  <!-- Display -->
+  <rect x="200" y="120" width="160" height="100" rx="2" fill="#1a1a1a" stroke="#555" stroke-width="0.8"/>
+  <rect x="220" y="130" width="120" height="40" rx="1" fill="#001a00" stroke="#444" stroke-width="0.5"/>
+  <text x="280" y="155" text-anchor="middle" font-size="12" fill="#0a0" font-family="monospace">0.0 Hz</text>
+  <circle cx="240" cy="195" r="8" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <circle cx="280" cy="195" r="8" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <circle cx="320" cy="195" r="8" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <!-- Vents -->
+  <rect x="60" y="280" width="440" height="4" rx="1" fill="#2e2e2e" stroke="#444" stroke-width="0.3"/>
+  <rect x="60" y="290" width="440" height="4" rx="1" fill="#2e2e2e" stroke="#444" stroke-width="0.3"/>
+  <rect x="60" y="300" width="440" height="4" rx="1" fill="#2e2e2e" stroke="#444" stroke-width="0.3"/>
+  <!-- Power terminals -->
+  <rect x="60" y="680" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="100" y="705" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">R/L1</text>
+  <rect x="160" y="680" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="200" y="705" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">S/L2</text>
+  <rect x="260" y="680" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="300" y="705" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">T/L3</text>
+  <rect x="380" y="680" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="420" y="705" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">U/T1</text>
+  <rect x="60" y="740" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="100" y="765" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">V/T2</text>
+  <rect x="160" y="740" width="80" height="40" rx="2" fill="#444" stroke="#666" stroke-width="0.5"/>
+  <text x="200" y="765" text-anchor="middle" font-size="10" fill="#aaa" font-family="sans-serif">W/T3</text>
+  <!-- DIN area -->
+  <rect x="30" y="880" width="500" height="560" rx="3" fill="#3a3a3a" stroke="#666" stroke-width="1"/>
+  <text x="280" y="910" text-anchor="middle" font-size="14" fill="#777" font-family="sans-serif">DIN RAIL AREA</text>
+  <rect x="50" y="940" width="460" height="14" rx="0.5" fill="#999" stroke="#777" stroke-width="0.5"/>
+  <path d="M50 940 L54 934 L506 934 L510 940" fill="none" stroke="#888" stroke-width="0.5"/>
+  <path d="M50 954 L54 960 L506 960 L510 954" fill="none" stroke="#888" stroke-width="0.5"/>
+  <rect x="50" y="1020" width="460" height="14" rx="0.5" fill="#999" stroke="#777" stroke-width="0.5"/>
+  <path d="M50 1020 L54 1014 L506 1014 L510 1020" fill="none" stroke="#888" stroke-width="0.5"/>
+  <path d="M50 1034 L54 1040 L506 1040 L510 1034" fill="none" stroke="#888" stroke-width="0.5"/>
+  <!-- Cable glands -->
+  <rect x="30" y="1500" width="500" height="200" rx="2" fill="#2e2e2e" stroke="#555" stroke-width="0.5"/>
+  <text x="280" y="1530" text-anchor="middle" font-size="14" fill="#555" font-family="sans-serif">CABLE ENTRY</text>
+  <circle cx="100" cy="1600" r="16" fill="none" stroke="#666" stroke-width="1.5"/>
+  <circle cx="200" cy="1600" r="16" fill="none" stroke="#666" stroke-width="1.5"/>
+  <circle cx="300" cy="1600" r="16" fill="none" stroke="#666" stroke-width="1.5"/>
+  <circle cx="400" cy="1600" r="16" fill="none" stroke="#666" stroke-width="1.5"/>
+</svg>

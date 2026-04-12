@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 24">
+  <!-- Generic busbar segment — de-branded -->
+  <!-- Main copper bar -->
+  <rect x="2" y="7" width="56" height="10" rx="0.5" fill="#c47a2c" stroke="#8a5520" stroke-width="0.5"/>
+  <!-- Cross-section profile at left end -->
+  <rect x="0.5" y="5" width="4" height="14" rx="0.3" fill="#d48a3c" stroke="#8a5520" stroke-width="0.4"/>
+  <!-- Mounting hole left -->
+  <circle cx="12" cy="12" r="2.5" fill="none" stroke="#8a5520" stroke-width="0.5"/>
+  <circle cx="12" cy="12" r="0.8" fill="#8a5520"/>
+  <!-- Mounting hole right -->
+  <circle cx="48" cy="12" r="2.5" fill="none" stroke="#8a5520" stroke-width="0.5"/>
+  <circle cx="48" cy="12" r="0.8" fill="#8a5520"/>
+  <!-- Surface highlight -->
+  <line x1="6" y1="9" x2="56" y2="9" stroke="#d89040" stroke-width="0.3" opacity="0.6"/>
+</svg>

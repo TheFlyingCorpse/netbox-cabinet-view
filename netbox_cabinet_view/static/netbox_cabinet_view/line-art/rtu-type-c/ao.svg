@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 100" width="24" height="100">
+  <!-- RTU Type C AO — beige, yellow band, bar indicators -->
+  <rect x="0.5" y="0.5" width="23" height="99" rx="1" fill="#d0ccc0" stroke="#999" stroke-width="0.5"/>
+  <!-- Yellow band at top -->
+  <rect x="0.5" y="0.5" width="23" height="10" rx="1" fill="#8a7a2a" stroke="#999" stroke-width="0.5"/>
+  <text x="12" y="7.5" text-anchor="middle" font-size="3.5" fill="#fff" font-family="sans-serif" font-weight="bold">AO</text>
+  <!-- 4 channel bar indicators -->
+  <rect x="4" y="14" width="3" height="24" rx="0.5" fill="#222" stroke="#888" stroke-width="0.2"/>
+  <rect x="4" y="28" width="3" height="10" rx="0.3" fill="#6a6a2a" opacity="0.7"/>
+  <rect x="9" y="14" width="3" height="24" rx="0.5" fill="#222" stroke="#888" stroke-width="0.2"/>
+  <rect x="9" y="22" width="3" height="16" rx="0.3" fill="#6a6a2a" opacity="0.7"/>
+  <rect x="14" y="14" width="3" height="24" rx="0.5" fill="#222" stroke="#888" stroke-width="0.2"/>
+  <rect x="14" y="32" width="3" height="6" rx="0.3" fill="#6a6a2a" opacity="0.7"/>
+  <rect x="19" y="14" width="3" height="24" rx="0.5" fill="#222" stroke="#888" stroke-width="0.2"/>
+  <rect x="19" y="26" width="3" height="12" rx="0.3" fill="#6a6a2a" opacity="0.7"/>
+  <!-- Channel labels -->
+  <text x="5.5" y="43" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">1</text>
+  <text x="10.5" y="43" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">2</text>
+  <text x="15.5" y="43" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">3</text>
+  <text x="20.5" y="43" text-anchor="middle" font-size="1.5" fill="#777" font-family="sans-serif">4</text>
+  <!-- Terminals -->
+  <rect x="3" y="47" width="18" height="20" rx="1" fill="#bbb8a8" stroke="#999" stroke-width="0.3"/>
+  <rect x="4" y="49" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="49" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="53" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="53" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="57" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="57" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="4" y="61" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <rect x="13" y="61" width="7" height="2.5" rx="0.3" fill="#888" stroke="#777" stroke-width="0.2"/>
+  <!-- DIN rail clip -->
+  <rect x="3" y="85" width="18" height="12" rx="0.5" fill="#aaa8a0" stroke="#888" stroke-width="0.4"/>
+  <rect x="5" y="87" width="14" height="8" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+</svg>

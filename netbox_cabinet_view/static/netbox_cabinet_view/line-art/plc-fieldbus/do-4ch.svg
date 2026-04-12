@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 100">
+  <!-- Generic 4-channel digital output (relay) module — de-branded -->
+  <rect x="0.5" y="0.5" width="19" height="99" rx="1" fill="#d8d4c8" stroke="#888" stroke-width="0.5"/>
+  <!-- Red band -->
+  <rect x="1" y="1" width="18" height="7" fill="#c03030"/>
+  <text x="10" y="6" text-anchor="middle" font-size="4" fill="#fff" font-family="sans-serif" font-weight="bold">DO</text>
+  <!-- Bus/power status strip -->
+  <rect x="2" y="10" width="3" height="4" rx="0.3" fill="#0a0"/>
+  <rect x="2" y="15" width="3" height="4" rx="0.3" fill="#e80"/>
+  <!-- 4 channel LEDs (red) -->
+  <circle cx="13" cy="12" r="1.5" fill="#c00" stroke="#900" stroke-width="0.2"/>
+  <circle cx="13" cy="20" r="1.5" fill="#c00" stroke="#900" stroke-width="0.2"/>
+  <circle cx="13" cy="28" r="1.5" fill="#c00" stroke="#900" stroke-width="0.2"/>
+  <circle cx="13" cy="36" r="1.5" fill="#c00" stroke="#900" stroke-width="0.2"/>
+  <!-- Channel numbers -->
+  <text x="8" y="13.5" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">1</text>
+  <text x="8" y="21.5" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">2</text>
+  <text x="8" y="29.5" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">3</text>
+  <text x="8" y="37.5" text-anchor="middle" font-size="2.5" fill="#555" font-family="sans-serif">4</text>
+  <!-- Label -->
+  <text x="10" y="46" text-anchor="middle" font-size="2.3" fill="#444" font-family="sans-serif">4xDO</text>
+  <text x="10" y="49.5" text-anchor="middle" font-size="2" fill="#444" font-family="sans-serif">Relay</text>
+  <!-- Relay output terminals (wider spacing, 4 positions) -->
+  <rect x="2" y="55" width="16" height="5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="6" y1="55" x2="6" y2="60" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="10" y1="55" x2="10" y2="60" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="14" y1="55" x2="14" y2="60" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="63" width="16" height="5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="6" y1="63" x2="6" y2="68" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="10" y1="63" x2="10" y2="68" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="14" y1="63" x2="14" y2="68" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="71" width="16" height="5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="6" y1="71" x2="6" y2="76" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="10" y1="71" x2="10" y2="76" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="14" y1="71" x2="14" y2="76" stroke="#a55010" stroke-width="0.2"/>
+  <rect x="2" y="79" width="16" height="5" rx="0.3" fill="#e87020" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="6" y1="79" x2="6" y2="84" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="10" y1="79" x2="10" y2="84" stroke="#a55010" stroke-width="0.2"/>
+  <line x1="14" y1="79" x2="14" y2="84" stroke="#a55010" stroke-width="0.2"/>
+  <!-- DIN rail clip -->
+  <rect x="3" y="92" width="14" height="5" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <line x1="5" y1="94.5" x2="15" y2="94.5" stroke="#777" stroke-width="0.3"/>
+</svg>

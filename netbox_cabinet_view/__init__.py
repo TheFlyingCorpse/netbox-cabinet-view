@@ -11,10 +11,11 @@ class CabinetViewConfig(PluginConfig):
         'for NetBox — with SVG visualization of cabinet interiors, chassis/'
         'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
-    version = '0.5.0'
+    version = '0.6.0'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
+    graphql_schema = 'graphql.schema.schema'
     # All APIs used (NetBoxModel, ViewTab, register_model_view, get_model_urls,
     # PluginTemplateExtension `models` list) are present in 4.4.0. Active
     # development and testing happens against 4.5.x.

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 70">
+  <!-- Generic DIN-rail relay — de-branded -->
+  <rect x="0.5" y="0.5" width="17" height="69" rx="1" fill="#a0a0a0" stroke="#777" stroke-width="0.5"/>
+  <!-- Indicator LED -->
+  <circle cx="9" cy="8" r="2" fill="#0a0" stroke="#080" stroke-width="0.3"/>
+  <!-- Relay contact diagram (X pattern) -->
+  <rect x="3" y="16" width="12" height="20" rx="0.5" fill="#888" stroke="#666" stroke-width="0.3"/>
+  <line x1="5" y1="18" x2="13" y2="34" stroke="#333" stroke-width="0.5"/>
+  <line x1="13" y1="18" x2="5" y2="34" stroke="#333" stroke-width="0.5"/>
+  <circle cx="5" cy="18" r="0.8" fill="#333"/>
+  <circle cx="13" cy="18" r="0.8" fill="#333"/>
+  <circle cx="5" cy="34" r="0.8" fill="#333"/>
+  <circle cx="13" cy="34" r="0.8" fill="#333"/>
+  <!-- Screw terminals (2 in, 2 out) -->
+  <circle cx="5" cy="44" r="2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="4" y1="43" x2="6" y2="45" stroke="#666" stroke-width="0.3"/>
+  <circle cx="13" cy="44" r="2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="12" y1="43" x2="14" y2="45" stroke="#666" stroke-width="0.3"/>
+  <circle cx="5" cy="52" r="2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="4" y1="51" x2="6" y2="53" stroke="#666" stroke-width="0.3"/>
+  <circle cx="13" cy="52" r="2" fill="#c0c0c0" stroke="#888" stroke-width="0.3"/>
+  <line x1="12" y1="51" x2="14" y2="53" stroke="#666" stroke-width="0.3"/>
+  <!-- DIN rail clip -->
+  <rect x="3" y="60" width="12" height="5" rx="1" fill="#999" stroke="#777" stroke-width="0.3"/>
+  <line x1="5" y1="62.5" x2="13" y2="62.5" stroke="#777" stroke-width="0.3"/>
+</svg>
