@@ -89,10 +89,21 @@
     <div class="card">
       <h5 class="card-header d-flex justify-content-between align-items-center">
         <span>Placements</span>
-        <a href="{% url 'plugins:netbox_cabinet_view:placement_add' %}?mount={{ object.pk }}"
-           class="btn btn-sm btn-primary">
-          <i class="mdi mdi-plus-thick"></i> Add Placement
-        </a>
+        <div class="d-flex gap-2">
+          <form method="post" action="{% url 'plugins:netbox_cabinet_view:auto_provision' %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="device_pk" value="{{ object.host_device.pk }}">
+            <input type="hidden" name="mount_pk" value="{{ object.pk }}">
+            <button type="submit" class="btn btn-sm btn-outline-success"
+                    title="Create one placement per unplaced bay on this mount's host device">
+              <i class="mdi mdi-auto-fix"></i> Auto-provision from bays
+            </button>
+          </form>
+          <a href="{% url 'plugins:netbox_cabinet_view:placement_add' %}?mount={{ object.pk }}"
+             class="btn btn-sm btn-primary">
+            <i class="mdi mdi-plus-thick"></i> Add Placement
+          </a>
+        </div>
       </h5>
       <div class="card-body table-responsive">
         {% render_table placement_table %}

@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
@@ -12,6 +14,7 @@ from utilities.views import ViewTab, register_model_view
 
 from . import filtersets, forms, models, tables
 from .ledger import enumerate_ledger
+from .provision import auto_provision_mount_and_placements, auto_provision_placements
 from .svg import CabinetLayoutSVG
 
 
@@ -209,6 +212,8 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'internal_height_mm': profile.internal_height_mm if profile else None,
             'ledger_enabled': ledger_enabled,
             'ledger_sections': ledger_sections,
+            # Feature 3 (v0.5.0): auto-provision button visibility.
+            'has_bays': instance.devicebays.exists() or instance.modulebays.exists(),
         }
 
 
@@ -240,6 +245,67 @@ class DiscoveryHintDismissView(LoginRequiredMixin, View):
             current.append(device.pk)
             request.user.config.set(key, current, commit=True)
         return redirect(device.get_absolute_url())
+
+
+# ---------------------------------------------------------------------------
+# Auto-provisioning — Feature 3 (v0.5.0)
+# ---------------------------------------------------------------------------
+
+class AutoProvisionView(LoginRequiredMixin, View):
+    """
+    One-click auto-provisioning of Placements from a device's bays.
+
+    **Mode A** (POST with ``mount_pk`` + ``device_pk``): create
+    sequential Placements on an existing Mount for every unplaced bay.
+
+    **Mode B** (POST with ``device_pk`` only): derive a new Mount
+    from the bays' profiles, then fill it with Placements.
+
+    POST-based because it creates shared data. CSRF token required.
+    """
+
+    def post(self, request):
+        device_pk = request.POST.get('device_pk')
+        mount_pk = request.POST.get('mount_pk')
+        device = get_object_or_404(Device, pk=device_pk)
+
+        if mount_pk:
+            # Mode A — placements only on an existing mount.
+            if not request.user.has_perm('netbox_cabinet_view.add_placement'):
+                messages.error(request, 'You do not have permission to add placements.')
+                return redirect(device.get_absolute_url())
+
+            mount = get_object_or_404(models.Mount, pk=mount_pk, host_device=device)
+            created, skipped = auto_provision_placements(mount)
+            if created:
+                messages.success(
+                    request,
+                    f'Auto-provisioned {created} placement(s) on {mount.name}.'
+                    + (f' {skipped} bay(s) skipped (capacity/validation).' if skipped else ''),
+                )
+            else:
+                messages.info(request, 'No new placements to create (all bays already placed or mount at capacity).')
+            return redirect(mount.get_absolute_url())
+        else:
+            # Mode B — create mount + placements.
+            if not request.user.has_perm('netbox_cabinet_view.add_mount'):
+                messages.error(request, 'You do not have permission to add mounts.')
+                return redirect(device.get_absolute_url())
+            if not request.user.has_perm('netbox_cabinet_view.add_placement'):
+                messages.error(request, 'You do not have permission to add placements.')
+                return redirect(device.get_absolute_url())
+
+            mount, created, skipped = auto_provision_mount_and_placements(device)
+            if mount is None:
+                messages.warning(request, 'No bays found on this device — nothing to provision.')
+                return redirect(device.get_absolute_url())
+            messages.success(
+                request,
+                f'Created mount "{mount.name}" with {created} placement(s).'
+                + (f' {skipped} bay(s) skipped.' if skipped else ''),
+            )
+            # Redirect to the Layout tab.
+            return redirect(reverse('dcim:device_cabinet_layout', kwargs={'pk': device.pk}))
 
 
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')

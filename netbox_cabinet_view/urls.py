@@ -52,6 +52,10 @@ urlpatterns = [
     path('hints/dismiss/<int:device_pk>/',
          views.DiscoveryHintDismissView.as_view(), name='hint_dismiss'),
 
+    # Auto-provisioning — Feature 3 (v0.5.0).
+    path('auto-provision/',
+         views.AutoProvisionView.as_view(), name='auto_provision'),
+
     # Placement
     path('placements/',
          views.PlacementListView.as_view(), name='placement_list'),
