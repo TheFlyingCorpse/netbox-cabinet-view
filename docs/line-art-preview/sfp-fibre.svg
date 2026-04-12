@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14">
+  <!-- SFP fibre — front face only (what you see when plugged in) -->
+  <rect x="0.5" y="0.5" width="13" height="13" rx="0.5" fill="#888" stroke="#666" stroke-width="0.4"/>
+  <!-- LC duplex apertures -->
+  <circle cx="4.5" cy="7" r="2" fill="#111" stroke="#444" stroke-width="0.3"/>
+  <circle cx="9.5" cy="7" r="2" fill="#111" stroke="#444" stroke-width="0.3"/>
+  <!-- Bail latch tab visible at top -->
+  <rect x="1" y="0.5" width="4" height="2" rx="0.3" fill="#aaa" stroke="#888" stroke-width="0.2"/>
+</svg>

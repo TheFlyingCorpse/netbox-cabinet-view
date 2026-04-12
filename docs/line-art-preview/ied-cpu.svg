@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100" width="30" height="100">
+  <!-- Generic IED CPU module — line art, no vendor marks -->
+  <rect x="0.5" y="0.5" width="29" height="99" rx="1" fill="#1a2a3a" stroke="#555" stroke-width="0.5"/>
+  <!-- Top label -->
+  <rect x="3" y="3" width="24" height="12" rx="1" fill="#223344" stroke="#668" stroke-width="0.3"/>
+  <text x="15" y="11" text-anchor="middle" font-size="4" fill="#8ac" font-family="sans-serif">CPU</text>
+  <!-- Display area (small LCD) -->
+  <rect x="4" y="20" width="22" height="10" rx="1" fill="#0a1a0a" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="15" y="27" text-anchor="middle" font-size="3" fill="#4a8a4a" font-family="monospace">READY</text>
+  <!-- Status LEDs row -->
+  <circle cx="6" cy="36" r="1.5" fill="#1e5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="11" cy="36" r="1.5" fill="#1e5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="16" cy="36" r="1.5" fill="#5a5a1e" stroke="#444" stroke-width="0.3"/>
+  <circle cx="21" cy="36" r="1.5" fill="#5a1e1e" stroke="#444" stroke-width="0.3"/>
+  <!-- Navigation buttons -->
+  <circle cx="9" cy="46" r="2.5" fill="#333" stroke="#666" stroke-width="0.3"/>
+  <circle cx="21" cy="46" r="2.5" fill="#333" stroke="#666" stroke-width="0.3"/>
+  <rect x="12" y="43" width="6" height="6" rx="1" fill="#333" stroke="#666" stroke-width="0.3"/>
+  <!-- Ethernet port -->
+  <rect x="5" y="58" width="20" height="10" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="8" y="60" width="6" height="6" rx="0.5" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <rect x="17" y="60" width="6" height="6" rx="0.5" fill="#111" stroke="#4a6a4a" stroke-width="0.4"/>
+  <text x="15" y="75" text-anchor="middle" font-size="2.5" fill="#666" font-family="sans-serif">ETH 1   ETH 2</text>
+  <!-- Bottom backplane connector -->
+  <rect x="3" y="82" width="24" height="15" rx="1" fill="#1a1a1a" stroke="#555" stroke-width="0.4"/>
+  <rect x="5" y="84" width="20" height="11" rx="0.5" fill="#0a0a0a" stroke="#333" stroke-width="0.3"/>
+</svg>

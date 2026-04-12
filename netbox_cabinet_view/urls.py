@@ -56,6 +56,10 @@ urlpatterns = [
     path('auto-provision/',
          views.AutoProvisionView.as_view(), name='auto_provision'),
 
+    # Line-art gallery — v0.6.1.
+    path('line-art/',
+         views.LineArtGalleryView.as_view(), name='line_art_gallery'),
+
     # Placement
     path('placements/',
          views.PlacementListView.as_view(), name='placement_list'),

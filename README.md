@@ -74,13 +74,25 @@ A **Cabinet View** entry appears in the sidebar, and every `dcim.Device` detail 
 
 **Faster add-placement shortcut:** click any empty slot on the rendered layout. 1D and grid mounts turn every unoccupied slot range into a click target; 2D mounting plates accept click-anywhere coordinates. The placement form opens pre-filled with the mount and position.
 
+## Bundled line-art
+
+The plugin ships 62 generic front-panel SVGs — de-branded, multi-vendor-inspired — as ready-to-use placeholder images. Upload them to `ModuleMountProfile.front_image` (modules) or `DeviceType.front_image` (host devices) so your layouts render with real panel art instead of plain colored rectangles:
+
+| IED CPU module | RTU DI module | SFP fibre face | IED chassis |
+|---|---|---|---|
+| ![](docs/line-art-preview/ied-cpu.svg) | ![](docs/line-art-preview/rtu-di.svg) | ![](docs/line-art-preview/sfp-fibre.svg) | ![](docs/line-art-preview/chassis-ied.svg) |
+
+Auto-assign to all demo profiles: `python manage.py cabinetview_assign_lineart`
+
+Browse the full library: [`docs/line-art.md`](docs/line-art.md) — 14 categories covering IED modules (4 manufacturer families), RTU modules (4 variants), PLC/fieldbus I/O, SFP/QSFP transceivers, DIN-rail devices, busbar components, cable management, and host chassis.
+
 ## Demo data
 
 ```bash
 python manage.py cabinetview_seed
 ```
 
-Idempotent. Creates one `Site`, one `Rack`, ~30 `DeviceType`s with profiles, and 20 demo scenarios covering the common OT/ICS and ISP cabinet patterns. See [`docs/scenarios.md`](docs/scenarios.md) for the full list of what gets created and what each scenario demonstrates.
+Idempotent. Creates one `Site`, one `Rack`, ~30 `DeviceType`s with profiles, and 20 demo scenarios. The seed also auto-assigns bundled line-art to all matching profiles, so the demo scenarios render with panel images out of the box. See [`docs/scenarios.md`](docs/scenarios.md) for the full list.
 
 ## Advanced topics
 

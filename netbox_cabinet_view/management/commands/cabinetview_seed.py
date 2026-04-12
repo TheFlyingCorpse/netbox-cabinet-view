@@ -1064,9 +1064,14 @@ class Command(BaseCommand):
         mount_slot(2, 5, size_slots=2)   # high-speed I/O — occupies slots 5-6
         mount_slot(2, 8)                 # binary I/O
 
+        # v0.6.1: assign bundled line-art to the seed's profiles.
+        from .cabinetview_assign_lineart import _auto_assign_all
+        art_count = _auto_assign_all(stdout=self.stdout)
+
         self.stdout.write('  site:       OT Test Site')
         self.stdout.write('  rack:       Test Rack A (24U)')
         self.stdout.write('  scenarios:  20 total — 9 baseline + 7 classic OT/ICS (A-G) +')
         self.stdout.write('              4 v0.3.0 scenarios (H vertical DIN wall box,')
         self.stdout.write('              I vertical Eurocard subrack, J grid IED with 2 bars,')
         self.stdout.write('              K ISP ODF with 12-cassette grid)')
+        self.stdout.write(f'  line-art:   {art_count} image(s) assigned to profiles')

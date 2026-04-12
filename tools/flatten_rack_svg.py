@@ -99,6 +99,13 @@ def fetch(session, path):
         return r.read().decode()
 
 
+def fetch_bytes(session, path):
+    """Fetch `path` relative to NETBOX_URL, return raw bytes."""
+    req = urllib.request.Request(f'{NETBOX_URL}{path}')
+    with session.open(req) as r:
+        return r.read()
+
+
 # ---------------------------------------------------------------------------
 # SVG surgery
 # ---------------------------------------------------------------------------
@@ -251,6 +258,32 @@ def flatten(session, face: str) -> str:
     out = rack_svg
     for old, new in replacements:
         out = out.replace(old, new, 1)
+
+    # v0.6.1: Also inline any /media/ image refs as base64 data URIs.
+    # These are module/device front_image files that the cabinet SVGs
+    # reference. Without inlining, GitHub can't render them.
+    import base64
+    MEDIA_IMAGE_RE = re.compile(
+        r'(?:xlink:href|href)="(/media/[^"]+\.(?:svg|png|jpg|jpeg|gif))"'
+    )
+    media_matches = list(MEDIA_IMAGE_RE.finditer(out))
+    inlined_count = 0
+    for m in media_matches:
+        media_path = m.group(1)
+        try:
+            img_bytes = fetch_bytes(session, media_path)
+            if media_path.endswith('.svg'):
+                data_uri = 'data:image/svg+xml;base64,' + base64.b64encode(img_bytes).decode()
+            elif media_path.endswith('.png'):
+                data_uri = 'data:image/png;base64,' + base64.b64encode(img_bytes).decode()
+            else:
+                data_uri = 'data:image/jpeg;base64,' + base64.b64encode(img_bytes).decode()
+            out = out.replace(media_path, data_uri, 1)
+            inlined_count += 1
+        except Exception:
+            pass  # skip unresolvable images
+    if inlined_count:
+        print(f'  inlined {inlined_count} media image(s) as base64 data URIs')
 
     # Fold the collected inner-SVG CSS into the outer rack <defs>.
     if all_css:

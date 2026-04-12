@@ -1,0 +1,56 @@
+{% extends 'generic/object_list.html' %}
+{% load static %}
+
+{% block title %}Bundled Line-Art Gallery{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <h5 class="card-header">
+          Bundled Line-Art Gallery
+          <small class="text-muted ms-2" style="font-weight: normal;">
+            62 generic, de-branded front-panel SVGs — upload to your profiles
+          </small>
+        </h5>
+        <div class="card-body">
+          <p class="text-muted">
+            These images ship with the plugin under <code>static/netbox_cabinet_view/line-art/</code>.
+            To use one, download it (right-click → Save) and upload to a
+            <strong>Module Mount Profile</strong> (<em>front_image</em> field) or a
+            <strong>Device Type</strong> (<em>front image</em> field in the core admin).
+            Or run <code>manage.py cabinetview_assign_lineart</code> to auto-assign
+            matching images to all profiles.
+          </p>
+          {% for category in categories %}
+          <div class="mb-4">
+            <h6>
+              {{ category.name }}
+              <span class="badge bg-secondary">{{ category.mount_type }}</span>
+              <small class="text-muted">{{ category.inspired_by }}</small>
+            </h6>
+            <p class="small text-muted mb-2">
+              {{ category.form_factor }} — upload to <code>{{ category.image_for }}</code>
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+              {% for item in category.items %}
+              <div class="text-center" style="max-width: 80px;">
+                <a href="{% static 'netbox_cabinet_view/line-art/' %}{{ item.file }}"
+                   target="_blank" title="{{ item.description }}">
+                  <img src="{% static 'netbox_cabinet_view/line-art/' %}{{ item.file }}"
+                       alt="{{ item.name }}"
+                       style="height: 100px; max-width: 80px; border: 1px solid var(--tblr-border-color); border-radius: 4px; background: var(--tblr-bg-surface); padding: 4px;">
+                </a>
+                <div class="small text-muted mt-1" style="font-size: 0.7em;">{{ item.name }}</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

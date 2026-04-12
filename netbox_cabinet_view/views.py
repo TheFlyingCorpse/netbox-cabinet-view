@@ -12,6 +12,9 @@ from dcim.models import Device
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
+import json
+import os
+
 from . import filtersets, forms, models, tables
 from .ledger import enumerate_ledger
 from .provision import auto_provision_mount_and_placements, auto_provision_placements
@@ -335,6 +338,33 @@ class AutoProvisionView(LoginRequiredMixin, View):
             )
             # Redirect to the Layout tab.
             return redirect(reverse('dcim:device_cabinet_layout', kwargs={'pk': device.pk}))
+
+
+# ---------------------------------------------------------------------------
+# Line-art gallery — v0.6.1
+# ---------------------------------------------------------------------------
+
+class LineArtGalleryView(LoginRequiredMixin, View):
+    """
+    In-NetBox gallery of bundled line-art images, browsable offline.
+    Reads the manifest.json taxonomy and renders it as an HTML page
+    with thumbnail images served from the plugin's static files.
+    """
+
+    def get(self, request):
+        from django.shortcuts import render as django_render
+        manifest_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'static', 'netbox_cabinet_view', 'line-art', 'manifest.json',
+        )
+        categories = []
+        if os.path.exists(manifest_path):
+            with open(manifest_path) as f:
+                data = json.load(f)
+            categories = data.get('categories', [])
+        return django_render(request, 'netbox_cabinet_view/line_art_gallery.html', {
+            'categories': categories,
+        })
 
 
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')
