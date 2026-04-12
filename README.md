@@ -16,19 +16,25 @@ The plugin patches NetBox's core `RackElevationSVG` so every carrier-hosting she
 
 The embedded interiors are rendered in thumbnail mode (diminished contrast, no per-placement labels) so they read as "preview — open the Layout tab to interact" rather than pretending each little rectangle is a click target. Full-fidelity rendering is one click away on the device's Layout tab.
 
-### A single WDM shelf — `DeviceBay`-backed child devices
+### Industrial switch with port overlay — status-coloured interface pins
 
-![WDM 2-slot shelf](docs/screenshots/04-wdm-2slot.svg)
+![Industrial switch shelf with port overlay](docs/screenshots/E-industrial-switch.svg)
 
-Two filter modules installed into `DeviceBay` slots on a parent shelf. The plugin resolves `placement.device_bay.installed_device` at render time, so the picture tracks standard NetBox parent/child device relationships without duplicating any data.
+An 8-port managed switch on a DIN rail, with the v0.7.0 **port/connector overlay** rendering each `dcim.Interface` as a clickable pin. Green = connected + enabled, grey = unconnected, dark grey = disabled, amber = connected + disabled. Click a pin to jump to the interface detail page.
 
-### A standalone DIN rail
+### Modular IED chassis — two-level module-bay overlay
 
-![Standalone DIN rail with two relays](docs/screenshots/01-din-rail.svg)
+![Protection IED chassis with module bays](docs/screenshots/J-grid-ied.svg)
 
-The simplest case — a bare DIN rail in a Location with two relays clipped on. No enclosing cabinet, no rack, no `u_height`. Proves the plugin doesn't require an enclosing device hierarchy.
+A 2-row × 12-slot protection IED with PSU, CPU, binary I/O, analog I/O, Ethernet, and fibre comms modules. The host device's `port_map` defines where each module bay sits; each installed module's own `port_map` defines its pin positions. Protruding spring-cage terminals (DI/DO/AI) extend beyond the module bounds.
 
-> Want to see the rest? The full gallery (20 scenarios covering DIN rails, subracks, mounting plates, busbars, grid mounts, vertical orientations, MCC buckets, VFD cabinets, modular IEDs, ODF frames, …) lives in [`docs/scenarios.md`](docs/scenarios.md).
+### MCC cabinet — nested SVG recursion
+
+![MCC cabinet with withdrawable buckets](docs/screenshots/B-mcc-cabinet.svg)
+
+A motor control center with three withdrawable buckets on a vertical busbar. Each bucket is itself a mount-host with its own DIN rail, contactor, and auxiliary relays rendered inline via nested SVG recursion (up to 3 levels deep).
+
+> Want to see the rest? The full gallery (20+ scenarios covering DIN rails, subracks, mounting plates, busbars, grid mounts, vertical orientations, MCC buckets, VFD cabinets, modular IEDs, ODF frames, safety panels, fieldbus I/O, …) lives in [`docs/scenarios.md`](docs/scenarios.md).
 
 ## Compatibility
 

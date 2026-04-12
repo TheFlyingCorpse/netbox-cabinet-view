@@ -200,6 +200,45 @@ Small-form-factor pluggable modules and empty transceiver cages.
 | `transceivers/qsfp28-fibre.svg` | QSFP28 fibre transceiver |
 | `transceivers/empty-cage.svg` | Empty transceiver cage (no optic installed) |
 
+### Network switches and routers
+
+DIN-mount and rack-mount network gear with visible port cutouts.  Useful for
+demonstrating the port/connector overlay feature.
+
+| Mount type | Upload to |
+|---|---|
+| `din_rail` / rack-mount | `DeviceMountProfile.front_image` |
+
+| File | Description |
+|---|---|
+| `network-switches/managed-switch-8port.svg` | DIN-mount 8-port managed switch with 2x SFP cages |
+| `network-switches/router-4port.svg` | DIN-mount industrial router with 4x ETH + 2x SFP + serial |
+| `network-switches/rack-switch-24port.svg` | 1U rack-mount 24-port managed switch with 4x SFP+ uplinks |
+
+### Busbar components
+
+Generic busbar segments, supports, and distribution blocks.
+
+| Mount type | Upload to |
+|---|---|
+| `busbar` | `DeviceMountProfile.front_image` |
+
+| File | Description |
+|---|---|
+| `busbar-components/segment.svg` | Busbar segment |
+| `busbar-components/support.svg` | Busbar insulating support |
+| `busbar-components/tap.svg` | Busbar tap-off point |
+| `busbar-components/distribution-block.svg` | Distribution block |
+
+### Cable management
+
+Ancillary cable management items.
+
+| File | Description |
+|---|---|
+| `cable-management/cable-gland.svg` | Top-view cable gland |
+| `cable-management/cable-duct.svg` | Slotted cable duct cross-section |
+
 ---
 
 ## How to upload
