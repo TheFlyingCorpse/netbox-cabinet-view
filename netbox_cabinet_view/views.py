@@ -177,20 +177,20 @@ class PlacementDeleteView(generic.ObjectDeleteView):
 def _device_hosts_mounts(device):
     """
     Tab visibility predicate for DeviceCabinetLayoutView — Finding B
-    (v0.4.0).
+    (v0.4.0), extended in v0.7.2 for non-host devices with port_map.
 
-    The Layout tab should be visible whenever the device's DeviceType
-    has a DeviceMountProfile with ``hosts_mounts=True``, EVEN IF there
-    are zero mounts yet. That unlocks the empty-state "Add the first
-    mount" CTA for devices that the admin has declared as
-    cabinet-shaped but not yet populated.
-
-    Devices with no profile, or with ``hosts_mounts=False``, still
-    suppress the tab. That preserves the "don't pollute every Device
-    page with a useless tab" guarantee from v0.3.0.
+    The Layout tab is visible when:
+    * The device's DeviceType has a profile with ``hosts_mounts=True``
+      (even with zero mounts — unlocks the empty-state CTA), OR
+    * The profile has a non-empty ``port_map`` (v0.7.2) — enables a
+      full-size front-panel view with interactive port overlay for
+      standalone rack-mount devices like switches that don't host
+      internal mounts.
     """
     profile = getattr(device.device_type, 'cabinet_profile', None)
-    return bool(profile and profile.hosts_mounts)
+    if not profile:
+        return False
+    return bool(profile.hosts_mounts or profile.port_map)
 
 
 @register_model_view(Device, 'cabinet_layout', path='cabinet-layout')
@@ -231,9 +231,16 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             else []
         )
 
+        # v0.7.2: front-panel-only mode for non-host devices with port_map.
+        front_panel_only = bool(
+            profile and not profile.hosts_mounts
+            and profile.port_map and not has_mounts
+        )
+
         return {
             'mounts': mounts,
             'has_mounts': has_mounts,
+            'front_panel_only': front_panel_only,
             # Internal dimensions for the empty-state scale-reference
             # canvas. May be None — the template degrades gracefully to
             # a plain Bootstrap card + button when unset.
@@ -429,4 +436,25 @@ class DeviceCabinetLayoutSVGView(View):
             highlight=highlight or None,
             theme=theme,
         ).render()
+        return HttpResponse(svg, content_type='image/svg+xml')
+
+
+@register_model_view(Device, 'cabinet_front_panel_svg', path='cabinet-layout/front-panel.svg')
+class DeviceFrontPanelSVGView(View):
+    """
+    v0.7.2: standalone front-panel SVG for non-host devices with port_map.
+
+    Renders the device's front_image at full size with port overlay pins
+    on top. Used by the Layout tab when the device has a port_map but
+    no internal mounts (e.g. a 1U rack-mount switch).
+    """
+
+    def get(self, request, pk):
+        from .svg.front_panel import render_front_panel
+        device = get_object_or_404(Device, pk=pk)
+        theme = request.GET.get('theme') or None
+        if theme not in ('dark', 'light', None):
+            theme = None
+        base_url = request.build_absolute_uri('/').rstrip('/')
+        svg = render_front_panel(device, base_url=base_url, theme=theme)
         return HttpResponse(svg, content_type='image/svg+xml')
