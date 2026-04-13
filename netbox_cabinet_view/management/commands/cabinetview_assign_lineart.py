@@ -45,9 +45,32 @@ def _load_manifest():
         return json.load(f)
 
 
+def _load_port_maps():
+    """Load and return the port_maps.json mapping (art path → port_map list)."""
+    path = os.path.join(_static_line_art_dir(), 'port_maps.json')
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        data = json.load(f)
+    # Strip the _comment key if present.
+    return {k: v for k, v in data.items() if not k.startswith('_')}
+
+
+_PORT_MAPS = None
+
+
+def _get_port_maps():
+    global _PORT_MAPS
+    if _PORT_MAPS is None:
+        _PORT_MAPS = _load_port_maps()
+    return _PORT_MAPS
+
+
 def _assign_image(profile, art_relpath):
     """
     Copy a line-art SVG from static/ into the profile's front_image field.
+    Also assigns the pre-built port_map from port_maps.json if the profile
+    doesn't already have one (don't overwrite user-customised port_maps).
     Returns True if the image was set, False if the file was not found.
     """
     art_dir = _static_line_art_dir()
@@ -57,6 +80,12 @@ def _assign_image(profile, art_relpath):
     filename = art_relpath.replace('/', '-')
     with open(src, 'rb') as f:
         profile.front_image.save(filename, File(f), save=True)
+    # v0.7.2: also assign port_map if available and profile has none.
+    if not profile.port_map:
+        port_map = _get_port_maps().get(art_relpath)
+        if port_map:
+            profile.port_map = port_map
+            profile.save()
     return True
 
 
@@ -101,6 +130,7 @@ _DEVICE_ART_MAP = {
     'Fieldbus 8-channel DO module': 'plc-fieldbus/do-4ch.svg',
     'Industrial Ethernet switch (DIN)': 'network-switches/managed-switch-8port.svg',
     'Industrial Ethernet switch': 'network-switches/managed-switch-8port.svg',
+    'Rack managed switch 1U (24-port)': 'network-switches/rack-switch-24port.svg',
     # Mountable plate devices
     'Variable frequency drive': 'din-rail-devices/psu.svg',
     'Auxiliary DIN rail strip 400 mm': 'host-chassis/rtu-din.svg',

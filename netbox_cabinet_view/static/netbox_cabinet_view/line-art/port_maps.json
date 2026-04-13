@@ -1,0 +1,156 @@
+{
+  "_comment": "Pre-built port_map definitions for bundled line-art SVGs. Coordinates are in the SVG's viewBox coordinate system (same as mm for the port overlay renderer). Applied by cabinetview_assign_lineart alongside front_image.",
+
+  "ied-type-a/binary-io.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 3, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3},
+    {"type": "zone", "name_pattern": "DO-*", "edge": "bottom", "start_mm": 3, "pitch_mm": 5, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "ied-type-a/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 5, "width_mm": 10, "height_mm": 8},
+    {"type": "pin", "name": "eth-2", "x_mm": 17, "y_mm": 5, "width_mm": 10, "height_mm": 8},
+    {"type": "lcd", "x_mm": 3, "y_mm": 20, "width_mm": 24, "height_mm": 10}
+  ],
+  "ied-type-a/analog-io.svg": [
+    {"type": "zone", "name_pattern": "AI-*", "edge": "top", "start_mm": 2, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "ied-type-a/comms-2slot.svg": [
+    {"type": "zone", "name_pattern": "eth-*", "edge": "top", "start_mm": 5, "pitch_mm": 12, "count": 4, "pin_width_mm": 10, "pin_height_mm": 8}
+  ],
+
+  "ied-type-b/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 80, "width_mm": 10, "height_mm": 8},
+    {"type": "pin", "name": "eth-2", "x_mm": 17, "y_mm": 80, "width_mm": 10, "height_mm": 8},
+    {"type": "lcd", "x_mm": 3, "y_mm": 15, "width_mm": 24, "height_mm": 12}
+  ],
+  "ied-type-b/binary-io.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 3, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3},
+    {"type": "zone", "name_pattern": "DO-*", "edge": "bottom", "start_mm": 3, "pitch_mm": 5, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "ied-type-b/analog-io.svg": [
+    {"type": "zone", "name_pattern": "AI-*", "edge": "top", "start_mm": 2, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "ied-type-b/eth-plugin.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 60, "width_mm": 10, "height_mm": 8},
+    {"type": "pin", "name": "eth-2", "x_mm": 17, "y_mm": 60, "width_mm": 10, "height_mm": 8}
+  ],
+
+  "ied-type-c/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 5, "width_mm": 10, "height_mm": 8},
+    {"type": "lcd", "x_mm": 3, "y_mm": 20, "width_mm": 24, "height_mm": 10}
+  ],
+  "ied-type-c/ct-pt.svg": [
+    {"type": "zone", "name_pattern": "CT-*", "edge": "top", "start_mm": 2, "pitch_mm": 3.5, "count": 8, "pin_width_mm": 2.5, "pin_height_mm": 3, "protrudes_mm": 4}
+  ],
+  "ied-type-c/comms.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 5, "width_mm": 12, "height_mm": 10},
+    {"type": "pin", "name": "eth-2", "x_mm": 22, "y_mm": 5, "width_mm": 12, "height_mm": 10}
+  ],
+
+  "ied-type-d/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 5, "width_mm": 10, "height_mm": 8},
+    {"type": "lcd", "x_mm": 3, "y_mm": 20, "width_mm": 24, "height_mm": 10}
+  ],
+  "ied-type-d/io.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 2, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3},
+    {"type": "zone", "name_pattern": "DO-*", "edge": "bottom", "start_mm": 2, "pitch_mm": 5, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+
+  "rtu-type-a/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 12, "height_mm": 10},
+    {"type": "pin", "name": "eth-2", "x_mm": 22, "y_mm": 10, "width_mm": 12, "height_mm": 10},
+    {"type": "lcd", "x_mm": 5, "y_mm": 30, "width_mm": 30, "height_mm": 12}
+  ],
+  "rtu-type-a/di-8ch.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 4, "pitch_mm": 2, "count": 8, "pin_width_mm": 1.5, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-a/do-4ch.svg": [
+    {"type": "zone", "name_pattern": "DO-*", "edge": "top", "start_mm": 4, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-a/ai-4ch.svg": [
+    {"type": "zone", "name_pattern": "AI-*", "edge": "top", "start_mm": 4, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+
+  "rtu-type-b/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 12, "height_mm": 10},
+    {"type": "pin", "name": "eth-2", "x_mm": 25, "y_mm": 10, "width_mm": 12, "height_mm": 10}
+  ],
+  "rtu-type-b/di.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 3, "pitch_mm": 3, "count": 8, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-b/do.svg": [
+    {"type": "zone", "name_pattern": "DO-*", "edge": "top", "start_mm": 3, "pitch_mm": 5, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-b/comms.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 10, "height_mm": 8}
+  ],
+
+  "rtu-type-c/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 12, "height_mm": 10},
+    {"type": "pin", "name": "eth-2", "x_mm": 25, "y_mm": 10, "width_mm": 12, "height_mm": 10}
+  ],
+  "rtu-type-c/di.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 2, "pitch_mm": 2.5, "count": 8, "pin_width_mm": 1.5, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-c/ao.svg": [
+    {"type": "zone", "name_pattern": "AO-*", "edge": "top", "start_mm": 2, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-c/comms.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 10, "height_mm": 8}
+  ],
+
+  "rtu-type-d/cpu.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 12, "height_mm": 10},
+    {"type": "pin", "name": "eth-2", "x_mm": 22, "y_mm": 10, "width_mm": 12, "height_mm": 10}
+  ],
+  "rtu-type-d/di.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 2, "pitch_mm": 2.5, "count": 8, "pin_width_mm": 1.5, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-d/do.svg": [
+    {"type": "zone", "name_pattern": "DO-*", "edge": "top", "start_mm": 2, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "rtu-type-d/comms.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 5, "y_mm": 10, "width_mm": 10, "height_mm": 8}
+  ],
+
+  "plc-fieldbus/coupler.svg": [
+    {"type": "pin", "name": "eth-1", "x_mm": 8, "y_mm": 10, "width_mm": 10, "height_mm": 8},
+    {"type": "pin", "name": "eth-2", "x_mm": 22, "y_mm": 10, "width_mm": 10, "height_mm": 8}
+  ],
+  "plc-fieldbus/di-8ch.svg": [
+    {"type": "zone", "name_pattern": "DI-*", "edge": "top", "start_mm": 2, "pitch_mm": 2, "count": 8, "pin_width_mm": 1.5, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "plc-fieldbus/do-4ch.svg": [
+    {"type": "zone", "name_pattern": "DO-*", "edge": "top", "start_mm": 2, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+  "plc-fieldbus/ai-4ch.svg": [
+    {"type": "zone", "name_pattern": "AI-*", "edge": "top", "start_mm": 2, "pitch_mm": 4, "count": 4, "pin_width_mm": 2, "pin_height_mm": 2, "protrudes_mm": 3}
+  ],
+
+  "network-switches/managed-switch-8port.svg": [
+    {"type": "zone", "name_pattern": "eth-*", "edge": "top", "start_mm": 6, "pitch_mm": 11, "count": 4, "pin_width_mm": 8, "pin_height_mm": 10},
+    {"type": "zone", "name_pattern": "eth-*", "edge": "bottom", "start_mm": 6, "pitch_mm": 11, "count": 4, "pin_width_mm": 8, "pin_height_mm": 10}
+  ],
+  "network-switches/router-4port.svg": [
+    {"type": "zone", "name_pattern": "eth-*", "edge": "top", "start_mm": 6, "pitch_mm": 13, "count": 4, "pin_width_mm": 10, "pin_height_mm": 12},
+    {"type": "pin", "name": "SFP-1", "x_mm": 62, "y_mm": 24, "width_mm": 10, "height_mm": 12},
+    {"type": "pin", "name": "SFP-2", "x_mm": 75, "y_mm": 24, "width_mm": 10, "height_mm": 12}
+  ],
+  "network-switches/rack-switch-24port.svg": [
+    {"type": "zone", "name_pattern": "eth-*", "edge": "top", "start_mm": 24, "pitch_mm": 11, "count": 12, "pin_width_mm": 8, "pin_height_mm": 10},
+    {"type": "zone", "name_pattern": "eth-*", "edge": "bottom", "start_mm": 24, "pitch_mm": 11, "count": 12, "pin_width_mm": 8, "pin_height_mm": 10},
+    {"type": "pin", "name": "SFP-1", "x_mm": 168, "y_mm": 14, "width_mm": 10, "height_mm": 10},
+    {"type": "pin", "name": "SFP-2", "x_mm": 181, "y_mm": 14, "width_mm": 10, "height_mm": 10},
+    {"type": "pin", "name": "SFP-3", "x_mm": 168, "y_mm": 28, "width_mm": 10, "height_mm": 10},
+    {"type": "pin", "name": "SFP-4", "x_mm": 181, "y_mm": 28, "width_mm": 10, "height_mm": 10}
+  ],
+
+  "transceivers/sfp-fibre.svg": [
+    {"type": "pin", "name": "port-1", "x_mm": 2, "y_mm": 2, "width_mm": 10, "height_mm": 10}
+  ],
+  "transceivers/sfp-rj45.svg": [
+    {"type": "pin", "name": "port-1", "x_mm": 2, "y_mm": 2, "width_mm": 10, "height_mm": 10}
+  ],
+  "transceivers/qsfp28-fibre.svg": [
+    {"type": "pin", "name": "port-1", "x_mm": 2, "y_mm": 2, "width_mm": 16, "height_mm": 10}
+  ]
+}

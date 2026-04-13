@@ -372,6 +372,11 @@ class Command(BaseCommand):
         # Module type for the PLC I/O card
         mt_io = goc(ModuleType, manufacturer=mfr, model='DI 16x24VDC')
 
+        # v0.7.2: Rack-mount 1U managed switch (standalone in rack)
+        dt_rack_switch = ensure_device_type(mfr, 'rack-managed-switch-1u-24port',
+                                            'Rack managed switch 1U (24-port)',
+                                            u_height=1, is_full_depth=False)
+
         # ------------------------------------------------------------------
         # ModuleMountProfiles (new in v0.4.0)
         #
@@ -494,6 +499,10 @@ class Command(BaseCommand):
         # K: ODF chassis — 1U fibre patch frame with a 2x6 cassette grid.
         ensure_profile(dt_odf_chassis, hosts_mounts=True,
                        internal_width_mm=440, internal_height_mm=44, internal_depth_mm=250)
+
+        # v0.7.2: Rack-mount switch — no mount geometry (rack-mounted directly),
+        # but needs a profile for front_image + port_map (assigned by lineart cmd).
+        ensure_profile(dt_rack_switch)
 
         # ------------------------------------------------------------------
         # Devices (standalone scenarios)
@@ -709,6 +718,12 @@ class Command(BaseCommand):
                 device=ied, module_bay=bay, defaults={'module_type': mtype},
             )
 
+        # --- v0.7.2: Rack-mount 1U switch (standalone in rack) ---
+        if 'network' not in roles:
+            roles['network'] = goc(DeviceRole, name='Network', slug='network',
+                                   defaults={'color': '00bcd4'})
+        rack_switch = ensure_device('Rack Switch #1', dt_rack_switch, 'network')
+
         # ------------------------------------------------------------------
         # Rack placement — done in two passes so re-runs never collide.
         #
@@ -726,6 +741,7 @@ class Command(BaseCommand):
             (fieldbus_shelf,         17,  'front'),
             (switch_shelf,       19,  'front'),
             (odf,                21,  'front'),
+            (rack_switch,        22,  'front'),   # v0.7.2
         ]
 
         managed_devices = [d for d, _, _ in rack_layout]
@@ -1107,6 +1123,12 @@ class Command(BaseCommand):
         # Industrial Ethernet switch: multiple ports
         ensure_iface_templates(dt_ethernet_switch, 'eth', 8, iface_type='1000base-t')
 
+        # v0.7.2: Rack-mount 1U switch: 24 ETH + 4 SFP + 1 mgmt
+        ensure_iface_templates(dt_rack_switch, 'eth', 24, iface_type='1000base-t')
+        ensure_iface_templates(dt_rack_switch, 'SFP', 4, iface_type='1000base-x-sfp')
+        goc(InterfaceTemplate, device_type=dt_rack_switch, name='mgmt',
+            defaults={'type': '1000base-t'})
+
         # ------------------------------------------------------------------
         # v0.7.0: port_map overlay definitions on profiles
         # ------------------------------------------------------------------
@@ -1243,7 +1265,8 @@ class Command(BaseCommand):
         # Backfill device-level interfaces.
         for dev_name in ('Industrial Ethernet switch #1', 'Fieldbus coupler #1',
                          'DI module #1', 'DI module #2', 'DI module #3', 'DI module #4',
-                         'DO module #1', 'DO module #2', 'DO module #3'):
+                         'DO module #1', 'DO module #2', 'DO module #3',
+                         'Rack Switch #1'):
             try:
                 dev = Device.objects.get(name=dev_name, site=site)
                 backfill_interfaces(dev)
@@ -1270,6 +1293,36 @@ class Command(BaseCommand):
                 elif n == 'eth-8':
                     iface.enabled = False
                     iface.mark_connected = True
+                    iface.save()
+        except Device.DoesNotExist:
+            pass
+
+        # v0.7.2: Mixed states on the rack switch — show all 4 status colours.
+        # eth-1..8 connected+enabled (green), eth-9..16 unconnected+enabled (grey),
+        # eth-17..20 disabled (dark grey), eth-21..24 connected+disabled (amber),
+        # SFP-1,2 connected+enabled, SFP-3,4 unconnected.
+        try:
+            rsw = Device.objects.get(name='Rack Switch #1', site=site)
+            for iface in Interface.objects.filter(device=rsw):
+                n = iface.name
+                if n.startswith('eth-'):
+                    num = int(n.split('-')[1])
+                    if num <= 8:
+                        iface.mark_connected = True
+                        iface.enabled = True
+                    elif num <= 16:
+                        iface.mark_connected = False
+                        iface.enabled = True
+                    elif num <= 20:
+                        iface.enabled = False
+                        iface.mark_connected = False
+                    else:
+                        iface.enabled = False
+                        iface.mark_connected = True
+                    iface.save()
+                elif n in ('SFP-1', 'SFP-2'):
+                    iface.mark_connected = True
+                    iface.enabled = True
                     iface.save()
         except Device.DoesNotExist:
             pass
