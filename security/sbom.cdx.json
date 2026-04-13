@@ -555,7 +555,7 @@
       "version": "30.4.4"
     },
     {
-      "bom-ref": "lxml==6.0.3",
+      "bom-ref": "lxml==6.0.4",
       "description": "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.",
       "externalReferences": [
         {
@@ -583,12 +583,12 @@
         }
       ],
       "name": "lxml",
-      "purl": "pkg:pypi/lxml@6.0.3",
+      "purl": "pkg:pypi/lxml@6.0.4",
       "type": "library",
-      "version": "6.0.3"
+      "version": "6.0.4"
     },
     {
-      "bom-ref": "netbox-cabinet-view==0.7.0",
+      "bom-ref": "netbox-cabinet-view==0.7.1",
       "description": "NetBox plugin: DIN rails, subracks, mounting plates, busbars, and multi-row grids with SVG visualization of cabinet interiors, chassis/parent-child devices, and modular PLC chassis. OT/ICS focus.",
       "externalReferences": [
         {
@@ -627,9 +627,9 @@
         }
       ],
       "name": "netbox-cabinet-view",
-      "purl": "pkg:pypi/netbox-cabinet-view@0.7.0",
+      "purl": "pkg:pypi/netbox-cabinet-view@0.7.1",
       "type": "library",
-      "version": "0.7.0"
+      "version": "0.7.1"
     },
     {
       "bom-ref": "packageurl-python==0.17.6",
@@ -1296,7 +1296,7 @@
       "dependsOn": [
         "jsonschema==4.26.0",
         "license-expression==30.4.4",
-        "lxml==6.0.3",
+        "lxml==6.0.4",
         "packageurl-python==0.17.6",
         "py-serializable==2.1.0",
         "referencing==0.37.0",
@@ -1357,13 +1357,13 @@
       "ref": "license-expression==30.4.4"
     },
     {
-      "ref": "lxml==6.0.3"
+      "ref": "lxml==6.0.4"
     },
     {
       "dependsOn": [
         "svgwrite==1.4.3"
       ],
-      "ref": "netbox-cabinet-view==0.7.0"
+      "ref": "netbox-cabinet-view==0.7.1"
     },
     {
       "ref": "packageurl-python==0.17.6"
@@ -1445,7 +1445,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-04-12T16:08:53.226080+00:00",
+    "timestamp": "2026-04-13T10:38:31.377453+00:00",
     "tools": {
       "components": [
         {
@@ -1549,7 +1549,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:574fc36b-d171-436a-9e9f-adb616dd5666",
+  "serialNumber": "urn:uuid:8f67806b-216f-40ce-8ae4-4fc063c15eb8",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

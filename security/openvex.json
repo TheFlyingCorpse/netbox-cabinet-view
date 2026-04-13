@@ -1,6 +1,6 @@
 {
   "@context": "https://openvex.dev/ns/v0.2.0",
-  "@id": "https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.7.1/openvex.json",
+  "@id": "https://github.com/TheFlyingCorpse/netbox-cabinet-view/releases/tag/v0.7.2/openvex.json",
   "author": "Rune Darrud <theflyingcorpse@gmail.com>",
   "role": "Project Maintainer",
   "timestamp": "2026-04-12T00:00:00Z",
@@ -14,15 +14,15 @@
       "timestamp": "2026-04-12T00:00:00Z",
       "products": [
         {
-          "@id": "pkg:pypi/netbox-cabinet-view@0.7.1",
+          "@id": "pkg:pypi/netbox-cabinet-view@0.7.2",
           "identifiers": {
-            "purl": "pkg:pypi/netbox-cabinet-view@0.7.1"
+            "purl": "pkg:pypi/netbox-cabinet-view@0.7.2"
           }
         }
       ],
       "status": "not_affected",
       "justification": "vulnerable_code_not_present",
-      "impact_statement": "As of the v0.7.1 release timestamp above, the maintainer is not aware of any CVE affecting either this package or its single direct runtime dependency (svgwrite 1.4.3). This statement is a floor, not a ceiling: it will be superseded by per-CVE statements when any future vulnerability report is triaged. Consumers requiring a continuously-updated VEX should subscribe to the project's GitHub Security Advisories."
+      "impact_statement": "As of the v0.7.2 release timestamp above, the maintainer is not aware of any CVE affecting either this package or its single direct runtime dependency (svgwrite 1.4.3). This statement is a floor, not a ceiling: it will be superseded by per-CVE statements when any future vulnerability report is triaged. Consumers requiring a continuously-updated VEX should subscribe to the project's GitHub Security Advisories."
     }
   ]
 }

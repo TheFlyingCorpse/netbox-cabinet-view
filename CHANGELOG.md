@@ -10,6 +10,13 @@ All notable changes to this project will be documented in this file. The format 
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
 
+## [0.7.2] — 2026-04-13
+
+### Added
+
+- **Pre-built `port_map` for bundled line-art.** New `port_maps.json` ships alongside the line-art SVGs with 39 pre-built port overlay definitions (zones, pins, LCDs) covering all IED, RTU, PLC/fieldbus, network switch, and transceiver art. The `cabinetview_assign_lineart` command now auto-applies the matching `port_map` alongside `front_image` when a profile doesn't already have one.
+- **1U rack-mount managed switch demo.** New `Rack managed switch 1U (24-port)` DeviceType with 29 interfaces (24 ETH + 4 SFP + 1 mgmt), placed at U22 in Test Rack A. Mixed interface states demonstrate all four port overlay status colours (green, grey, dark grey, amber). Uses `rack-switch-24port.svg` line-art with port_map auto-assigned from `port_maps.json`.
+
 ## [0.7.1] — 2026-04-12
 
 ### Fixed
