@@ -34,10 +34,9 @@ A 2-row × 12-slot protection IED with PSU, CPU, binary I/O, analog I/O, Etherne
 
 | NetBox version | Supported | Tested | Notes |
 |---|:---:|:---:|---|
-| **4.5.x** | ✅ | ✅ | Actively developed against 4.5.7 — this is the version all screenshots and smoke tests run against |
-| **4.4.x** | ✅ | ⚠️ | Untested but all APIs used (`NetBoxModel`, `ViewTab`, `register_model_view`, `get_model_urls`, `PluginTemplateExtension.models`, HTMXSelect pattern) are present in 4.4.0; no code changes expected |
-| 4.3.x and older | ❌ | ❌ | Not supported — some helpers we rely on may not exist or have different signatures |
-| 4.6.x (when released) | ❓ | ❓ | To be verified when released |
+| **4.6.x** | ✅ | ✅ | Verified against 4.6.4 - all imported APIs present, the `RackElevationSVG` patch target is unchanged, no Django 6.0 removals hit plugin code |
+| **4.5.x** | ✅ | ✅ | Actively developed against 4.5.7 - this is the version all screenshots and smoke tests run against |
+| 4.4.x and older | ❌ | ❌ | Not supported. The initial migrations depend on core migrations `dcim.0226_modulebay_rebuild_tree` and `extras.0134_owner`, which first ship in NetBox 4.5; on 4.4 the migration graph fails to build and the plugin will not install |
 
 Python 3.10+ required.
 

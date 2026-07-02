@@ -11,15 +11,19 @@ class CabinetViewConfig(PluginConfig):
         'for NetBox — with SVG visualization of cabinet interiors, chassis/'
         'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
-    version = '0.7.2'
+    version = '0.7.3'
     author = 'Rune Darrud'
     author_email = 'theflyingcorpse@gmail.com'
     base_url = 'cabinet-view'
     graphql_schema = 'graphql.schema.schema'
-    # All APIs used (NetBoxModel, ViewTab, register_model_view, get_model_urls,
-    # PluginTemplateExtension `models` list) are present in 4.4.0. Active
-    # development and testing happens against 4.5.x.
-    min_version = '4.4.0'
+    # Real floor is 4.5.0: the initial migrations depend on core migrations
+    # `dcim.0226_modulebay_rebuild_tree` and `extras.0134_owner`, both of
+    # which first ship in NetBox 4.5. On 4.4.x the migration graph cannot be
+    # built (NodeNotFoundError), so the plugin never installs. The runtime
+    # APIs used (NetBoxModel, ViewTab, register_model_view, get_model_urls,
+    # PluginTemplateExtension) do exist in 4.4, but the migration deps do not.
+    # Verified compatible against 4.5.x and 4.6.x.
+    min_version = '4.5.0'
     max_version = '4.9.99'
     default_settings = {
         # SVG scale factor — 1 mm of mount geometry = this many SVG pixels.

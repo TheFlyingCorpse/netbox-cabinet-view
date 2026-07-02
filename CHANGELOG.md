@@ -10,6 +10,24 @@ All notable changes to this project will be documented in this file. The format 
 - Krone LSA / 110-block terminal frame modelling for copper cross-connect installs.
 - Okabe-Ito colorblind-safe palette + monochrome/pattern fallback for print.
 
+## [0.7.3] - 2026-07-02
+
+### Fixed
+
+- **Corrected the declared NetBox floor: `min_version` is now `4.5.0`, not `4.4.0`.** The initial migrations (`0001_initial`, `0003_rename_carrier_to_mount`, `0004_mount_profiles`) depend on the core migrations `dcim.0226_modulebay_rebuild_tree` and `extras.0134_owner`, both of which first ship in NetBox 4.5. On 4.4.x those parent nodes do not exist, so Django's migration graph fails to build with `NodeNotFoundError` and the plugin never installs. The manifest previously advertised 4.4.0 support, which was never actually installable. No code behaviour changes; this only corrects the advertised range and the README compatibility table.
+
+### Verified
+
+- **NetBox 4.6.x compatibility.** Audited the plugin's full NetBox API surface against 4.6.4: every imported symbol is present, the monkey-patched `RackElevationSVG.draw_device_front`/`draw_device_rear` methods and the `_draw_device` signature are byte-identical to 4.5, no Django 6.0 removals are hit by plugin code, and the plugin is unaffected by the 4.6 deprecations (legacy `actions` dict, `querystring` tag). The compatibility table now lists 4.6.x as supported and tested.
+
+### Added
+
+- **Front-panel Layout tab for non-host devices.** The Layout tab is now shown for any device whose profile defines a `port_map`, even without `hosts_mounts` (e.g. a 1U rack-mount switch). It renders a full-size, interactive front-panel SVG with the port overlay instead of a cabinet interior. New `svg/front_panel.py` renderer (device `front_image` + port-overlay pins, sized to `u_height * 44mm` at 19" rack width) and a new `DeviceFrontPanelSVGView` endpoint at `cabinet-layout/front-panel.svg`.
+
+### Changed
+
+- **Safari theme toggle now shows a dismissible hint** ("Refresh the page to apply the new theme") instead of silently leaving already-loaded SVGs on the previous theme. Safari caches `<object>` content and does not re-fetch on `data` changes; Chrome and Firefox continue to update live.
+
 ## [0.7.2] — 2026-04-13
 
 ### Added
