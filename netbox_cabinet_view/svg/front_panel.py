@@ -194,6 +194,48 @@ def render_front_panel(device, base_url='', theme=None):
             else:
                 dwg.add(rect)
 
+        elif entry_type == 'module_bay':
+            # A mounting slot. Draw its boundary, then overlay the installed
+            # module's OWN port_map offset by the bay position. The module's
+            # port coordinates are stored relative to the module (not the
+            # device), so the same module renders correctly in any bay -
+            # "Port E CH1" follows the ETH-BB card whether it sits in E or F.
+            bx = entry.get('x_mm', 0)
+            by = entry.get('y_mm', 0)
+            dwg.add(Rect(
+                insert=(ox + _mm(bx), oy + _mm(by)),
+                size=(_mm(entry.get('width_mm', 0)), _mm(entry.get('height_mm', 0))),
+                style='fill: none; stroke: #2ecc71; stroke-width: 1.5; stroke-dasharray: 6 3',
+                class_='module-bay',
+            ))
+            bay = device.modulebays.filter(name=entry.get('name')).first()
+            module = getattr(bay, 'installed_module', None) if bay else None
+            mprofile = getattr(module.module_type, 'cabinet_profile', None) if module else None
+            if not (mprofile and mprofile.port_map):
+                continue
+            token = str(bay.position or bay.name or '')
+            for m in mprofile.port_map:
+                if m.get('type') != 'pin':
+                    continue
+                name = (m.get('name') or '').replace('{module}', token)
+                comp = components.get(name)
+                color = _port_color(comp) if comp else port_colors.get('unconnected_disabled', '7f8c8d')
+                rect = Rect(
+                    insert=(ox + _mm(bx + m.get('x_mm', 0)), oy + _mm(by + m.get('y_mm', 0))),
+                    size=(_mm(m.get('width_mm', 3)), _mm(m.get('height_mm', 3))),
+                    style=f'fill: #{color}',
+                    class_='port-pin',
+                )
+                if comp:
+                    url = comp.get_absolute_url()
+                    if url and url.startswith('/'):
+                        url = f'{base_url}{url}'
+                    link = Hyperlink(href=url, target='_parent')
+                    link.add(rect)
+                    dwg.add(link)
+                else:
+                    dwg.add(rect)
+
     return dwg.tostring()
 
 

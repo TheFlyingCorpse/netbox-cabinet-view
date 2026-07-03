@@ -82,6 +82,18 @@ BUSBAR_PX = 24
 # Subrack visual height when the host has no internal_height_mm, in px.
 SUBRACK_DEFAULT_HEIGHT_PX = 120
 
+# TODO(placement-height): the perpendicular size (height for a horizontal mount)
+# of a DIN-rail / subrack placement is HARDCODED here and in
+# _placement_visual_thickness_px (DIN returns a flat 70 px). This is wrong for
+# mounts whose modules are physically tall - e.g. a Siemens SIPROTEC 5 modular
+# device has ~255 mm-tall modules, which get clipped to the ~90 mm nominal and
+# render as a squashed strip. Only grid mounts currently honour real height (via
+# row_height_mm). We should derive placement thickness from the mounted module's
+# real dimension (ModuleMountProfile.footprint_secondary, or the host profile's
+# internal_height_mm) instead of a constant, so DIN/subrack render true portrait
+# proportions. First step: measure what height each mount type actually produces
+# today and pick the source-of-truth field. See faceplates/siprotec bridge PoC.
+
 # Minimum drawing dimensions.
 MIN_WIDTH_PX = 400
 MIN_HEIGHT_PX = 120
@@ -455,7 +467,10 @@ class CabinetLayoutSVG:
             row_h_px = self._mm(mount.row_height_mm or 0)
             return max(DIN_RAIL_PX, row_h_px - 4)
         # DIN rail
-        return 70  # typical DIN module height ~90 mm — give it real presence
+        # TODO(placement-height): flat 70 px clips physically tall modules
+        # (e.g. SIPROTEC 5 ~255 mm). Derive from real module dimension instead.
+        # See the note at SUBRACK_DEFAULT_HEIGHT_PX.
+        return 70  # typical DIN module height ~90 mm, give it real presence
 
     def _row_origin_px(self, mount, row: int):
         """
