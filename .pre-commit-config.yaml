@@ -37,3 +37,14 @@ repos:
         types: [python]
         pass_filenames: false
         require_serial: true
+      # Vendored from deploybox/share/lint-scripts (Tier A). Keep byte-identical.
+      - id: smart-dashes
+        name: no smart dashes (em/en -> ASCII hyphen)
+        entry: python3 scripts/lint_smart_dashes.py
+        language: system
+        types: [text]
+      - id: section-pilcrow
+        name: no section-sign / pilcrow characters
+        entry: python3 scripts/lint_section_pilcrow.py
+        language: system
+        types: [text]

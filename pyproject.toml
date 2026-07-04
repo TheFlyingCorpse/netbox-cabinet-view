@@ -81,7 +81,9 @@ dev = [
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-extend-exclude = ["netbox_cabinet_view/migrations/*.py"]
+# scripts/ are byte-identical vendored copies of deploybox/share/lint-scripts;
+# they carry their own style and must not be reformatted here.
+extend-exclude = ["netbox_cabinet_view/migrations/*.py", "scripts/*.py"]
 lint.select = ["E", "F", "W", "I", "B", "C4", "UP", "SIM", "RUF", "PIE"]
 lint.ignore = [
     "E501",    # line too long - long help_text / querysets / URLs; not worth wrapping
@@ -114,5 +116,7 @@ exclude = [
     'netbox_cabinet_view/migrations/',
     'netbox_cabinet_view/graphql/',
     'netbox_cabinet_view/management/',
+    'netbox_cabinet_view/tests/',
+    'scripts/',
     'build/',
 ]
