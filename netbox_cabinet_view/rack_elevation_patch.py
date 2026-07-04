@@ -4,7 +4,7 @@ devices render their cabinet layout SVG *inside* the rack elevation at
 their U slot, instead of the stock DeviceType.front_image /
 DeviceType.rear_image.
 
-The core rack elevation does not expose a plugin hook for this — it
+The core rack elevation does not expose a plugin hook for this - it
 iterates a rack's devices and emits one ``<image>`` per device from
 Python. The only practical seam is patching the ``draw_device_front``
 and ``draw_device_rear`` methods at plugin ``ready()`` time.
@@ -15,24 +15,24 @@ chassis where the *rear* face is where the interesting stuff is.
 
 Design notes
 ============
-* **Opt-out flag** — controlled by ``PLUGINS_CONFIG['netbox_cabinet_view']
+* **Opt-out flag** - controlled by ``PLUGINS_CONFIG['netbox_cabinet_view']
   ['PATCH_RACK_ELEVATION']``. Defaults to ``True``. Flip to ``False`` if
   a NetBox upgrade breaks the patch.
-* **1U fallback** — devices with ``u_height < 2`` fall through to the
+* **1U fallback** - devices with ``u_height < 2`` fall through to the
   stock behaviour. A 230×22 px slot is too narrow to usefully show a
   cabinet layout, and real-world DIN shelves in a rack are always 2U+
   anyway (a DIN module with wire management needs ~90 mm = 2U).
-* **Letterboxing** — for 2U+ devices we request the cabinet-layout SVG
+* **Letterboxing** - for 2U+ devices we request the cabinet-layout SVG
   at the slot's exact pixel dimensions via ``?w=&h=``. The renderer
   emits an outer ``<svg>`` with ``preserveAspectRatio="xMidYMid meet"``
   so the layout keeps its natural aspect ratio and any spare strip
   above/below is filled with the theme background.
-* **Cache-busting** — the URL gains a ``?v=<hash>`` query token derived
+* **Cache-busting** - the URL gains a ``?v=<hash>`` query token derived
   from the device's carriers and mounts. When a Mount is added or
   moved, the hash changes, the URL changes, the browser refetches.
-* **Idempotent** — ``install_patch`` tags each wrapper so re-entry (from
+* **Idempotent** - ``install_patch`` tags each wrapper so re-entry (from
   Django autoreload) doesn't double-wrap.
-* **Graceful degradation** — any exception during patch installation
+* **Graceful degradation** - any exception during patch installation
   is logged at WARNING level and swallowed, so a broken patch never
   prevents the plugin from loading.
 """
@@ -50,7 +50,7 @@ _MIN_U_FOR_LAYOUT = 2  # devices shorter than this fall through to front/rear_im
 
 class _URLOnlyImage:
     """
-    Duck-typed stand-in for Django's ``FieldFile`` — just a ``.url``
+    Duck-typed stand-in for Django's ``FieldFile`` - just a ``.url``
     attribute, which is the only thing ``RackElevationSVG._draw_device``
     reads off the image argument.
     """
@@ -64,7 +64,7 @@ class _URLOnlyImage:
 def _content_hash(device) -> str:
     """
     Return a short stable hash of a device's mounts and placements, used
-    as a cache-busting token in the embedded SVG URL. Cheap — a single
+    as a cache-busting token in the embedded SVG URL. Cheap - a single
     query returning the (mount_id, last_updated) for each mount and the
     (placement_id, last_updated) for each placement.
 
@@ -84,7 +84,7 @@ def _make_face_patch(original, face_name: str):
     Build an upgraded draw_device_{front,rear} method that replaces the
     stock DeviceType image with our cabinet-layout SVG URL when the
     device is a carrier host. The replacement logic is identical for
-    both faces — only the original callable and the log label differ.
+    both faces - only the original callable and the log label differ.
     """
 
     def patched(self, device, coords, size):
@@ -117,7 +117,7 @@ def _make_face_patch(original, face_name: str):
                 # so the embedded rendering reads as "preview, zoom in
                 # to interact" instead of pretending the placements are
                 # clickable from inside the rack elevation <image>
-                # wrapper (they aren't — clicking lands on the HOST
+                # wrapper (they aren't - clicking lands on the HOST
                 # device via the core rack-elevation hyperlink, which
                 # is a click-target lie without the diminishment).
                 # Feature 1 (v0.5.0): pass the current face so the

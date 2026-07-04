@@ -17,7 +17,7 @@ Usage:
 
 The command copies SVGs from the plugin's static/line-art/ directory into
 Django's MEDIA_ROOT and sets the front_image field on the target profile.
-Idempotent — re-running updates the image if it changed.
+Idempotent - re-running updates the image if it changed.
 """
 import json
 import os
@@ -199,7 +199,7 @@ class Command(BaseCommand):
 
         for cat in manifest.get('categories', []):
             self.stdout.write(self.style.SUCCESS(
-                f"\n{cat['name']} ({cat['mount_type']}) — {cat['inspired_by']}"
+                f"\n{cat['name']} ({cat['mount_type']}) - {cat['inspired_by']}"
             ))
             self.stdout.write(f"  Upload to: {cat['image_for']}")
             for item in cat.get('items', []):
@@ -241,10 +241,10 @@ def _auto_assign_all(stdout=None):
                 stdout.write(f'  module: {model_name} → {art}')
             assigned += 1
 
-    # Device profiles (ALL — both hosts and mountable devices)
+    # Device profiles (ALL - both hosts and mountable devices)
     for profile in DeviceMountProfile.objects.select_related('device_type'):
         model_name = profile.device_type.model
-        # The seed prefixes with "Generic " — strip it for matching
+        # The seed prefixes with "Generic " - strip it for matching
         clean_name = model_name.replace('Generic ', '')
         art = _DEVICE_ART_MAP.get(clean_name) or _DEVICE_ART_MAP.get(model_name)
         if art and _assign_image(profile, art):

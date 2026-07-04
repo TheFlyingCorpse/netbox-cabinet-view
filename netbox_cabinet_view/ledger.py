@@ -1,5 +1,5 @@
 """
-Slot ledger — Finding D, v0.4.0.
+Slot ledger - Finding D, v0.4.0.
 
 Produces a tabular, spreadsheet-style view of every slot on every
 mount of a host device, including empty ranges and (for modular
@@ -13,7 +13,7 @@ Lives in its own module so it doesn't pull in svgwrite. Gated on
 (default False in v0.4.0).
 
 The enumeration logic intentionally mirrors the empty-slot
-enumeration used by the SVG renderer's Finding C pass — if one
+enumeration used by the SVG renderer's Finding C pass - if one
 changes, the other should follow.
 """
 from dataclasses import dataclass
@@ -26,7 +26,7 @@ from dataclasses import field
 @dataclass
 class SubRow:
     """ModuleBay sub-row under a hosted device's primary row."""
-    slot_label: str        # e.g. "Slot 3", "R1S2" — copied from ModuleBay.position or .name
+    slot_label: str        # e.g. "Slot 3", "R1S2" - copied from ModuleBay.position or .name
     module_name: str       # str(module), which is str(module_type) in NetBox
     module_type: str       # str(module_type)
     role: str              # parent device role name
@@ -41,13 +41,13 @@ class SlotRow:
     (contiguous), an empty ModuleBay-backed Placement, or a dangling
     reference.
     """
-    slot_label: str                       # e.g. "1", "3 – 6", "R1S3", "(100, 200) mm"
-    size_label: str                       # e.g. "1 HP", "4 HP", "—"
+    slot_label: str                       # e.g. "1", "3 to 6", "R1S3", "(100, 200) mm"
+    size_label: str                       # e.g. "1 HP", "4 HP", "-"
     device_name: str                      # "" for empty rows
     device_url: str                       # "" for empty rows
     role: str                             # "" for empty rows
     type_name: str                        # DeviceType or ModuleType model string
-    bay_label: str                        # e.g. "Slot 3 bay" or "—"
+    bay_label: str                        # e.g. "Slot 3 bay" or "-"
     state: str                            # "populated" | "empty" | "bay_empty" | "module_empty" | "dangling"
     action_label: str                     # "edit" | "+ mount" | "install" | "clean"
     action_url: str                       # href for the action cell
@@ -56,7 +56,7 @@ class SlotRow:
 
 @dataclass
 class MountSection:
-    """One section in the ledger — header (mount name + occupancy bar) plus rows."""
+    """One section in the ledger - header (mount name + occupancy bar) plus rows."""
     mount: object                         # the Mount instance (template accesses .name, .subtype, etc.)
     rows: list                            # list[SlotRow]
     populated_count: int
@@ -149,7 +149,7 @@ def _sub_rows_for_device(device) -> list:
     for bay in bays:
         mod = getattr(bay, 'installed_module', None)
         if mod is None:
-            continue  # not populated — don't emit
+            continue  # not populated - don't emit
         mt = mod.module_type
         role = device.role.name if device.role_id else ''
         out.append(SubRow(
@@ -173,13 +173,13 @@ def _slot_row_for_placement(placement, mount) -> SlotRow:
     # Slot label - 1D/grid uses position[..position+size-1], 2D uses (x,y)
     if mount.is_two_d:
         slot_label = f'({placement.position_x}, {placement.position_y}) mm'
-        size_label = f'{placement.size_x or "—"} × {placement.size_y or "—"} mm'
+        size_label = f'{placement.size_x or "-"} × {placement.size_y or "-"} mm'
     else:
         size = placement.size or 1
         if size == 1:
             slot_label = str(placement.position or 1)
         else:
-            slot_label = f'{placement.position or 1} – {(placement.position or 1) + size - 1}'
+            slot_label = f'{placement.position or 1} - {(placement.position or 1) + size - 1}'
         # Grid mounts prefix with the row
         if mount.is_grid and placement.row is not None:
             slot_label = f'R{placement.row}·{slot_label}'
@@ -198,7 +198,7 @@ def _slot_row_for_placement(placement, mount) -> SlotRow:
             device_name='(bay empty)',
             device_url='',
             role='',
-            type_name='—',
+            type_name='-',
             bay_label=str(placement.device_bay),
             state='bay_empty',
             action_label='install',
@@ -215,7 +215,7 @@ def _slot_row_for_placement(placement, mount) -> SlotRow:
                 device_name='(bay empty)',
                 device_url='',
                 role='',
-                type_name='—',
+                type_name='-',
                 bay_label=str(placement.module_bay),
                 state='module_empty',
                 action_label='install',
@@ -245,8 +245,8 @@ def _slot_row_for_placement(placement, mount) -> SlotRow:
         device_name=device.name or str(device.device_type) if device else '(none)',
         device_url=device.get_absolute_url() if device else '',
         role=role,
-        type_name=str(device.device_type) if device else '—',
-        bay_label=str(placement.device_bay) if placement.device_bay_id else '—',
+        type_name=str(device.device_type) if device else '-',
+        bay_label=str(placement.device_bay) if placement.device_bay_id else '-',
         state='populated',
         action_label='edit',
         action_url=placement.get_absolute_url(),
@@ -272,15 +272,15 @@ def _empty_slot_rows(mount) -> list:
                 per_row[r].update(range(p.position, p.position + p.size))
         for r, occupied in per_row.items():
             for start, end in _empty_ranges(occupied, capacity):
-                slot_label = f'R{r}·{start}' if start == end else f'R{r}·{start} – {end}'
+                slot_label = f'R{r}·{start}' if start == end else f'R{r}·{start} - {end}'
                 rows.append(SlotRow(
                     slot_label=slot_label,
                     size_label=f'{end - start + 1}',
                     device_name='(empty)',
                     device_url='',
                     role='',
-                    type_name='—',
-                    bay_label='—',
+                    type_name='-',
+                    bay_label='-',
                     state='empty',
                     action_label='+ mount',
                     action_url=_placement_add_url(
@@ -294,15 +294,15 @@ def _empty_slot_rows(mount) -> list:
                 continue
             occupied.update(range(p.position, p.position + p.size))
         for start, end in _empty_ranges(occupied, capacity):
-            slot_label = str(start) if start == end else f'{start} – {end}'
+            slot_label = str(start) if start == end else f'{start} - {end}'
             rows.append(SlotRow(
                 slot_label=slot_label,
                 size_label=f'{end - start + 1}',
                 device_name='(empty)',
                 device_url='',
                 role='',
-                type_name='—',
-                bay_label='—',
+                type_name='-',
+                bay_label='-',
                 state='empty',
                 action_label='+ mount',
                 action_url=_placement_add_url(mount=mount.pk, position=start),

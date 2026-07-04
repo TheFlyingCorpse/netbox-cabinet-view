@@ -3,11 +3,11 @@
 {#                                                                      #}
 {# Rendered into the right column of Device detail pages whose          #}
 {# DeviceType has no DeviceMountProfile yet and is cabinet-shaped       #}
-{# (u_height == 0). The CabinetViewHintExtension does the gating —     #}
+{# (u_height == 0). The CabinetViewHintExtension does the gating -     #}
 {# by the time this template runs, we know the hint SHOULD be shown.   #}
 {#                                                                      #}
 {# Context:                                                             #}
-{#   device: dcim.Device — the current device being viewed              #}
+{#   device: dcim.Device - the current device being viewed              #}
 {# ==================================================================== #}
 <div class="card mb-3" style="border-left: 4px solid #81c784;">
   <div class="card-header d-flex justify-content-between align-items-center"
@@ -22,7 +22,7 @@
   </div>
   <div class="card-body">
     <p class="small mb-3">
-      This looks like an enclosure — no rack U height, no cabinet profile
+      This looks like an enclosure - no rack U height, no cabinet profile
       yet. Set up a Cabinet View profile to add DIN rails, subracks,
       mounting plates, busbars, or grids, then drop devices onto them
       visually.

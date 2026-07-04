@@ -215,7 +215,7 @@ class DeviceMountProfile(NetBoxModel):
     )
     footprint_primary = models.PositiveSmallIntegerField(
         null=True, blank=True,
-        help_text='Width in mount units (DIN modules, HP, or mm — matches the mount\'s unit).',
+        help_text='Width in mount units (DIN modules, HP, or mm - matches the mount\'s unit).',
     )
     footprint_secondary = models.PositiveSmallIntegerField(
         null=True, blank=True,
@@ -279,7 +279,7 @@ class DeviceMountProfile(NetBoxModel):
         verbose_name_plural = 'Device Mount Profiles'
 
     def __str__(self):
-        return f'{self.device_type} — mount profile'
+        return f'{self.device_type} - mount profile'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_cabinet_view:devicemountprofile', args=[self.pk])
@@ -328,12 +328,12 @@ class ModuleMountProfile(NetBoxModel):
     ``footprint_primary`` / ``footprint_secondary``.
 
     ModuleTypes don't host mounts (no ``hosts_mounts`` field here)
-    and don't have interior dimensions — modules are always themselves
+    and don't have interior dimensions - modules are always themselves
     mounted on some containing device's mount. This model captures
     only the "where does this module fit" side of the story.
 
     Not to be confused with NetBox 4.5's core ``dcim.ModuleTypeProfile``
-    which is an unrelated concept — a reusable attribute schema
+    which is an unrelated concept - a reusable attribute schema
     (key/value definitions) inheritable by ModuleTypes.
     """
 
@@ -357,7 +357,7 @@ class ModuleMountProfile(NetBoxModel):
     )
     footprint_primary = models.PositiveSmallIntegerField(
         null=True, blank=True,
-        help_text='Width in mount units (HP, DIN modules, or mm — matches the mount\'s unit).',
+        help_text='Width in mount units (HP, DIN modules, or mm - matches the mount\'s unit).',
     )
     footprint_secondary = models.PositiveSmallIntegerField(
         null=True, blank=True,
@@ -418,7 +418,7 @@ class ModuleMountProfile(NetBoxModel):
         verbose_name_plural = 'Module Mount Profiles'
 
     def __str__(self):
-        return f'{self.module_type} — mount profile'
+        return f'{self.module_type} - mount profile'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_cabinet_view:modulemountprofile', args=[self.pk])
@@ -460,13 +460,13 @@ class Mount(NetBoxModel):
 
     Five mount types are supported:
 
-    * **din_rail** — 1D rail, positions in `position` / `size` (units: mm, DIN
+    * **din_rail** - 1D rail, positions in `position` / `size` (units: mm, DIN
       module 17.5 mm, …). Orientation horizontal or vertical.
-    * **subrack** — 1D Eurocard rail, positions in HP (5.08 mm) or mm.
-    * **mounting_plate** — 2D back plate, positions in `position_x/y`, sizes in
+    * **subrack** - 1D Eurocard rail, positions in HP (5.08 mm) or mm.
+    * **mounting_plate** - 2D back plate, positions in `position_x/y`, sizes in
       `size_x/y` (mm).
-    * **busbar** — 1D copper bar, positions in mm (typically).
-    * **grid** — multi-row grid (rows of 1D strips), positions in `(row, position)`.
+    * **busbar** - 1D copper bar, positions in mm (typically).
+    * **grid** - multi-row grid (rows of 1D strips), positions in `(row, position)`.
 
     The mount's `offset_x_mm` / `offset_y_mm` place it inside the host
     device's internal area (from the top-left of the host's interior).
@@ -487,7 +487,7 @@ class Mount(NetBoxModel):
         max_length=30,
         blank=True,
         choices=MountSubtypeChoices,
-        help_text='Specific mount subtype (optional but recommended — controls compatibility checks).',
+        help_text='Specific mount subtype (optional but recommended - controls compatibility checks).',
     )
     orientation = models.CharField(
         max_length=20,
@@ -556,7 +556,7 @@ class Mount(NetBoxModel):
         verbose_name_plural = 'Mounts'
 
     def __str__(self):
-        return f'{self.host_device} — {self.name}'
+        return f'{self.host_device} - {self.name}'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_cabinet_view:mount', args=[self.pk])
@@ -667,12 +667,12 @@ class Placement(NetBoxModel):
 
     Exactly one of `device`, `device_bay`, or `module_bay` must be set:
 
-    * `device` — a standalone `dcim.Device` is placed directly on the mount.
+    * `device` - a standalone `dcim.Device` is placed directly on the mount.
       Typical for bare DIN-rail installations.
-    * `device_bay` — the placement represents a chassis child slot. Resolves
+    * `device_bay` - the placement represents a chassis child slot. Resolves
       to `device_bay.installed_device` at render time. Typical for WDM
       shelves, blade chassis, parent/child device relationships.
-    * `module_bay` — the placement represents a modular chassis slot. Resolves
+    * `module_bay` - the placement represents a modular chassis slot. Resolves
       to `module_bay.installed_module` at render time. Typical for PLC
       backplanes and line-card chassis.
 
@@ -800,7 +800,7 @@ class Placement(NetBoxModel):
         return reverse('plugins:netbox_cabinet_view:placement', args=[self.pk])
 
     # ------------------------------------------------------------------
-    # Persistence — Finding A (v0.4.0): make full_clean() run on every
+    # Persistence - Finding A (v0.4.0): make full_clean() run on every
     # save() code path, not just form submissions.
     #
     # The v0.3.0 seed command used update_or_create(), which bypasses
@@ -928,13 +928,13 @@ class Placement(NetBoxModel):
             if self.position < 1 or end > mount.capacity_units:
                 raise ValidationError({
                     'position': (
-                        f'Placement occupies units {self.position}–{end}, but the mount '
+                        f'Placement occupies units {self.position}-{end}, but the mount '
                         f'has only {mount.capacity_units} units.'
                     ),
                 })
 
             # Overlap with sibling placements (1D). Filter siblings with
-            # complete geometry — see 2D overlap check below for the
+            # complete geometry - see 2D overlap check below for the
             # Finding A / pre-v0.4.0 NULL-size caveat.
             siblings = mount.placements.exclude(pk=self.pk).filter(
                 position__isnull=False, size__isnull=False,
@@ -972,7 +972,7 @@ class Placement(NetBoxModel):
                 })
 
             # Overlap detection (2D bounding boxes).
-            # Filter siblings with complete geometry — Finding A (v0.4.0)
+            # Filter siblings with complete geometry - Finding A (v0.4.0)
             # forces full_clean() on every save, but pre-v0.4.0 DB rows
             # may have NULL size_x/size_y because the auto-fill never
             # ran. Such siblings just get skipped here (they will fail
@@ -1019,7 +1019,7 @@ class Placement(NetBoxModel):
             if self.row < 1 or self.row + span - 1 > (mount.rows or 0):
                 raise ValidationError({
                     'row': (
-                        f'Placement spans rows {self.row}–{self.row + span - 1}, but the mount '
+                        f'Placement spans rows {self.row}-{self.row + span - 1}, but the mount '
                         f'has only {mount.rows} rows.'
                     ),
                 })
@@ -1028,7 +1028,7 @@ class Placement(NetBoxModel):
             if self.position < 1 or end > mount.capacity_units:
                 raise ValidationError({
                     'position': (
-                        f'Placement occupies units {self.position}–{end} within a row, but each '
+                        f'Placement occupies units {self.position}-{end} within a row, but each '
                         f'row has only {mount.capacity_units} units.'
                     ),
                 })
@@ -1053,7 +1053,7 @@ class Placement(NetBoxModel):
                     raise ValidationError({
                         'row': (
                             f'Overlaps with {other._target_summary()} at rows '
-                            f'{o_row_lo}–{o_row_hi}, cols {o_col_lo}–{o_col_hi}.'
+                            f'{o_row_lo}-{o_row_hi}, cols {o_col_lo}-{o_col_hi}.'
                         ),
                     })
 

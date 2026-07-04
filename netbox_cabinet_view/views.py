@@ -176,17 +176,17 @@ class PlacementDeleteView(generic.ObjectDeleteView):
 
 
 # ---------------------------------------------------------------------------
-# Device detail integration — Layout tab + SVG endpoint
+# Device detail integration - Layout tab + SVG endpoint
 # ---------------------------------------------------------------------------
 
 def _device_hosts_mounts(device):
     """
-    Tab visibility predicate for DeviceCabinetLayoutView — Finding B
+    Tab visibility predicate for DeviceCabinetLayoutView - Finding B
     (v0.4.0), extended in v0.7.2 for non-host devices with port_map.
 
     The Layout tab is visible when:
     * The device's DeviceType has a profile with ``hosts_mounts=True``
-      (even with zero mounts — unlocks the empty-state CTA), OR
+      (even with zero mounts - unlocks the empty-state CTA), OR
     * The profile has a non-empty ``port_map`` (v0.7.2) or
       ``rear_port_map`` (v0.8.0). Enables a full-size front/rear-panel
       view with interactive port overlay for standalone rack-mount
@@ -252,7 +252,7 @@ class DeviceCabinetLayoutView(generic.ObjectView):
             'has_front_panel': has_front_panel,
             'has_rear_panel': has_rear_panel,
             # Internal dimensions for the empty-state scale-reference
-            # canvas. May be None — the template degrades gracefully to
+            # canvas. May be None - the template degrades gracefully to
             # a plain Bootstrap card + button when unset.
             'internal_width_mm': profile.internal_width_mm if profile else None,
             'internal_height_mm': profile.internal_height_mm if profile else None,
@@ -267,7 +267,7 @@ class DeviceCabinetLayoutView(generic.ObjectView):
 
 
 # ---------------------------------------------------------------------------
-# Discovery hint — Finding H (v0.4.0)
+# Discovery hint - Finding H (v0.4.0)
 # ---------------------------------------------------------------------------
 
 class DiscoveryHintDismissView(LoginRequiredMixin, View):
@@ -297,7 +297,7 @@ class DiscoveryHintDismissView(LoginRequiredMixin, View):
 
 
 # ---------------------------------------------------------------------------
-# Auto-provisioning — Feature 3 (v0.5.0)
+# Auto-provisioning - Feature 3 (v0.5.0)
 # ---------------------------------------------------------------------------
 
 class AutoProvisionView(LoginRequiredMixin, View):
@@ -319,7 +319,7 @@ class AutoProvisionView(LoginRequiredMixin, View):
         device = get_object_or_404(Device, pk=device_pk)
 
         if mount_pk:
-            # Mode A — placements only on an existing mount.
+            # Mode A - placements only on an existing mount.
             if not request.user.has_perm('netbox_cabinet_view.add_placement'):
                 messages.error(request, 'You do not have permission to add placements.')
                 return redirect(device.get_absolute_url())
@@ -336,7 +336,7 @@ class AutoProvisionView(LoginRequiredMixin, View):
                 messages.info(request, 'No new placements to create (all bays already placed or mount at capacity).')
             return redirect(mount.get_absolute_url())
         else:
-            # Mode B — create mount + placements.
+            # Mode B - create mount + placements.
             if not request.user.has_perm('netbox_cabinet_view.add_mount'):
                 messages.error(request, 'You do not have permission to add mounts.')
                 return redirect(device.get_absolute_url())
@@ -346,7 +346,7 @@ class AutoProvisionView(LoginRequiredMixin, View):
 
             mount, created, skipped = auto_provision_mount_and_placements(device)
             if mount is None:
-                messages.warning(request, 'No bays found on this device — nothing to provision.')
+                messages.warning(request, 'No bays found on this device - nothing to provision.')
                 return redirect(device.get_absolute_url())
             messages.success(
                 request,
@@ -358,7 +358,7 @@ class AutoProvisionView(LoginRequiredMixin, View):
 
 
 # ---------------------------------------------------------------------------
-# Line-art gallery — v0.6.1
+# Line-art gallery - v0.6.1
 # ---------------------------------------------------------------------------
 
 class LineArtGalleryView(LoginRequiredMixin, View):
@@ -563,17 +563,17 @@ class DeviceCabinetLayoutSVGView(View):
 
     Accepts four optional query parameters:
 
-    * ``?w=<int>`` and ``?h=<int>`` — render the drawing letterboxed into
+    * ``?w=<int>`` and ``?h=<int>`` - render the drawing letterboxed into
       this pixel box (used by the rack elevation patch to fit a cabinet
       layout into a U slot without distortion).
-    * ``?v=<str>`` — cache-buster token. Ignored by the view but varies
+    * ``?v=<str>`` - cache-buster token. Ignored by the view but varies
       the URL so the browser invalidates its cached copy whenever the
       host device's mounts or placements change.
-    * ``?thumb=1`` — render in thumbnail mode (lowered contrast, no
+    * ``?thumb=1`` - render in thumbnail mode (lowered contrast, no
       labels, desaturated role colours). Used by the rack elevation
       patch so the embedded cabinet reads as a preview, not a live
       click target. Finding E, v0.4.0.
-    * ``?face=front|rear`` — render only mounts assigned to this face
+    * ``?face=front|rear`` - render only mounts assigned to this face
       (plus mounts with face='' which appear on both). Feature 1,
       v0.5.0.
     """

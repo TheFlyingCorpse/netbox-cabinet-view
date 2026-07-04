@@ -6,11 +6,11 @@ The plugin ships a management command that creates a realistic OT/ICS + ISP demo
 python manage.py cabinetview_seed
 ```
 
-The command is idempotent — safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 30 `DeviceType`s with matching `DeviceMountProfile`s, nine `ModuleType`s with matching `ModuleMountProfile`s, one `Rack` (`Test Rack A`, 24U), and **20 scenarios** across four groups.
+The command is idempotent - safe to re-run, updates drifted fields back to the canonical values, and re-layouts rack positions cleanly. It creates one `Site` (`OT Test Site`), one `Location`, one `Manufacturer` (`Generic`), nine `DeviceRole`s, around 30 `DeviceType`s with matching `DeviceMountProfile`s, nine `ModuleType`s with matching `ModuleMountProfile`s, one `Rack` (`Test Rack A`, 24U), and **20 scenarios** across four groups.
 
-Device type and model names in the seed are deliberately generic by category (no real vendor part numbers) as an operational-security hygiene measure — the plugin's repo should not help adversaries fingerprint which specific equipment lives at which site.
+Device type and model names in the seed are deliberately generic by category (no real vendor part numbers) as an operational-security hygiene measure - the plugin's repo should not help adversaries fingerprint which specific equipment lives at which site.
 
-## Core scenarios (9) — the basic model
+## Core scenarios (9) - the basic model
 
 | # | Scenario | Host device | Mount(s) | Demonstrates |
 |---|---|---|---|---|
@@ -24,32 +24,32 @@ Device type and model names in the seed are deliberately generic by category (no
 | 8 | Rack-mounted DIN shelf (4U, two rails) | `DIN Shelf 4U #1` | 2× stacked DIN rails | Multi-mount host, stacked rails |
 | 9 | ISP-style 4U DIN shelf (single rail) | `DIN Shelf 4U ISP #1` | 1× DIN rail (centered vertically) | Single rail with wire-management headroom |
 
-## Classic OT/ICS scenarios (A–G)
+## Classic OT/ICS scenarios (A-G)
 
 | # | Scenario | Host device | Demonstrates |
 |---|---|---|---|
-| A | **Marshalling cabinet** | `Marshalling Cabinet #1` (4U rack) | 20 terminal blocks at 6 mm pitch — dense narrow-slot rendering stress test |
+| A | **Marshalling cabinet** | `Marshalling Cabinet #1` (4U rack) | 20 terminal blocks at 6 mm pitch - dense narrow-slot rendering stress test |
 | B | **MCC with withdrawable buckets** | `MCC Cabinet #1` | **Device-in-Device recursion** on a vertical busbar mount; three bucket devices, each a host with its own DIN rail inside holding a contactor and an auxiliary relay |
-| C | **VFD control cabinet** | `VFD Cabinet #1` | Mounting plate holding a VFD + a nested DIN strip device that itself carries a 24 V PSU and two motor contactors — rail-on-plate nesting |
+| C | **VFD control cabinet** | `VFD Cabinet #1` | Mounting plate holding a VFD + a nested DIN strip device that itself carries a 24 V PSU and two motor contactors - rail-on-plate nesting |
 | D | **Fieldbus remote I/O station** | `Fieldbus Remote I/O #1` (2U rack) | Bus-coupler-plus-modules pattern on DIN: 1 coupler + 4 DI + 3 DO cards |
 | E | **Industrial Ethernet switch panel** | `Industrial Switch Shelf #1` (2U rack) | Single wider-footprint device on a DIN rail |
 | F | **Safety relay panel** | `Safety Panel #1` | Four fixed-size safety relays on a 2D plate |
 | G | **Substation protection panel** | `Protection Panel #1` | Two overcurrent IEDs + one line-distance IED on a plate, plus a nested test-block rail device carrying four test blocks |
 
-## v0.3.0 scenarios (H–K) — grid mounts, vertical, and ISP
+## v0.3.0 scenarios (H-K) - grid mounts, vertical, and ISP
 
 | # | Scenario | Host device | Demonstrates |
 |---|---|---|---|
 | H | **Vertical DIN rail wall box** | `Vertical DIN Wall Box #1` | Vertical-orientation DIN rail with 6 relays stacked top-to-bottom |
-| I | **Vertical Eurocard subrack** | `Vertical Subrack #1` | Vertical-orientation subrack with 4 cards — proves all 1D mount types support `orientation='vertical'` |
-| J | **Grid-mounted protection IED** | `Protection IED L01` | **Grid mount** with 2 rows × 12 slots, ModuleBay-backed placements including a comms module that **spans both rows** via `row_span=2` — the "one device, many mount positions depending on its ModuleBays" story |
-| K | **ISP ODF (fibre patch frame)** | `ODF Frame #1` (1U rack) | 12 fibre splice cassettes in a 2×6 grid. The interesting face of an ODF is the **rear**, so this also proves the rear-face `RackElevationSVG` patch — the ODF layout appears inside the rack elevation at U21 on both front and rear columns |
+| I | **Vertical Eurocard subrack** | `Vertical Subrack #1` | Vertical-orientation subrack with 4 cards - proves all 1D mount types support `orientation='vertical'` |
+| J | **Grid-mounted protection IED** | `Protection IED L01` | **Grid mount** with 2 rows × 12 slots, ModuleBay-backed placements including a comms module that **spans both rows** via `row_span=2` - the "one device, many mount positions depending on its ModuleBays" story |
+| K | **ISP ODF (fibre patch frame)** | `ODF Frame #1` (1U rack) | 12 fibre splice cassettes in a 2×6 grid. The interesting face of an ODF is the **rear**, so this also proves the rear-face `RackElevationSVG` patch - the ODF layout appears inside the rack elevation at U21 on both front and rear columns |
 
 `Test Rack A` (24U) holds the 1U / 2U / 4U rack-mounted scenarios (3, 4, 7, 8, 9, A, D, E, K) at consecutive U positions. The standalone scenarios (1, 2, 5, 6, B, C, F, G, H, I, J) live in `OT Test Site` / `Control Room` without a rack.
 
 ## Rendered scenario gallery
 
-The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — every stroke, fill and label you see is exactly what the plugin's `/dcim/devices/<pk>/cabinet-layout/svg/` endpoint returns for that device.
+The SVGs below are committed at `docs/screenshots/*.svg` and embedded live - every stroke, fill and label you see is exactly what the plugin's `/dcim/devices/<pk>/cabinet-layout/svg/` endpoint returns for that device.
 
 | Scenario | Rendering |
 |---|---|
@@ -60,8 +60,8 @@ The SVGs below are committed at `docs/screenshots/*.svg` and embedded live — e
 | **5. LV distribution busbar** | ![](screenshots/05-busbar.png) |
 | **6. Modular PLC (ModuleBay)** | ![](screenshots/06-modular-plc.png) |
 | **7. 2U rack DIN shelf** | ![](screenshots/07-din-shelf-2u.png) |
-| **8. 4U rack DIN shelf — two stacked rails** | ![](screenshots/08-din-shelf-4u-two-rail.png) |
-| **9. 4U rack DIN shelf — ISP single-rail** | ![](screenshots/09-din-shelf-4u-isp.png) |
+| **8. 4U rack DIN shelf - two stacked rails** | ![](screenshots/08-din-shelf-4u-two-rail.png) |
+| **9. 4U rack DIN shelf - ISP single-rail** | ![](screenshots/09-din-shelf-4u-isp.png) |
 | **A. Marshalling cabinet (20 terminal blocks)** | ![](screenshots/A-marshalling.png) |
 | **B. MCC with withdrawable buckets** | ![](screenshots/B-mcc-cabinet.png) |
 | **C. VFD control cabinet** | ![](screenshots/C-vfd-cabinet.png) |
@@ -91,11 +91,11 @@ The plugin covers the common OT/ICS cabinet types:
 
 Yes. The plugin covers the main physical-mounting patterns ISPs encounter:
 
-- **Modular OLT / WDM / ROADM shelves** with line cards — `subrack` mounts with `ModuleBay`-backed placements (scenarios 3, 4, 6)
-- **ODF / fibre patch chassis** — `grid` mounts with cassette positions, visible on the rack rear face (scenario K)
-- **DIN-mounted NIDs, media converters, surge protectors, small fieldbus switches** — `din_rail` mounts (scenarios 1, D, E, H)
-- **Telco DC power distribution** — `busbar` mounts + nested DIN for MCBs (scenario 5)
-- **Vertical DIN rails in street cabinets / OSP pedestals** — `orientation='vertical'` on any 1D mount (scenario H)
-- **Rack elevation showing what's inside each shelf on both faces** — via the `RackElevationSVG` rear-face patch, now rendered in thumbnail mode so users understand the embed is a preview, not a live click target
+- **Modular OLT / WDM / ROADM shelves** with line cards - `subrack` mounts with `ModuleBay`-backed placements (scenarios 3, 4, 6)
+- **ODF / fibre patch chassis** - `grid` mounts with cassette positions, visible on the rack rear face (scenario K)
+- **DIN-mounted NIDs, media converters, surge protectors, small fieldbus switches** - `din_rail` mounts (scenarios 1, D, E, H)
+- **Telco DC power distribution** - `busbar` mounts + nested DIN for MCBs (scenario 5)
+- **Vertical DIN rails in street cabinets / OSP pedestals** - `orientation='vertical'` on any 1D mount (scenario H)
+- **Rack elevation showing what's inside each shelf on both faces** - via the `RackElevationSVG` rear-face patch, now rendered in thumbnail mode so users understand the embed is a preview, not a live click target
 
-Gaps for ISPs, called out explicitly: Krone LSA / 110-block copper frames are deferred (see [roadmap](roadmap.md)). Standard 19″ patch panel cabling (front/rear port tracking) is already handled by NetBox core — the plugin doesn't need to duplicate it.
+Gaps for ISPs, called out explicitly: Krone LSA / 110-block copper frames are deferred (see [roadmap](roadmap.md)). Standard 19″ patch panel cabling (front/rear port tracking) is already handled by NetBox core - the plugin doesn't need to duplicate it.

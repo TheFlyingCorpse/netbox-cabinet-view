@@ -4,15 +4,15 @@
 
 ## Models
 
-- **`DeviceMountProfile`** — per-`dcim.DeviceType` declaration of whether the device hosts mounts (it's a cabinet or enclosure) and/or mounts on other mounts (it's a DIN-mounted relay, a 4-HP Eurocard, a clip-on MCB). Internal dimensions and footprints live here.
-- **`ModuleMountProfile`** — per-`dcim.ModuleType` declaration of mount compatibility + footprint. Mirror of `DeviceMountProfile`'s mountable role, scoped to modules. Unlocks correct widths for modular I/O cards, line cards, fibre cassettes, and other plug-in modules.
-- **`Mount`** — a geometric mounting structure attached to a host `Device`. Five types: `din_rail`, `subrack`, `mounting_plate`, `busbar`, `grid`. Each has an offset, orientation (horizontal or vertical for any 1D type), length (1D) / width+height (2D) / rows+row_height_mm (grid), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm). Grid mounts are 1-to-N stacked rows for modular IED / multi-row backplanes; a placement can span multiple rows via `row_span`.
-- **`Placement`** — a device/bay/module placed on a `Mount`. Points at exactly one of:
+- **`DeviceMountProfile`** - per-`dcim.DeviceType` declaration of whether the device hosts mounts (it's a cabinet or enclosure) and/or mounts on other mounts (it's a DIN-mounted relay, a 4-HP Eurocard, a clip-on MCB). Internal dimensions and footprints live here.
+- **`ModuleMountProfile`** - per-`dcim.ModuleType` declaration of mount compatibility + footprint. Mirror of `DeviceMountProfile`'s mountable role, scoped to modules. Unlocks correct widths for modular I/O cards, line cards, fibre cassettes, and other plug-in modules.
+- **`Mount`** - a geometric mounting structure attached to a host `Device`. Five types: `din_rail`, `subrack`, `mounting_plate`, `busbar`, `grid`. Each has an offset, orientation (horizontal or vertical for any 1D type), length (1D) / width+height (2D) / rows+row_height_mm (grid), and a unit (mm, DIN module 17.5 mm, Eurocard HP 5.08 mm). Grid mounts are 1-to-N stacked rows for modular IED / multi-row backplanes; a placement can span multiple rows via `row_span`.
+- **`Placement`** - a device/bay/module placed on a `Mount`. Points at exactly one of:
   - a standalone `dcim.Device` (bare DIN-rail installations)
-  - a `dcim.DeviceBay` (chassis with child devices — WDM shelves, blade chassis)
+  - a `dcim.DeviceBay` (chassis with child devices - WDM shelves, blade chassis)
   - a `dcim.ModuleBay` (modular PLC / line-card chassis)
 
-  The three FKs are a three-way XOR — exactly one populated, enforced in `Placement.clean()`.
+  The three FKs are a three-way XOR - exactly one populated, enforced in `Placement.clean()`.
 
 ## Schema diagram
 
@@ -96,9 +96,9 @@ erDiagram
 
 NetBox already represents three different parent/child relationships:
 
-1. **Direct device placement** — a single standalone device sitting on a rail.
-2. **`DeviceBay`-backed child devices** — a chassis like a WDM shelf with two filter modules, where each child is a full `dcim.Device` installed into a `DeviceBay`.
-3. **`ModuleBay`-backed modules** — a modular chassis like a PLC backplane or a line-card router, where each module is a `dcim.Module` (not a Device) installed into a `ModuleBay`.
+1. **Direct device placement** - a single standalone device sitting on a rail.
+2. **`DeviceBay`-backed child devices** - a chassis like a WDM shelf with two filter modules, where each child is a full `dcim.Device` installed into a `DeviceBay`.
+3. **`ModuleBay`-backed modules** - a modular chassis like a PLC backplane or a line-card router, where each module is a `dcim.Module` (not a Device) installed into a `ModuleBay`.
 
 The cabinet-view model treats each as a valid "thing that occupies a mount position", so its geometry layer works uniformly across all three. When the SVG renderer paints a `Placement`, it resolves the XOR target at render time:
 
@@ -127,13 +127,13 @@ The plugin renders `dcim.Interface`, `dcim.FrontPort`, and `dcim.RearPort` as cl
 
 The overlay has a **two-level feature flag**:
 
-1. **Global** — `ENABLE_PORT_OVERLAY` in `PLUGINS_CONFIG` (default `True`). When `False`, the overlay is suppressed everywhere regardless of per-profile settings.
-2. **Per device type / module type** — `enable_port_overlay` boolean on `DeviceMountProfile` and `ModuleMountProfile` (default `True`). Set to `False` to suppress the overlay on a specific device or module type.
+1. **Global** - `ENABLE_PORT_OVERLAY` in `PLUGINS_CONFIG` (default `True`). When `False`, the overlay is suppressed everywhere regardless of per-profile settings.
+2. **Per device type / module type** - `enable_port_overlay` boolean on `DeviceMountProfile` and `ModuleMountProfile` (default `True`). Set to `False` to suppress the overlay on a specific device or module type.
 
 Both must be `True` (and the profile must have a non-empty `port_map`) for the overlay to render.
 
 ```python
-# configuration.py — global setting
+# configuration.py - global setting
 PLUGINS_CONFIG = {
     'netbox_cabinet_view': {
         'ENABLE_PORT_OVERLAY': True,       # master switch (default True)
@@ -151,7 +151,7 @@ PLUGINS_CONFIG = {
 
 The `port_map` field on both profile models is a JSON list of overlay entries. Four entry types are supported:
 
-#### `zone` — repetitive port groups
+#### `zone` - repetitive port groups
 
 For terminal blocks, DIN-rail spring-cage connectors, or any row of identically-spaced ports:
 
@@ -182,7 +182,7 @@ For terminal blocks, DIN-rail spring-cage connectors, or any row of identically-
 
 Matching: interfaces are sorted alphabetically and assigned to zone pins in order. If the device has 8 interfaces named `DI-1`..`DI-8`, the first pin gets `DI-1`, the second `DI-2`, etc.
 
-#### `pin` — individual port at exact coordinates
+#### `pin` - individual port at exact coordinates
 
 For Ethernet RJ45 jacks, SFP cages, or any port at a specific position:
 
@@ -200,7 +200,7 @@ For Ethernet RJ45 jacks, SFP cages, or any port at a specific position:
 
 Matched by exact name to `dcim.Interface.name`, `FrontPort.name`, or `RearPort.name`.
 
-#### `module_bay` — physical module slot position
+#### `module_bay` - physical module slot position
 
 Defines where a module bay sits on the host device's front-panel image. When the bay has an installed module whose `ModuleMountProfile` has its own `port_map`, the module's pins render offset by the bay position (two-level overlay):
 
@@ -218,7 +218,7 @@ Defines where a module bay sits on the host device's front-panel image. When the
 
 `name` is matched to `dcim.ModuleBay.name` on the device.
 
-#### `lcd` — management IP display area
+#### `lcd` - management IP display area
 
 Reserved area for the management IP LCD overlay (Feature 3, opt-in via `SHOW_MANAGEMENT_IP`):
 
@@ -249,15 +249,15 @@ Override via `PORT_STATUS_COLORS` in `PLUGINS_CONFIG`.
 
 For modular devices like IEDs, PLCs, and managed switches with plug-in modules:
 
-1. The **host device's** `DeviceMountProfile.port_map` defines `module_bay` entries — where each physical module slot sits on the device's front-panel image.
-2. Each **installed module's** `ModuleMountProfile.port_map` defines `zone`/`pin` entries — where the module's own interfaces sit relative to the module's top-left corner.
+1. The **host device's** `DeviceMountProfile.port_map` defines `module_bay` entries - where each physical module slot sits on the device's front-panel image.
+2. Each **installed module's** `ModuleMountProfile.port_map` defines `zone`/`pin` entries - where the module's own interfaces sit relative to the module's top-left corner.
 3. The renderer composites both layers: module pin positions = bay position + module-relative pin position.
 
 This means you define port positions once per module type and once per device type. Every instance inherits automatically.
 
 ### Protruding connectors
 
-When `protrudes_mm > 0` on a zone or pin entry, the pin rect extends beyond the device's bounding box. This is rendered **outside** the placement's SVG clipPath so the pin visually sticks out — matching how real spring-cage terminal blocks protrude from DIN-mount modules. Protruding pins get a subtle drop shadow for depth.
+When `protrudes_mm > 0` on a zone or pin entry, the pin rect extends beyond the device's bounding box. This is rendered **outside** the placement's SVG clipPath so the pin visually sticks out - matching how real spring-cage terminal blocks protrude from DIN-mount modules. Protruding pins get a subtle drop shadow for depth.
 
 ### Drag-to-place (v0.7.0)
 

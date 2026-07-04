@@ -8,7 +8,7 @@ class CabinetViewConfig(PluginConfig):
     verbose_name = 'Cabinet View'
     description = (
         'DIN rails, subracks, mounting plates, busbars, and multi-row grids '
-        'for NetBox — with SVG visualization of cabinet interiors, chassis/'
+        'for NetBox - with SVG visualization of cabinet interiors, chassis/'
         'parent-child devices, and modular PLCs. OT/ICS focus.'
     )
     version = '0.7.3'
@@ -26,7 +26,7 @@ class CabinetViewConfig(PluginConfig):
     min_version = '4.5.0'
     max_version = '4.9.99'
     default_settings = {
-        # SVG scale factor — 1 mm of mount geometry = this many SVG pixels.
+        # SVG scale factor - 1 mm of mount geometry = this many SVG pixels.
         'MM_TO_PX': 2,
         # Whether the Layout tab's SVG embeds DeviceType/ModuleType front images by default.
         'INCLUDE_IMAGES_DEFAULT': True,
@@ -61,7 +61,7 @@ class CabinetViewConfig(PluginConfig):
             'unconnected_disabled': '7f8c8d', # dark grey
         },
         # v0.7.0: show device.primary_ip4 on CPU-type placements as an LCD
-        # overlay. Off by default — opt in per deployment.
+        # overlay. Off by default - opt in per deployment.
         'SHOW_MANAGEMENT_IP': False,
     }
 

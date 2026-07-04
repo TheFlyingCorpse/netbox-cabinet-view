@@ -6,7 +6,7 @@ explicitly:
 
     python manage.py cabinetview_seed
 
-It is idempotent — every object is created via get_or_create /
+It is idempotent - every object is created via get_or_create /
 update_or_create, so re-running it is safe and updates any drifted fields
 back to the canonical seed values.
 
@@ -49,8 +49,8 @@ def goc(_model_cls, defaults=None, **lookup):
 
 def ensure_device_type(mfr, slug, model, **extras):
     """
-    Look up a DeviceType by (manufacturer, slug) — the only real identity
-    key NetBox enforces — and update the ``model`` display name plus any
+    Look up a DeviceType by (manufacturer, slug) - the only real identity
+    key NetBox enforces - and update the ``model`` display name plus any
     other extras on every run. This makes the seed command safely
     idempotent across renames: if an earlier run created the DT with a
     different ``model`` string, we update it in place instead of failing
@@ -93,7 +93,7 @@ def ensure_mount_obj(host, name, **fields):
 def ensure_placement(mount, **fields):
     """
     Upsert a Placement keyed on the target (device / device_bay /
-    module_bay) alone — NOT on the mount — because the Placement model
+    module_bay) alone - NOT on the mount - because the Placement model
     has a per-target uniqueness constraint. Keying on (mount, target)
     would cause ``get_or_create`` to miss a stale placement that points
     to the same target but a different (old) mount, and the subsequent
@@ -163,7 +163,7 @@ class Command(BaseCommand):
         #
         # All names here are deliberately generic by category. Specific
         # vendor part numbers are withheld as an operational-security hygiene
-        # measure — do not add "brand X model Y" identifiers to this file.
+        # measure - do not add "brand X model Y" identifiers to this file.
         # ------------------------------------------------------------------
         dt_din_rail = ensure_device_type(mfr, 'din-rail-ts35-480mm',
                                          'DIN rail TS35 480 mm',
@@ -197,14 +197,14 @@ class Command(BaseCommand):
         dt_mcb = ensure_device_type(mfr, 'clip-on-mcb-1p',
                                     'Clip-on MCB 1P',
                                     u_height=0)
-        # Separate DIN-mount MCB type — same conceptual device (1P
+        # Separate DIN-mount MCB type - same conceptual device (1P
         # circuit breaker) but a different clip system. Real installs
         # carry both variants because different cabinets standardise on
         # different mounting platforms.
         dt_mcb_din = ensure_device_type(mfr, 'din-mount-mcb-1p',
                                         'DIN-mount MCB 1P',
                                         u_height=0)
-        # Rack-mounted DIN shelves — marked is_full_depth=False because
+        # Rack-mounted DIN shelves - marked is_full_depth=False because
         # real DIN shelves terminate well short of the rack's rear rails
         # (the rails + cable management stay near the front face), so
         # they should only render on whichever face they're installed on.
@@ -345,7 +345,7 @@ class Command(BaseCommand):
                     name=f'R{row}S{slot}',
                     defaults={'position': f'R{row}S{slot}'})
 
-        # Generic module types — every vendor ships rough equivalents.
+        # Generic module types - every vendor ships rough equivalents.
         mt_psu_module = goc(ModuleType, manufacturer=mfr, model='IED power supply module')
         mt_cpu_module = goc(ModuleType, manufacturer=mfr, model='IED CPU module')
         mt_bin_io_module = goc(ModuleType, manufacturer=mfr, model='IED binary I/O module')
@@ -413,7 +413,7 @@ class Command(BaseCommand):
         # 4U shelf: 4U inner ≈ 175 mm, room for two stacked DIN rails + wire management
         ensure_profile(dt_din_shelf_4u,  hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
-        # 4U shelf, single rail (ISP marshalling style) — one rail centered with
+        # 4U shelf, single rail (ISP marshalling style) - one rail centered with
         # generous wire-management space above and below.
         ensure_profile(dt_din_shelf_4u_isp, hosts_mounts=True, internal_width_mm=440,
                        internal_height_mm=175, internal_depth_mm=200)
@@ -492,11 +492,11 @@ class Command(BaseCommand):
         ensure_profile(dt_ied_chassis, hosts_mounts=True,
                        internal_width_mm=440, internal_height_mm=260, internal_depth_mm=250)
 
-        # K: ODF chassis — 1U fibre patch frame with a 2x6 cassette grid.
+        # K: ODF chassis - 1U fibre patch frame with a 2x6 cassette grid.
         ensure_profile(dt_odf_chassis, hosts_mounts=True,
                        internal_width_mm=440, internal_height_mm=44, internal_depth_mm=250)
 
-        # v0.7.2: Rack-mount switch — no mount geometry (rack-mounted directly),
+        # v0.7.2: Rack-mount switch - no mount geometry (rack-mounted directly),
         # but needs a profile for front_image + port_map (assigned by lineart cmd).
         ensure_profile(dt_rack_switch)
 
@@ -668,7 +668,7 @@ class Command(BaseCommand):
             for i in range(1, 5)
         ]
 
-        # --- Scenario K: ISP ODF — 1U chassis with 12 fibre splice cassettes ---
+        # --- Scenario K: ISP ODF - 1U chassis with 12 fibre splice cassettes ---
         # The interesting face of an ODF is usually the REAR (where the splices
         # and trunk fibres terminate), so this scenario is also the proving
         # ground for the rear-face rack elevation patch in v0.3.0+.
@@ -684,7 +684,7 @@ class Command(BaseCommand):
         # --- Scenario J: Grid-mounted IED with ModuleBay-backed mounts ---
         # This is the one that answers "can a single device be many entries
         # in a rail/bus, depending on its module bays and mounted modules?"
-        # — YES. The IED is one dcim.Device with 24 ModuleBays. Some bays
+        # - YES. The IED is one dcim.Device with 24 ModuleBays. Some bays
         # are populated with a mix of Modules (PSU / CPU / I/O / comms),
         # some stay empty. Each populated bay becomes ONE Mount on the grid
         # carrier, showing the Module's ModuleType as the slot's visual.
@@ -721,7 +721,7 @@ class Command(BaseCommand):
         rack_switch = ensure_device('Rack Switch #1', dt_rack_switch, 'network')
 
         # ------------------------------------------------------------------
-        # Rack placement — done in two passes so re-runs never collide.
+        # Rack placement - done in two passes so re-runs never collide.
         #
         # Pass 1: clear any existing rack position for every device we manage.
         # Pass 2: assign each device to its canonical (rack, U, face).
@@ -798,14 +798,14 @@ class Command(BaseCommand):
             unit='hp_5_08', length_mm=400, offset_x_mm=0, offset_y_mm=10,
         )
 
-        # 2U DIN shelf — single rail centered vertically
+        # 2U DIN shelf - single rail centered vertically
         c_din_2u = ensure_mount_obj(
             din_shelf_2u, 'Main rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=40,
         )
 
-        # 4U DIN shelf — two stacked rails
+        # 4U DIN shelf - two stacked rails
         c_din_4u_upper = ensure_mount_obj(
             din_shelf_4u, 'Upper rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
@@ -817,7 +817,7 @@ class Command(BaseCommand):
             unit='module_17_5', length_mm=420, offset_x_mm=10, offset_y_mm=130,
         )
 
-        # ISP 4U DIN shelf — one rail centered vertically, wire room above/below
+        # ISP 4U DIN shelf - one rail centered vertically, wire room above/below
         c_din_4u_isp = ensure_mount_obj(
             din_shelf_4u_isp, 'Main rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
@@ -826,14 +826,14 @@ class Command(BaseCommand):
 
         # --- Scenarios A-G carriers ---
 
-        # A: Marshalling shelf — one DIN rail in mm units (terminal blocks are 5-6 mm)
+        # A: Marshalling shelf - one DIN rail in mm units (terminal blocks are 5-6 mm)
         c_marshalling = ensure_mount_obj(
             marshalling_shelf, 'Terminal rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=88,
         )
 
-        # B: MCC cabinet — vertical busbar, plus one DIN rail inside each bucket
+        # B: MCC cabinet - vertical busbar, plus one DIN rail inside each bucket
         c_mcc_busbar = ensure_mount_obj(
             mcc_cabinet, 'Vertical busbar',
             mount_type='busbar', subtype='bb_60mm_pitch', orientation='vertical',
@@ -847,7 +847,7 @@ class Command(BaseCommand):
                 unit='mm', length_mm=280, offset_x_mm=10, offset_y_mm=80,
             ))
 
-        # C: VFD cabinet — back plate, plus a nested DIN strip device with its own rail
+        # C: VFD cabinet - back plate, plus a nested DIN strip device with its own rail
         c_vfd_plate = ensure_mount_obj(
             vfd_cabinet, 'Back plate',
             mount_type='mounting_plate', subtype='plate_generic',
@@ -859,28 +859,28 @@ class Command(BaseCommand):
             unit='mm', length_mm=380, offset_x_mm=10, offset_y_mm=30,
         )
 
-        # D: Fieldbus remote I/O — DIN rail with coupler + I/O modules
+        # D: Fieldbus remote I/O - DIN rail with coupler + I/O modules
         c_fieldbus = ensure_mount_obj(
             fieldbus_shelf, 'Main rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
         )
 
-        # E: Industrial switch — DIN rail with a single 90 mm switch
+        # E: Industrial switch - DIN rail with a single 90 mm switch
         c_switch = ensure_mount_obj(
             switch_shelf, 'Main rail',
             mount_type='din_rail', subtype='ts35', orientation='horizontal',
             unit='mm', length_mm=420, offset_x_mm=10, offset_y_mm=44,
         )
 
-        # F: Safety relay panel — back plate with 4 safety relays
+        # F: Safety relay panel - back plate with 4 safety relays
         c_safety_plate = ensure_mount_obj(
             safety_cabinet, 'Back plate',
             mount_type='mounting_plate', subtype='plate_generic',
             unit='mm', width_mm=600, height_mm=800, offset_x_mm=0, offset_y_mm=0,
         )
 
-        # G: Protection panel — back plate with IEDs + nested test block rail
+        # G: Protection panel - back plate with IEDs + nested test block rail
         c_protection_plate = ensure_mount_obj(
             protection_cabinet, 'Back plate',
             mount_type='mounting_plate', subtype='plate_generic',
@@ -894,21 +894,21 @@ class Command(BaseCommand):
 
         # --- Scenarios H / I / J carriers ---
 
-        # H: Vertical DIN rail wall box — one vertical TS35 rail
+        # H: Vertical DIN rail wall box - one vertical TS35 rail
         c_wall_v = ensure_mount_obj(
             wall_box_v, 'Vertical rail',
             mount_type='din_rail', subtype='ts35', orientation='vertical',
             unit='mm', length_mm=560, offset_x_mm=80, offset_y_mm=20,
         )
 
-        # I: Vertical 6U subrack — one vertical subrack carrier holding cards
+        # I: Vertical 6U subrack - one vertical subrack carrier holding cards
         c_vsubrack = ensure_mount_obj(
             vsubrack, 'Card cage',
             mount_type='subrack', subtype='hp_6u', orientation='vertical',
             unit='hp_5_08', length_mm=460, offset_x_mm=20, offset_y_mm=20,
         )
 
-        # K: ODF — 1U chassis with a 2x6 grid of 70 mm fibre splice cassettes.
+        # K: ODF - 1U chassis with a 2x6 grid of 70 mm fibre splice cassettes.
         # Row height is half the 44 mm 1U internal space = 22 mm per row.
         c_odf_grid = ensure_mount_obj(
             odf, 'Cassette grid',
@@ -917,7 +917,7 @@ class Command(BaseCommand):
             offset_x_mm=10, offset_y_mm=0,
         )
 
-        # J: IED grid — 2 rows ("bars") of 12 slots at 30 mm slot width.
+        # J: IED grid - 2 rows ("bars") of 12 slots at 30 mm slot width.
         # Row length = 12 * 30 mm. Row spacing = 100 mm so labels breathe.
         c_ied_grid = ensure_mount_obj(
             ied, 'Module bars',
@@ -966,11 +966,11 @@ class Command(BaseCommand):
 
         # --- Scenarios A-G mounts (sizes mostly default from device profile footprint) ---
 
-        # A: Marshalling — 20 terminal blocks at 6 mm spacing, starting 10 mm in
+        # A: Marshalling - 20 terminal blocks at 6 mm spacing, starting 10 mm in
         for i, tb in enumerate(terminal_blocks):
             ensure_placement(c_marshalling, device=tb, position=10 + i * 6)
 
-        # B: MCC — 3 withdrawable buckets on the vertical busbar
+        # B: MCC - 3 withdrawable buckets on the vertical busbar
         ensure_placement(c_mcc_busbar, device=buckets[0], position=100)
         ensure_placement(c_mcc_busbar, device=buckets[1], position=500)
         ensure_placement(c_mcc_busbar, device=buckets[2], position=900)
@@ -979,7 +979,7 @@ class Command(BaseCommand):
             ensure_placement(rail, device=contactor, position=30)
             ensure_placement(rail, device=aux, position=100)
 
-        # C: VFD cabinet plate — VFD drive at top, aux DIN strip below
+        # C: VFD cabinet plate - VFD drive at top, aux DIN strip below
         ensure_placement(c_vfd_plate, device=vfd_drive, position_x=150, position_y=100)
         ensure_placement(c_vfd_plate, device=aux_rail_device, position_x=80, position_y=600)
         # Aux DIN strip carries a PSU and two VFD contactors
@@ -987,7 +987,7 @@ class Command(BaseCommand):
         ensure_placement(c_aux_rail, device=vfd_contactor_a, position=120)
         ensure_placement(c_aux_rail, device=vfd_contactor_b, position=180)
 
-        # D: Fieldbus remote I/O — coupler at left, then alternating DI/DO modules
+        # D: Fieldbus remote I/O - coupler at left, then alternating DI/DO modules
         ensure_placement(c_fieldbus, device=fb_coupler, position=10)
         x = 115  # left edge of the first I/O module, just right of the coupler
         for di in fb_di_modules:
@@ -997,14 +997,14 @@ class Command(BaseCommand):
             ensure_placement(c_fieldbus, device=do, position=x)
             x += 14
 
-        # E: Industrial switch — single switch centered on the rail
+        # E: Industrial switch - single switch centered on the rail
         ensure_placement(c_switch, device=industrial_switch, position=160)
 
-        # F: Safety relay panel — 4 safety relays spaced along the plate top
+        # F: Safety relay panel - 4 safety relays spaced along the plate top
         for i, sr in enumerate(safety_relays):
             ensure_placement(c_safety_plate, device=sr, position_x=60 + i * 130, position_y=150)
 
-        # G: Protection panel — 2 overcurrent IEDs, 1 line-distance IED, test block rail below
+        # G: Protection panel - 2 overcurrent IEDs, 1 line-distance IED, test block rail below
         ensure_placement(c_protection_plate, device=oc_ied_1, position_x=270, position_y=200)
         ensure_placement(c_protection_plate, device=oc_ied_2, position_x=270, position_y=550)
         ensure_placement(c_protection_plate, device=ld_ied,    position_x=140, position_y=900)
@@ -1026,7 +1026,7 @@ class Command(BaseCommand):
         for i, card in enumerate(eurocards):
             ensure_placement(c_vsubrack, device=card, position=1 + i * 10)  # 10 HP per card
 
-        # K: ODF cassette mounts — each ModuleBay holds a fibre splice
+        # K: ODF cassette mounts - each ModuleBay holds a fibre splice
         # cassette, placed at its position on the 2x6 grid carrier.
         CASSETTE_MM = 70  # slot width along each row in mm
         for row in (1, 2):
@@ -1039,7 +1039,7 @@ class Command(BaseCommand):
                     size=CASSETTE_MM,
                 )
 
-        # J: IED grid mounts — each physical module bay in the IED becomes
+        # J: IED grid mounts - each physical module bay in the IED becomes
         # ONE Mount row on the grid carrier. This demonstrates the key
         # "one Device appears as many entries on its own carrier" story:
         # the IED (`ied`) is a single dcim.Device, but its 24 ModuleBays
@@ -1069,12 +1069,12 @@ class Command(BaseCommand):
         mount_slot(1, 4)                 # binary I/O
         mount_slot(1, 5)                 # analog I/O
         mount_slot(1, 7)                 # binary I/O
-        mount_slot(1, 8, size_slots=2)   # ethernet comms — occupies slots 8-9
-        mount_slot(1, 11, size_slots=2,  # fibre comms — spans rows 1-2, slots 11-12
+        mount_slot(1, 8, size_slots=2)   # ethernet comms - occupies slots 8-9
+        mount_slot(1, 11, size_slots=2,  # fibre comms - spans rows 1-2, slots 11-12
                    row_span=2)
         mount_slot(2, 1)                 # binary I/O
         mount_slot(2, 3)                 # binary I/O
-        mount_slot(2, 5, size_slots=2)   # high-speed I/O — occupies slots 5-6
+        mount_slot(2, 5, size_slots=2)   # high-speed I/O - occupies slots 5-6
         mount_slot(2, 8)                 # binary I/O
 
         # ------------------------------------------------------------------
@@ -1129,7 +1129,7 @@ class Command(BaseCommand):
         # v0.7.0: port_map overlay definitions on profiles
         # ------------------------------------------------------------------
 
-        # IED binary I/O module — DI terminals protrude from top, DO from bottom
+        # IED binary I/O module - DI terminals protrude from top, DO from bottom
         ensure_module_profile(mt_bin_io_module, mountable_on='grid', footprint_primary=30,
                               port_map=[
             {'type': 'zone', 'name_pattern': 'DI-*', 'edge': 'top',
@@ -1140,7 +1140,7 @@ class Command(BaseCommand):
              'pin_width_mm': 2, 'pin_height_mm': 2, 'protrudes_mm': 3},
         ])
 
-        # IED analog input — AI terminals protrude from top
+        # IED analog input - AI terminals protrude from top
         ensure_module_profile(mt_ana_io_module, mountable_on='grid', footprint_primary=30,
                               port_map=[
             {'type': 'zone', 'name_pattern': 'AI-*', 'edge': 'top',
@@ -1148,7 +1148,7 @@ class Command(BaseCommand):
              'pin_width_mm': 2, 'pin_height_mm': 2, 'protrudes_mm': 3},
         ])
 
-        # IED CPU module — Ethernet ports on front + LCD for mgmt IP
+        # IED CPU module - Ethernet ports on front + LCD for mgmt IP
         ensure_module_profile(mt_cpu_module, mountable_on='grid', footprint_primary=30,
                               port_map=[
             {'type': 'pin', 'name': 'eth-1', 'x_mm': 5, 'y_mm': 5,
@@ -1158,7 +1158,7 @@ class Command(BaseCommand):
             {'type': 'lcd', 'x_mm': 3, 'y_mm': 20, 'width_mm': 24, 'height_mm': 10},
         ])
 
-        # IED Ethernet comms module — 4 ETH ports across the front face
+        # IED Ethernet comms module - 4 ETH ports across the front face
         ensure_module_profile(mt_eth_module, mountable_on='grid', footprint_primary=60,
                               port_map=[
             {'type': 'zone', 'name_pattern': 'eth-*', 'edge': 'top',
@@ -1166,7 +1166,7 @@ class Command(BaseCommand):
              'pin_width_mm': 10, 'pin_height_mm': 8, 'protrudes_mm': 0},
         ])
 
-        # IED fibre comms module — 2 SFP front ports
+        # IED fibre comms module - 2 SFP front ports
         ensure_module_profile(mt_fibre_module, mountable_on='grid', footprint_primary=60,
                               port_map=[
             {'type': 'pin', 'name': 'SFP-1', 'x_mm': 10, 'y_mm': 5,
@@ -1175,7 +1175,7 @@ class Command(BaseCommand):
              'width_mm': 12, 'height_mm': 8},
         ])
 
-        # Fieldbus DI module — DI channels protrude from top (spring-cage)
+        # Fieldbus DI module - DI channels protrude from top (spring-cage)
         ensure_profile(dt_fb_di, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=12, port_map=[
             {'type': 'zone', 'name_pattern': 'DI-*', 'edge': 'top',
@@ -1183,7 +1183,7 @@ class Command(BaseCommand):
              'pin_width_mm': 1, 'pin_height_mm': 1.5, 'protrudes_mm': 2},
         ])
 
-        # Fieldbus DO module — DO channels protrude from top
+        # Fieldbus DO module - DO channels protrude from top
         ensure_profile(dt_fb_do, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=12, port_map=[
             {'type': 'zone', 'name_pattern': 'DO-*', 'edge': 'top',
@@ -1191,7 +1191,7 @@ class Command(BaseCommand):
              'pin_width_mm': 1, 'pin_height_mm': 1.5, 'protrudes_mm': 2},
         ])
 
-        # Fieldbus coupler — 2 ETH ports on front
+        # Fieldbus coupler - 2 ETH ports on front
         ensure_profile(dt_fb_coupler, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=100, port_map=[
             {'type': 'pin', 'name': 'eth-1', 'x_mm': 30, 'y_mm': 10,
@@ -1200,7 +1200,7 @@ class Command(BaseCommand):
              'width_mm': 12, 'height_mm': 10},
         ])
 
-        # Industrial Ethernet switch — 8 ETH ports across the front
+        # Industrial Ethernet switch - 8 ETH ports across the front
         ensure_profile(dt_ethernet_switch, mountable_on='din_rail', mountable_subtype='ts35',
                        footprint_primary=90, port_map=[
             {'type': 'zone', 'name_pattern': 'eth-*', 'edge': 'top',
@@ -1208,7 +1208,7 @@ class Command(BaseCommand):
              'pin_width_mm': 8, 'pin_height_mm': 6, 'protrudes_mm': 0},
         ])
 
-        # IED chassis — module bay positions on the host device image.
+        # IED chassis - module bay positions on the host device image.
         # This demonstrates the two-level overlay: the chassis port_map
         # defines where each module bay sits, and each installed module's
         # own port_map defines its pin positions.
@@ -1293,7 +1293,7 @@ class Command(BaseCommand):
         except Device.DoesNotExist:
             pass
 
-        # v0.7.2: Mixed states on the rack switch — show all 4 status colours.
+        # v0.7.2: Mixed states on the rack switch - show all 4 status colours.
         # eth-1..8 connected+enabled (green), eth-9..16 unconnected+enabled (grey),
         # eth-17..20 disabled (dark grey), eth-21..24 connected+disabled (amber),
         # SFP-1,2 connected+enabled, SFP-3,4 unconnected.
@@ -1337,7 +1337,7 @@ class Command(BaseCommand):
 
         self.stdout.write('  site:       OT Test Site')
         self.stdout.write('  rack:       Test Rack A (24U)')
-        self.stdout.write('  scenarios:  20 total — 9 baseline + 7 classic OT/ICS (A-G) +')
+        self.stdout.write('  scenarios:  20 total - 9 baseline + 7 classic OT/ICS (A-G) +')
         self.stdout.write('              4 v0.3.0 scenarios (H vertical DIN wall box,')
         self.stdout.write('              I vertical Eurocard subrack, J grid IED with 2 bars,')
         self.stdout.write('              K ISP ODF with 12-cassette grid)')

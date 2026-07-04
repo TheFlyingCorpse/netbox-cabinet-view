@@ -23,7 +23,7 @@
           </tr>
           <tr>
             <th scope="row">Subtype</th>
-            <td>{{ object.get_subtype_display|default:"—" }}</td>
+            <td>{{ object.get_subtype_display|default:"-" }}</td>
           </tr>
           <tr>
             <th scope="row">Orientation</th>
@@ -39,7 +39,7 @@
           </tr>
           <tr>
             <th scope="row">Description</th>
-            <td>{{ object.description|default:"—" }}</td>
+            <td>{{ object.description|default:"-" }}</td>
           </tr>
         </table>
       </div>

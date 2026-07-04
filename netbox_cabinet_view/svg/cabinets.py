@@ -2,7 +2,7 @@
 SVG renderer for cabinet layouts.
 
 Mirrors the structure and image-embedding pattern of
-``netbox/dcim/svg/racks.py`` — same svgwrite primitives, same Hyperlink →
+``netbox/dcim/svg/racks.py`` - same svgwrite primitives, same Hyperlink →
 Rect → (optional Image) composition, same fallback chain when an image is
 absent.
 """
@@ -48,7 +48,7 @@ def _fit_label(text: str, width_px: float, font_size: int = 11) -> str:
     """
     Return a version of ``text`` that fits horizontally in ``width_px``.
 
-    Rough char-width heuristic — same approximation the core rack renderer
+    Rough char-width heuristic - same approximation the core rack renderer
     uses (``truncate_text`` in dcim/svg/racks.py). Returns '' when the box
     is too narrow to show even a single character plus an ellipsis.
     """
@@ -67,14 +67,14 @@ def _fit_label(text: str, width_px: float, font_size: int = 11) -> str:
     return text[: max_chars - 1] + '…'
 
 
-# SVG scale factor — 1 mm of mount geometry = this many SVG pixels.
+# SVG scale factor - 1 mm of mount geometry = this many SVG pixels.
 # Overridable via PLUGINS_CONFIG['netbox_cabinet_view']['MM_TO_PX'].
 DEFAULT_MM_TO_PX = 2
 
 # Padding around the drawing, in px.
 DRAWING_PADDING = 20
 
-# How tall a DIN rail is drawn, in px (visual only — the rail has no real height).
+# How tall a DIN rail is drawn, in px (visual only - the rail has no real height).
 DIN_RAIL_PX = 14
 
 # Busbar visual thickness, in px.
@@ -177,7 +177,7 @@ class CabinetLayoutSVG:
         # `thumbnail` class so the embedded CSS can paint everything at
         # reduced opacity, suppress labels, and desaturate role colours.
         # Used by the rack elevation patch so the inline-embedded cabinet
-        # interior reads as "preview — zoom in to interact" instead of
+        # interior reads as "preview - zoom in to interact" instead of
         # pretending each module is a live click target.
         self.thumbnail = thumbnail
         # v0.7.1: explicit theme ('dark' or 'light'). When set, the root
@@ -260,7 +260,7 @@ class CabinetLayoutSVG:
             w = self._mm(self.profile.internal_width_mm)
             h = self._mm(self.profile.internal_height_mm)
         else:
-            # No outer frame — fit the bounding box of all mounts.
+            # No outer frame - fit the bounding box of all mounts.
             max_x = 0.0
             max_y = 0.0
             for mount in self.mounts:
@@ -503,7 +503,7 @@ class CabinetLayoutSVG:
                 (self._mm(placement.size_x), self._mm(placement.size_y)),
             )
 
-        # 1D or grid — compute (start, length) along the mount's axis,
+        # 1D or grid - compute (start, length) along the mount's axis,
         # then thicken perpendicular to it.
         start_units = (placement.position - 1) if placement.position else 0
         start_mm = start_units * mount.mm_per_unit
@@ -624,7 +624,7 @@ class CabinetLayoutSVG:
         )
         dwg.add(outline)
 
-        # Label with the host device name — placed ABOVE the outline so it
+        # Label with the host device name - placed ABOVE the outline so it
         # never collides with mounts or placements inside the enclosure.
         label = Text(
             self.host_device.name or str(self.host_device.device_type),
@@ -640,7 +640,7 @@ class CabinetLayoutSVG:
         so it sits on top of the placement rectangles instead of hiding
         behind them (Finding A, v0.4.0).
 
-        Returns ``(ox, oy, cw, ch)`` — the coordinates/extent the label
+        Returns ``(ox, oy, cw, ch)`` - the coordinates/extent the label
         pass needs to compute where the label should sit.
         """
         ox, oy = self._mount_origin_px(mount)
@@ -716,7 +716,7 @@ class CabinetLayoutSVG:
            (>= 18 px), draw the label inside the mount's top-left corner,
            clipped to the mount rectangle.
         3. Otherwise (thin DIN rail / busbar pressed against the outline
-           top), suppress the label — the mount name is still visible in
+           top), suppress the label - the mount name is still visible in
            the Mounts table underneath the SVG.
         """
         label_offset_px = 14  # text baseline distance from the anchor edge
@@ -734,7 +734,7 @@ class CabinetLayoutSVG:
             return
 
         if ch >= 18:
-            # Room inside the mount — put the label top-left, clipped so
+            # Room inside the mount - put the label top-left, clipped so
             # it can't spill over the mount rect.
             clip_id = f'clip-mount-{mount.pk or id(mount)}-lbl'
             clip = ClipPath(id_=clip_id)
@@ -748,7 +748,7 @@ class CabinetLayoutSVG:
             ))
             return
 
-        # Too thin to label safely — suppress. The Mounts table under the
+        # Too thin to label safely - suppress. The Mounts table under the
         # SVG still lists the name, so nothing is actually lost.
 
     # ------------------------------------------------------------------
@@ -978,7 +978,7 @@ class CabinetLayoutSVG:
         if component:
             color = self._resolve_port_status_color(component)
         else:
-            # No matching component — render as unconnected/disabled
+            # No matching component - render as unconnected/disabled
             color = self._port_colors.get('unconnected_disabled', '7f8c8d')
 
         protrudes = protrudes_mm and protrudes_mm > 0
@@ -1389,7 +1389,7 @@ class CabinetLayoutSVG:
         color = target.color or '999999'
         text_color = f'#{foreground_color(color)}' if color else '#000000'
 
-        # Per-placement clipPath — every label/image is hard-clipped to the
+        # Per-placement clipPath - every label/image is hard-clipped to the
         # placement's bounding box so narrow mounts never show overflowing
         # text or stray pixels from images.
         clip_id = f'clip-placement-{placement.pk or id(placement)}'
@@ -1486,7 +1486,7 @@ class CabinetLayoutSVG:
                 self._draw_lcd_overlay(dwg, placement, target, x, y, w, h)
                 return
 
-        # No image — draw a plain label on the colored rect (if it fits).
+        # No image - draw a plain label on the colored rect (if it fits).
         if label_text:
             link.add(Text(
                 label_text,
@@ -1594,7 +1594,7 @@ class CabinetLayoutSVG:
     def _draw_empty_slots_grid(self, dwg, mount):
         """
         For a grid mount, compute empty ranges row by row and wrap each
-        in an `<a>` — so users can drop a placement into "row 2, cols 5-8".
+        in an `<a>` - so users can drop a placement into "row 2, cols 5-8".
         """
         capacity = mount.capacity_units
         rows = max(1, mount.rows or 1)
@@ -1671,7 +1671,7 @@ class CabinetLayoutSVG:
            all of each mount's placements (device rectangles + images
            + per-placement labels) inside the mount's footprint.
         2. **Pass 2**: draw empty-slot click targets (Finding C,
-           v0.4.0) — unoccupied slot ranges on 1D/grid mounts, plus a
+           v0.4.0) - unoccupied slot ranges on 1D/grid mounts, plus a
            whole-plate transparent rect on 2D mounts for click-
            anywhere handling. Skipped in thumbnail mode.
         3. **Pass 3**: draw the mount NAME label on top of
@@ -1744,13 +1744,13 @@ class CabinetLayoutSVG:
                     class_='highlight-placement',
                 ))
             except (TypeError, ValueError, ZeroDivisionError):
-                pass  # invalid highlight params — skip silently
+                pass  # invalid highlight params - skip silently
 
         return dwg.tostring()
 
 
 # Stylesheet inlined into the SVG. The SVG is loaded via <object> so it renders
-# in its own document context — `prefers-color-scheme` flips the palette
+# in its own document context - `prefers-color-scheme` flips the palette
 # automatically when NetBox is in dark mode.
 _EMBEDDED_CSS = """
 /* Light theme (default) */
@@ -1843,7 +1843,7 @@ a:hover > .slot.empty-slot,
   cursor: grab;
 }
 
-/* Dark theme — v0.7.1: class-based (`svg.dark`) instead of
+/* Dark theme - v0.7.1: class-based (`svg.dark`) instead of
  * `@media (prefers-color-scheme: dark)`.  NetBox controls its theme via
  * `data-bs-theme` on <html> and localStorage, which does NOT propagate
  * `prefers-color-scheme` into <object>-embedded SVG documents.  The
@@ -1897,7 +1897,7 @@ svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
   svg:not(.dark):not(.light) .lcd-bg          { fill: #0a0a0a; stroke: #555; }
 }
 
-/* Thumbnail mode — Finding E, v0.4.0.
+/* Thumbnail mode - Finding E, v0.4.0.
  *
  * When CabinetLayoutSVG is constructed with `thumbnail=True`, the root
  * <svg> element gets `class="thumbnail"`. These rules then apply to
@@ -1908,7 +1908,7 @@ svg.dark .lcd-bg   { fill: #0a0a0a; stroke: #555; }
  * interior inside a rack U slot reads as "zoom in via the Layout tab
  * to interact" instead of tempting users to click on individual
  * placement rectangles (whose hyperlinks are unreachable from inside
- * the core rack-elevation <image> wrapper anyway — clicking them
+ * the core rack-elevation <image> wrapper anyway - clicking them
  * navigates to the HOST device, not the mounted one, and that's a
  * click-target lie).
  *
@@ -1935,7 +1935,7 @@ svg.thumbnail .slot {
   filter: saturate(0.6);
 }
 
-/* High-contrast mode — Finding F, v0.4.0.
+/* High-contrast mode - Finding F, v0.4.0.
  *
  * Triggers automatically when the OS asks for increased contrast:
  *

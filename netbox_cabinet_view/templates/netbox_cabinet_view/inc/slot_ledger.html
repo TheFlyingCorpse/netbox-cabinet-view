@@ -88,7 +88,7 @@
                       {{ row.device_name }}
                     {% endif %}
                   </td>
-                  <td>{{ row.role|default:"—" }}</td>
+                  <td>{{ row.role|default:"-" }}</td>
                   <td>{{ row.type_name }}</td>
                   <td>{{ row.bay_label }}</td>
                   <td class="text-end">
@@ -105,11 +105,11 @@
                   <td class="ps-4 text-muted">
                     <span style="opacity: 0.6;">↳</span> {{ sub.slot_label }}
                   </td>
-                  <td class="text-muted">—</td>
+                  <td class="text-muted">-</td>
                   <td>{{ sub.module_name }}</td>
-                  <td class="text-muted">{{ sub.role|default:"—" }}</td>
+                  <td class="text-muted">{{ sub.role|default:"-" }}</td>
                   <td class="text-muted">{{ sub.module_type }}</td>
-                  <td class="text-muted">—</td>
+                  <td class="text-muted">-</td>
                   <td></td>
                 </tr>
                 {% endfor %}

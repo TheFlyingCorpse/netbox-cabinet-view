@@ -99,7 +99,7 @@ MOUNT_TYPE_SUBTYPES = {
         MountSubtypeChoices.BB_CLIP_ON,
         MountSubtypeChoices.BB_GENERIC_CU,
     )),
-    # Grid mounts don't have subtypes — they're driven entirely by the
+    # Grid mounts don't have subtypes - they're driven entirely by the
     # `rows` / `row_height_mm` / `unit` / `length_mm` fields. An empty
     # frozenset means no subtype is accepted.
     MountTypeChoices.TYPE_GRID: frozenset(),
@@ -108,7 +108,7 @@ MOUNT_TYPE_SUBTYPES = {
 
 class MountFaceChoices(ChoiceSet):
     """
-    Which device face a Mount renders on — Feature 1, v0.5.0.
+    Which device face a Mount renders on - Feature 1, v0.5.0.
 
     ``''`` (blank) = both faces (default, backward-compatible).
     ``'front'`` / ``'rear'`` = only on that face. Aligns with
@@ -144,8 +144,8 @@ class UnitChoices(ChoiceSet):
     key = 'Mount.unit'
 
     MM         = 'mm'
-    MODULE_175 = 'module_17_5'   # DIN module — 17.5 mm
-    HP_508     = 'hp_5_08'       # Eurocard HP — 5.08 mm
+    MODULE_175 = 'module_17_5'   # DIN module - 17.5 mm
+    HP_508     = 'hp_5_08'       # Eurocard HP - 5.08 mm
 
     CHOICES = [
         (MM,         'Millimetres',           'gray'),

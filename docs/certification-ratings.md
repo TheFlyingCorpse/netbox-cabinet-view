@@ -1,6 +1,6 @@
-# Environmental & certification ratings — use NetBox custom fields
+# Environmental & certification ratings - use NetBox custom fields
 
-This plugin's job is **geometric visualization** of what's inside a physical enclosure. Textual certification attributes (IP rating, Ex rating, temperature range, RF shielding, EMP/HEMP hardening, SIL rating, seismic zone, fire rating, etc.) are a different axis — they're not about where things are, they're about what the enclosure or equipment is certified to withstand. These belong in NetBox's first-class **custom fields** system, not in the plugin's models.
+This plugin's job is **geometric visualization** of what's inside a physical enclosure. Textual certification attributes (IP rating, Ex rating, temperature range, RF shielding, EMP/HEMP hardening, SIL rating, seismic zone, fire rating, etc.) are a different axis - they're not about where things are, they're about what the enclosure or equipment is certified to withstand. These belong in NetBox's first-class **custom fields** system, not in the plugin's models.
 
 To add them, go to NetBox → Customization → Custom Fields → Add and create fields on the `dcim.rack` and/or `dcim.devicetype` content types. A reasonable baseline covering most industrial / utility / telco / ISP use cases:
 
@@ -25,14 +25,14 @@ To add them, go to NetBox → Customization → Custom Fields → Add and create
 | `pl_rating` | Selection | `PLa`…`PLe` | DeviceType | Machine safety (ISO 13849) |
 | `certifications` | Text (multiline) | `CE, UKCA, UL, CSA, IEC 61439, IEC 61850, EN 50155` | Rack + DeviceType | Regulatory / compliance |
 
-**Recommended split:** put the ratings on **Rack** when you care about "as-installed" (an individual rack might have been modified in the field) and on **DeviceType** when you maintain a device-type library with design-value ratings. NetBox custom fields don't inherit, so if you want both, fill in both — or pick the one your workflow actually queries. For most ISP / OT / utility operators, **Rack is the more load-bearing location** because that's where field modifications happen.
+**Recommended split:** put the ratings on **Rack** when you care about "as-installed" (an individual rack might have been modified in the field) and on **DeviceType** when you maintain a device-type library with design-value ratings. NetBox custom fields don't inherit, so if you want both, fill in both - or pick the one your workflow actually queries. For most ISP / OT / utility operators, **Rack is the more load-bearing location** because that's where field modifications happen.
 
 ## Why these aren't first-class plugin fields
 
 Adding them would:
 
-1. **Duplicate NetBox's built-in custom-fields system** — which already handles everything in the table above.
-2. **Commit the plugin to maintaining a taxonomy of every rating scheme across every region** — and every region has its own local variants of IP / NEMA / Ex / fire / seismic standards, most of which update on a rolling basis.
+1. **Duplicate NetBox's built-in custom-fields system** - which already handles everything in the table above.
+2. **Commit the plugin to maintaining a taxonomy of every rating scheme across every region** - and every region has its own local variants of IP / NEMA / Ex / fire / seismic standards, most of which update on a rolling basis.
 3. **Dilute the "this is a geometry plugin" narrative** without giving operators anything they can't already do in the NetBox UI in 30 seconds.
 
-Custom fields also give you free filtering, search, sort, and bulk-edit support — which the plugin would have to re-implement for its own first-class fields. The cost/benefit is firmly on the "use what NetBox already provides" side.
+Custom fields also give you free filtering, search, sort, and bulk-edit support - which the plugin would have to re-implement for its own first-class fields. The cost/benefit is firmly on the "use what NetBox already provides" side.

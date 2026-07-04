@@ -59,7 +59,7 @@
         {% elif has_mounts %}
           {% if has_face_specific %}
             {# Feature 1 (v0.5.0): dual-SVG rendering when mounts have explicit faces. #}
-            {# v0.7.1: data-src instead of data — JS populates data with ?theme= appended. #}
+            {# v0.7.1: data-src instead of data - JS populates data with ?theme= appended. #}
             <div class="row g-0">
               <div class="col-6 border-end">
                 <div class="small text-muted py-1 border-bottom">Front</div>
@@ -200,7 +200,7 @@
       var baseSrc = obj.getAttribute('data-src');
       if (baseSrc) obj.setAttribute('data', buildUrl(baseSrc, newMode));
     });
-    // Safari caches <object> content aggressively — the URL change
+    // Safari caches <object> content aggressively - the URL change
     // above doesn't trigger a re-fetch.  Show a hint instead of
     // silently leaving stale content.
     if (isSafari) {
@@ -287,7 +287,7 @@
 {# attributes. On drag, a ghost rect follows the cursor with grid snap. #}
 {# On drop, PATCH /api/plugins/netbox-cabinet-view/placements/<pk>/     #}
 {# with the new position. On success, reload the SVG via cache-buster.  #}
-{# Click vs. drag distinguished by a 5px threshold — if the mouse       #}
+{# Click vs. drag distinguished by a 5px threshold - if the mouse       #}
 {# doesn't move enough, we navigate to the device detail URL instead.   #}
 {# =================================================================== #}
 <script>
@@ -364,7 +364,7 @@
       if (!dragging) return;
 
       if (!dragStarted) {
-        // Click — navigate to the device detail URL.
+        // Click - navigate to the device detail URL.
         var link = dragging.closest('a');
         if (link) {
           var href = link.getAttribute('href') || link.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
@@ -488,7 +488,7 @@
             <tr>
               <td><a href="{{ mount.get_absolute_url }}">{{ mount.name }}</a></td>
               <td>{{ mount.get_mount_type_display }}</td>
-              <td>{{ mount.get_subtype_display|default:"—" }}</td>
+              <td>{{ mount.get_subtype_display|default:"-" }}</td>
               <td>{{ mount.get_unit_display }}</td>
               <td>
                 {% if mount.length_mm %}

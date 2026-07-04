@@ -1,5 +1,5 @@
 """
-Minimal DRF serializers — just enough to satisfy NetBox's list-view filter
+Minimal DRF serializers - just enough to satisfy NetBox's list-view filter
 forms and DynamicModelChoiceField autocomplete. Not intended as a public
 REST API in v1.
 """

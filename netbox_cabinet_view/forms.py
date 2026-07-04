@@ -101,7 +101,7 @@ class ModuleMountProfileForm(NetBoxModelForm):
         super().__init__(*args, **kwargs)
         self.fields['front_image'].help_text = _(
             'Upload a front-panel image (SVG or PNG). The plugin ships bundled '
-            'line-art — run <code>manage.py cabinetview_assign_lineart --list</code> '
+            'line-art - run <code>manage.py cabinetview_assign_lineart --list</code> '
             'to see available images, or <code>manage.py cabinetview_assign_lineart</code> '
             'to auto-assign matching images to all profiles.'
         )
@@ -208,7 +208,7 @@ class MountFilterForm(NetBoxModelFilterSetForm):
 
 class PlacementForm(NetBoxModelForm):
     """
-    Carrier-driven dynamic Placement form — Finding G, v0.4.0.
+    Carrier-driven dynamic Placement form - Finding G, v0.4.0.
 
     Reshapes itself when the user picks a Mount:
 
@@ -235,7 +235,7 @@ class PlacementForm(NetBoxModelForm):
       bays already used by another Placement.
 
     Numeric placement fields get computed ``help_text`` hints
-    ("Range: 1 – 79") so users don't have to read the Mount record
+    ("Range: 1 to 79") so users don't have to read the Mount record
     to figure out how many slots are available.
 
     Driven by NetBox 4.5's HTMX `hx-get='.' / hx-include='#form_fields'
@@ -248,7 +248,7 @@ class PlacementForm(NetBoxModelForm):
     mount = DynamicModelChoiceField(
         queryset=Mount.objects.all(),
         label='Mount',
-        help_text='Pick a mount first — the form below adapts to its type.',
+        help_text='Pick a mount first - the form below adapts to its type.',
     )
     device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
@@ -319,7 +319,7 @@ class PlacementForm(NetBoxModelForm):
             )
             return
 
-        # Mount is known — reshape the form to its type.
+        # Mount is known - reshape the form to its type.
         self._reshape_for_mount(mount)
         self._filter_target_querysets(mount)
         self._set_range_hints(mount)
@@ -418,7 +418,7 @@ class PlacementForm(NetBoxModelForm):
     def _set_range_hints(self, mount):
         """
         Annotate numeric placement fields with a computed help_text
-        "Range: 1 – N" derived from mount capacity. Users learn the
+        "Range: 1 - N" derived from mount capacity. Users learn the
         valid range without reading the Mount record separately.
         """
         unit_short = {
@@ -430,7 +430,7 @@ class PlacementForm(NetBoxModelForm):
         if mount.is_one_d or mount.is_grid:
             if 'position' in self.fields:
                 self.fields['position'].help_text = _(
-                    'Range: 1 – {cap} ({unit}).'
+                    'Range: 1 - {cap} ({unit}).'
                 ).format(cap=mount.capacity_units, unit=unit_short)
             if 'size' in self.fields:
                 self.fields['size'].help_text = _(
@@ -440,7 +440,7 @@ class PlacementForm(NetBoxModelForm):
         if mount.is_grid:
             if 'row' in self.fields:
                 self.fields['row'].help_text = _(
-                    'Row number, 1 – {rows}.'
+                    'Row number, 1 - {rows}.'
                 ).format(rows=mount.rows or 1)
             if 'row_span' in self.fields:
                 self.fields['row_span'].help_text = _(
@@ -449,11 +449,11 @@ class PlacementForm(NetBoxModelForm):
         if mount.is_two_d:
             if 'position_x' in self.fields:
                 self.fields['position_x'].help_text = _(
-                    'X position in mm (0 – {w}).'
+                    'X position in mm (0 - {w}).'
                 ).format(w=mount.width_mm or 0)
             if 'position_y' in self.fields:
                 self.fields['position_y'].help_text = _(
-                    'Y position in mm (0 – {h}).'
+                    'Y position in mm (0 - {h}).'
                 ).format(h=mount.height_mm or 0)
             if 'size_x' in self.fields:
                 self.fields['size_x'].help_text = _(

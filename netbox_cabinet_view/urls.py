@@ -48,15 +48,15 @@ urlpatterns = [
     path('mounts/<int:pk>/',
          include(get_model_urls('netbox_cabinet_view', 'mount'))),
 
-    # Discovery hint dismissal — Finding H (v0.4.0).
+    # Discovery hint dismissal - Finding H (v0.4.0).
     path('hints/dismiss/<int:device_pk>/',
          views.DiscoveryHintDismissView.as_view(), name='hint_dismiss'),
 
-    # Auto-provisioning — Feature 3 (v0.5.0).
+    # Auto-provisioning - Feature 3 (v0.5.0).
     path('auto-provision/',
          views.AutoProvisionView.as_view(), name='auto_provision'),
 
-    # Line-art gallery — v0.6.1.
+    # Line-art gallery - v0.6.1.
     path('line-art/',
          views.LineArtGalleryView.as_view(), name='line_art_gallery'),
 

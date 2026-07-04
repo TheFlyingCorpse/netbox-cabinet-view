@@ -1,14 +1,14 @@
 """
-Auto-provisioning — Feature 3, v0.5.0.
+Auto-provisioning - Feature 3, v0.5.0.
 
 Two modes:
 
-**Mode A** — ``auto_provision_placements(mount)``: given an existing
+**Mode A** - ``auto_provision_placements(mount)``: given an existing
 Mount, create one Placement per DeviceBay / ModuleBay on the mount's
 host device that doesn't already have a Placement on this mount.
 Positions are sequential at footprint-width intervals.
 
-**Mode B** — ``auto_provision_mount_and_placements(device)``: create
+**Mode B** - ``auto_provision_mount_and_placements(device)``: create
 a Mount (type + unit + length derived from the bays' profiles) and
 then call Mode A to fill it. One-click from zero to a fully
 populated mount.
@@ -106,7 +106,7 @@ def auto_provision_placements(mount):
 
     # Collect all bays on the host device, excluding those already
     # placed on ANY mount (the unique constraint is per-bay, not
-    # per-mount — a bay can only have one Placement total).
+    # per-mount - a bay can only have one Placement total).
     device_bays = list(
         host.devicebays.all()
         .select_related('installed_device__device_type__cabinet_profile')

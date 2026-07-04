@@ -34,7 +34,7 @@ class RackMountHostsPanel(PluginTemplateExtension):
 
 class CabinetViewHintExtension(PluginTemplateExtension):
     """
-    Discovery hint card — Finding H, v0.4.0.
+    Discovery hint card - Finding H, v0.4.0.
 
     Injects a soft CTA on Device detail pages whose DeviceType looks
     "cabinet-shaped" but has no DeviceMountProfile yet. Answers the
@@ -69,7 +69,7 @@ class CabinetViewHintExtension(PluginTemplateExtension):
         if getattr(device.device_type, 'cabinet_profile', None) is not None:
             return ''
 
-        # (2) u_height == 0 — looks cabinet-shaped.
+        # (2) u_height == 0 - looks cabinet-shaped.
         if (device.device_type.u_height or 0) != 0:
             return ''
 
@@ -94,7 +94,7 @@ class CabinetViewHintExtension(PluginTemplateExtension):
     def _dismissed_device_pks(user) -> set:
         """
         Return the set of Device PKs for which this user has dismissed
-        the discovery hint. Robust against legacy data shapes —
+        the discovery hint. Robust against legacy data shapes -
         ``user.config.get('cabinet_view.dismissed_hints')`` returns
         None, a list, or something else depending on what was stored.
         """

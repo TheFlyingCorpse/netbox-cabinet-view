@@ -252,7 +252,7 @@ def flatten(session, face: str) -> str:
         )
         replacements.append((tag, replacement))
 
-    # Apply replacements (one at a time — classes are unique so
+    # Apply replacements (one at a time - classes are unique so
     # ``str.replace(..., count=1)`` is fine).
     out = rack_svg
     for old, new in replacements:
