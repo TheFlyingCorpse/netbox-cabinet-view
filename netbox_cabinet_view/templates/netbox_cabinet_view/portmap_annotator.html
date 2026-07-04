@@ -102,10 +102,32 @@
                   <option value="usb-mini">USB-mini</option>
                   <option value="usb-micro">USB-micro</option>
                   <option value="hdmi">HDMI</option>
+                  <option value="displayport">DisplayPort</option>
                   <option value="vga">VGA</option>
                   <option value="ps2">PS/2</option>
                   <option value="ps2-dual">PS/2 (dual)</option>
+                  <option value="rj11">RJ11</option>
                   <option value="terminal">Terminal block</option>
+                  <option value="phoenix">Phoenix / pluggable terminal</option>
+                </optgroup>
+                <optgroup label="Fiber">
+                  <option value="lc">LC (duplex)</option>
+                  <option value="sc">SC</option>
+                  <option value="st">ST</option>
+                  <option value="mpo">MPO / MTP</option>
+                </optgroup>
+                <optgroup label="Industrial / OT">
+                  <option value="m12">M12 circular</option>
+                  <option value="din">DIN (round)</option>
+                </optgroup>
+                <optgroup label="Power">
+                  <option value="iec-inlet">IEC inlet (C14)</option>
+                  <option value="iec-outlet">IEC outlet (C13)</option>
+                  <option value="dc-jack">DC barrel jack</option>
+                </optgroup>
+                <optgroup label="RF / coax">
+                  <option value="bnc">BNC</option>
+                  <option value="sma">SMA</option>
                 </optgroup>
                 <optgroup label="Indicators &amp; controls">
                   <option value="led-green">LED (green)</option>
@@ -134,6 +156,20 @@
             </div>
           </div>
           <div class="form-text mt-1"><b>Type</b> is the port-map role; <b>Line art</b> is the glyph the generator draws. Drag a box to move it; <b>Shift</b>-drag to draw over an existing box. Frame W/H apply to the selected frame.</div>
+
+          <div class="row g-1 mt-1">
+            <div class="col-12"><label class="form-label mb-0 small text-muted">Selected box position / size (mm, relative to frame)</label></div>
+            <div class="col-3"><input id="pma-bx" type="number" step="0.1" class="form-control form-control-sm" placeholder="X" title="X (mm)" disabled></div>
+            <div class="col-3"><input id="pma-by" type="number" step="0.1" class="form-control form-control-sm" placeholder="Y" title="Y (mm)" disabled></div>
+            <div class="col-3"><input id="pma-bw" type="number" step="0.1" class="form-control form-control-sm" placeholder="W" title="Width (mm)" disabled></div>
+            <div class="col-3"><input id="pma-bh" type="number" step="0.1" class="form-control form-control-sm" placeholder="H" title="Height (mm)" disabled></div>
+          </div>
+          <div class="row g-1 mt-1 align-items-end">
+            <div class="col-3"><label class="form-label mb-0 small">Repeat</label><input id="pma-rep-n" type="number" min="1" step="1" value="4" class="form-control form-control-sm" title="Count"></div>
+            <div class="col-4"><label class="form-label mb-0 small">Pitch (mm)</label><input id="pma-rep-p" type="number" step="0.01" value="5.08" class="form-control form-control-sm" title="Pitch (mm)"></div>
+            <div class="col-3"><label class="form-label mb-0 small">Dir</label><select id="pma-rep-d" class="form-select form-select-sm"><option value="right">Right</option><option value="down">Down</option><option value="left">Left</option><option value="up">Up</option></select></div>
+            <div class="col-2"><button type="button" class="btn btn-sm btn-outline-primary w-100" id="pma-rep-go" title="Repeat the selected box N times at the pitch">x N</button></div>
+          </div>
 
           <hr class="my-2">
           <div class="d-flex justify-content-between align-items-center">
@@ -204,6 +240,10 @@
     rj45:'#3fb950', qsfp:'#12b886', sfp:'#20c997', db9:'#e0902a', db25:'#d2691e',
     'usb-a':'#1f6feb', 'usb-b':'#2f80ed', 'usb-c':'#4a9eff', 'usb-mini':'#5aa9ff', 'usb-micro':'#6cb4ff',
     hdmi:'#a371f7', vga:'#c678dd', ps2:'#d29922', 'ps2-dual':'#b8860b', terminal:'#e0902a',
+    displayport:'#7048e8', rj11:'#40c057', phoenix:'#e8590c',
+    lc:'#f2cc0c', sc:'#f2cc0c', st:'#f2cc0c', mpo:'#e8b400',
+    m12:'#4dabf7', din:'#9775fa', 'iec-inlet':'#e5534b', 'iec-outlet':'#fa5252', 'dc-jack':'#f06595',
+    bnc:'#20c997', sma:'#868e96',
     // decor styles
     'led-green':'#2ecc71', 'led-red':'#e5534b', 'led-amber':'#e0902a',
     button:'#a0a0a0', keypad:'#8a94a6', 'display-dark':'#00bcd4', 'display-green':'#26a69a',
@@ -293,7 +333,7 @@
       moving={ i:hit, dx:p.x-boxes[hit].x, dy:p.y-boxes[hit].y, moved:false };
       sel=hit; const b=boxes[hit];
       if(b.type==='module'){ $('pma-modw').value=b.mm_w; $('pma-modh').value=b.mm_h; }
-      highlightRows(); redraw();
+      highlightRows(); redraw(); fillBoxMm();
     } else {
       drawing={x0:p.x,y0:p.y,x1:p.x,y1:p.y};
     }
@@ -348,7 +388,7 @@
         `<td><select class="form-select form-select-sm py-0 pma-rtype" data-i="${i}">${typeOptionsHTML(b.type)}</select></td>`+
         `<td><select class="form-select form-select-sm py-0 pma-rstyle" data-i="${i}">${styleOptionsHTML(b.style)}</select></td>`+
         `<td class="text-end" style="width:20px"><button type="button" class="btn btn-sm btn-outline-danger py-0 pma-del" data-i="${i}">&times;</button></td>`;
-      tr.addEventListener('click', ()=>{ sel=i; highlightRows(); if(b.type==='module'){ $('pma-modw').value=b.mm_w; $('pma-modh').value=b.mm_h; } redraw(); });
+      tr.addEventListener('click', ()=>{ sel=i; highlightRows(); if(b.type==='module'){ $('pma-modw').value=b.mm_w; $('pma-modh').value=b.mm_h; } redraw(); fillBoxMm(); });
       tb.appendChild(tr);
     });
     tb.querySelectorAll('.pma-rlabel').forEach(inp=>inp.addEventListener('input', ()=>{ boxes[+inp.dataset.i].label=inp.value; dirty=true; refreshJson(); redraw(); }));
@@ -362,7 +402,53 @@
     $('pma-count').textContent=boxes.length;
     redraw();
     refreshJson();
+    fillBoxMm();
   }
+
+  // ---- Numeric mm entry for the selected (non-frame) box --------------
+  function fillBoxMm(){
+    const b=boxes[sel], f=referenceFrame();
+    const ok = sel>=0 && b && b.type!=='module' && f;
+    ['pma-bx','pma-by','pma-bw','pma-bh'].forEach(id=>{ $(id).disabled=!ok; if(!ok) $(id).value=''; });
+    if(!ok) return;
+    const MW=f.mm_w||73, MH=f.mm_h||255.8, r=v=>Math.round(v*10)/10;
+    $('pma-bx').value=r((b.x-f.x)/f.w*MW);
+    $('pma-by').value=r((b.y-f.y)/f.h*MH);
+    $('pma-bw').value=r(b.w/f.w*MW);
+    $('pma-bh').value=r(b.h/f.h*MH);
+  }
+  function applyBoxMm(){
+    const b=boxes[sel], f=referenceFrame();
+    if(sel<0 || !b || b.type==='module' || !f) return;
+    const MW=f.mm_w||73, MH=f.mm_h||255.8;
+    const xmm=parseFloat($('pma-bx').value), ymm=parseFloat($('pma-by').value),
+          wmm=parseFloat($('pma-bw').value), hmm=parseFloat($('pma-bh').value);
+    if(!isNaN(xmm)) b.x=Math.round(f.x + xmm/MW*f.w);
+    if(!isNaN(ymm)) b.y=Math.round(f.y + ymm/MH*f.h);
+    if(!isNaN(wmm)) b.w=Math.max(1, Math.round(wmm/MW*f.w));
+    if(!isNaN(hmm)) b.h=Math.max(1, Math.round(hmm/MH*f.h));
+    dirty=true; redraw(); refreshJson();
+  }
+  ['pma-bx','pma-by','pma-bw','pma-bh'].forEach(id=>$(id).addEventListener('input', applyBoxMm));
+
+  // ---- Array / repeat the selected box N times at a mm pitch ----------
+  $('pma-rep-go').onclick=()=>{
+    const s=boxes[sel], f=referenceFrame();
+    if(sel<0 || !s || s.type==='module'){ alert('Select a box (not the frame) to repeat.'); return; }
+    if(!f){ alert('Need a single frame to measure the pitch in mm.'); return; }
+    const n=Math.max(1, Math.min(500, parseInt($('pma-rep-n').value,10)||0));
+    const pitchMm=parseFloat($('pma-rep-p').value)||0, dir=$('pma-rep-d').value;
+    const MW=f.mm_w||73, MH=f.mm_h||255.8;
+    let dx=0, dy=0;
+    if(dir==='right') dx=pitchMm/MW*f.w; else if(dir==='left') dx=-pitchMm/MW*f.w;
+    else if(dir==='down') dy=pitchMm/MH*f.h; else dy=-pitchMm/MH*f.h;
+    const m=(s.label||'').match(/^(.*?)(\d+)$/);
+    for(let i=1;i<=n;i++){
+      const label = m ? m[1]+(parseInt(m[2],10)+i) : (s.label||'');
+      boxes.push({ ...s, x:Math.round(s.x+dx*i), y:Math.round(s.y+dy*i), label });
+    }
+    sel=boxes.length-1; dirty=true; sync();
+  };
 
   // Editing the mm inputs updates the selected module frame.
   ['pma-modw','pma-modh'].forEach(id=>$(id).addEventListener('input', ()=>{
@@ -483,6 +569,60 @@
         const n2=Math.max(2, Math.round(w/2.5)), sw=w/n2;
         for(let i=0;i<n2;i++) P.push(`<rect x="${x+i*sw+sw*0.15}" y="${y+h*0.2}" width="${sw*0.7}" height="${h*0.6}" style="fill:#d8d8d8;stroke:#666;stroke-width:0.2"/>`);
         break; }
+      case 'displayport':
+        P.push(`<path d="M ${x} ${y} L ${x+w} ${y} L ${x+w} ${y+h} L ${x+w*0.18} ${y+h} L ${x} ${y+h*0.6} Z" style="${F}"/>`);
+        P.push(`<rect x="${x+w*0.22}" y="${y+h*0.22}" width="${w*0.56}" height="${h*0.26}" style="fill:#9a9a9a"/>`); break;
+      case 'rj11': {
+        const iw=w*0.66, ix=x+(w-iw)/2;
+        P.push(`<rect x="${ix}" y="${y}" width="${iw}" height="${h}" rx="0.6" style="${F}"/>`);
+        P.push(`<rect x="${cx-w*0.08}" y="${y+h}" width="${w*0.16}" height="${h*0.16}" style="${F}"/>`); break; }
+      case 'phoenix': {
+        P.push(box('fill:none;stroke:#555;stroke-width:0.4'));
+        const n=Math.max(2, Math.round(w/3)), sw=w/n;
+        for(let i=0;i<n;i++){
+          P.push(`<rect x="${x+i*sw+sw*0.12}" y="${y+h*0.15}" width="${sw*0.76}" height="${h*0.7}" style="fill:#e6e6e6;stroke:#666;stroke-width:0.2"/>`);
+          P.push(`<circle cx="${x+i*sw+sw*0.5}" cy="${y+h*0.42}" r="${Math.min(sw,h)*0.12}" style="fill:none;stroke:#666;stroke-width:0.2"/>`);
+        } break; }
+      case 'lc': {
+        P.push(box());
+        const bw=w*0.34;
+        [x+w*0.12, x+w*0.54].forEach(bx=>P.push(`<rect x="${bx}" y="${y+h*0.2}" width="${bw}" height="${h*0.6}" rx="0.4" style="fill:#d0d0d0;stroke:#666;stroke-width:0.2"/>`));
+        break; }
+      case 'sc':
+        P.push(box());
+        P.push(`<rect x="${x+w*0.22}" y="${y+h*0.15}" width="${w*0.56}" height="${h*0.7}" style="fill:#d0d0d0;stroke:#666;stroke-width:0.25"/>`); break;
+      case 'st':
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="${F}"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.16}" style="fill:#888"/>`); break;
+      case 'mpo': {
+        P.push(box());
+        const n=8, gap=w*0.8/n;
+        for(let i=0;i<n;i++) P.push(`<circle cx="${x+w*0.1+gap*(i+0.5)}" cy="${cy}" r="${Math.min(gap,h)*0.18}" style="fill:#888"/>`);
+        break; }
+      case 'm12': case 'din': {
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="${F}"/>`);
+        for(let i=0;i<5;i++){ const a=Math.PI*2*i/5 - Math.PI/2;
+          P.push(`<circle cx="${cx+Math.cos(a)*mn*0.2}" cy="${cy+Math.sin(a)*mn*0.2}" r="0.4" style="fill:#777"/>`); }
+        if(key==='m12') P.push(`<rect x="${cx-0.3}" y="${y+mn*0.03}" width="0.6" height="${h*0.12}" style="fill:#777"/>`);
+        break; }
+      case 'iec-inlet': case 'iec-outlet': {
+        P.push(`<path d="M ${x+w*0.14} ${y} L ${x+w*0.86} ${y} L ${x+w} ${y+h*0.4} L ${x+w} ${y+h} L ${x} ${y+h} L ${x} ${y+h*0.4} Z" style="${F}"/>`);
+        const hs = key==='iec-inlet' ? 'fill:#555' : 'fill:none;stroke:#555;stroke-width:0.3';
+        [-0.22, 0, 0.22].forEach(d=>P.push(`<rect x="${cx+d*w-w*0.05}" y="${y+h*0.44}" width="${w*0.1}" height="${h*0.3}" style="${hs}"/>`));
+        break; }
+      case 'dc-jack':
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="${F}"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.28}" style="fill:none;stroke:#666;stroke-width:0.3"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.1}" style="fill:#666"/>`); break;
+      case 'bnc':
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="${F}"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.22}" style="fill:none;stroke:#666;stroke-width:0.3"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.07}" style="fill:#666"/>`); break;
+      case 'sma': {
+        const r=mn/2, pts=[];
+        for(let i=0;i<6;i++){ const a=Math.PI/6 + Math.PI*2*i/6; pts.push(`${(cx+Math.cos(a)*r).toFixed(2)},${(cy+Math.sin(a)*r).toFixed(2)}`); }
+        P.push(`<polygon points="${pts.join(' ')}" style="${F}"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${r*0.3}" style="fill:#888"/>`); break; }
       default: P.push(box());
     }
     if(label){
