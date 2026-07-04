@@ -37,8 +37,8 @@ class DeviceMountProfileForm(NetBoxModelForm):
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             name=_('Mountable on mounts'),
         ),
-        FieldSet('front_image', name=_('Front-panel image')),
-        FieldSet('enable_port_overlay', 'port_map', name=_('Port / connector overlay')),
+        FieldSet('front_image', 'rear_image', name=_('Panel images')),
+        FieldSet('enable_port_overlay', 'port_map', 'rear_port_map', name=_('Port / connector overlay')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -48,12 +48,13 @@ class DeviceMountProfileForm(NetBoxModelForm):
             'device_type',
             'hosts_mounts', 'internal_width_mm', 'internal_height_mm', 'internal_depth_mm',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
-            'front_image',
-            'enable_port_overlay', 'port_map',
+            'front_image', 'rear_image',
+            'enable_port_overlay', 'port_map', 'rear_port_map',
             'tags',
         )
         widgets = {
             'port_map': forms.Textarea(attrs={'rows': 12, 'class': 'font-monospace'}),
+            'rear_port_map': forms.Textarea(attrs={'rows': 12, 'class': 'font-monospace'}),
         }
 
 
@@ -87,8 +88,8 @@ class ModuleMountProfileForm(NetBoxModelForm):
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
             name=_('Mountable on mounts'),
         ),
-        FieldSet('front_image', name=_('Front-panel image')),
-        FieldSet('enable_port_overlay', 'port_map', name=_('Port / connector overlay')),
+        FieldSet('front_image', 'rear_image', name=_('Panel images')),
+        FieldSet('enable_port_overlay', 'port_map', 'rear_port_map', name=_('Port / connector overlay')),
         FieldSet('tags', name=_('Details')),
     )
 
@@ -106,12 +107,13 @@ class ModuleMountProfileForm(NetBoxModelForm):
         fields = (
             'module_type',
             'mountable_on', 'mountable_subtype', 'footprint_primary', 'footprint_secondary',
-            'front_image',
-            'enable_port_overlay', 'port_map',
+            'front_image', 'rear_image',
+            'enable_port_overlay', 'port_map', 'rear_port_map',
             'tags',
         )
         widgets = {
             'port_map': forms.Textarea(attrs={'rows': 12, 'class': 'font-monospace'}),
+            'rear_port_map': forms.Textarea(attrs={'rows': 12, 'class': 'font-monospace'}),
         }
 
 

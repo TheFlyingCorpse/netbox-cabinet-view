@@ -25,96 +25,116 @@ from .choices import (
 # Port map validation (shared by DeviceMountProfile and ModuleMountProfile)
 # ---------------------------------------------------------------------------
 
-_PORT_MAP_TYPES = {'zone', 'pin', 'module_bay', 'lcd'}
+_PORT_MAP_TYPES = {'zone', 'pin', 'module_bay', 'lcd', 'decor'}
 _ZONE_EDGES = {'left', 'right', 'top', 'bottom'}
 _ZONE_REQUIRED = {'name_pattern', 'edge', 'start_mm', 'pitch_mm', 'count', 'pin_width_mm', 'pin_height_mm'}
 _PIN_REQUIRED = {'name', 'x_mm', 'y_mm', 'width_mm', 'height_mm'}
 _MODULE_BAY_REQUIRED = {'name', 'x_mm', 'y_mm', 'width_mm', 'height_mm'}
 _LCD_REQUIRED = {'x_mm', 'y_mm', 'width_mm', 'height_mm'}
+# v0.8.0: purely visual faceplate elements for the line-art generator
+# (LEDs, keypads, buttons, displays). Not matched to NetBox components;
+# skipped by the interactive overlay. 'style' names the glyph to draw.
+_DECOR_REQUIRED = {'x_mm', 'y_mm', 'width_mm', 'height_mm', 'style'}
 
 
-def _validate_port_map(entries):
+def _validate_port_map(entries, field='port_map'):
     """
     Validate a port_map JSON list. Raises ValidationError on invalid entries.
+
+    ``field`` names the model field the error is attached to, so the same
+    validator serves both ``port_map`` (front) and ``rear_port_map`` (rear).
     """
     if not isinstance(entries, list):
-        raise ValidationError({'port_map': 'port_map must be a JSON list.'})
+        raise ValidationError({field: f'{field} must be a JSON list.'})
 
     for i, entry in enumerate(entries):
-        prefix = f'port_map[{i}]'
+        prefix = f'{field}[{i}]'
         if not isinstance(entry, dict):
-            raise ValidationError({'port_map': f'{prefix}: each entry must be a JSON object.'})
+            raise ValidationError({field: f'{prefix}: each entry must be a JSON object.'})
         entry_type = entry.get('type')
         if entry_type not in _PORT_MAP_TYPES:
             raise ValidationError({
-                'port_map': f'{prefix}: "type" must be one of {sorted(_PORT_MAP_TYPES)}.',
+                field: f'{prefix}: "type" must be one of {sorted(_PORT_MAP_TYPES)}.',
             })
 
         if entry_type == 'zone':
             missing = _ZONE_REQUIRED - set(entry.keys())
             if missing:
                 raise ValidationError({
-                    'port_map': f'{prefix}: zone missing keys: {sorted(missing)}.',
+                    field: f'{prefix}: zone missing keys: {sorted(missing)}.',
                 })
             if entry['edge'] not in _ZONE_EDGES:
                 raise ValidationError({
-                    'port_map': f'{prefix}: "edge" must be one of {sorted(_ZONE_EDGES)}.',
+                    field: f'{prefix}: "edge" must be one of {sorted(_ZONE_EDGES)}.',
                 })
             if not isinstance(entry['count'], int) or entry['count'] < 1:
                 raise ValidationError({
-                    'port_map': f'{prefix}: "count" must be a positive integer.',
+                    field: f'{prefix}: "count" must be a positive integer.',
                 })
             # Validate name_pattern is a valid fnmatch glob (just check it doesn't crash)
             try:
                 fnmatch.fnmatch('test', entry['name_pattern'])
             except Exception:
                 raise ValidationError({
-                    'port_map': f'{prefix}: "name_pattern" is not a valid glob pattern.',
+                    field: f'{prefix}: "name_pattern" is not a valid glob pattern.',
                 })
             for key in ('start_mm', 'pitch_mm', 'pin_width_mm', 'pin_height_mm'):
                 val = entry.get(key)
                 if not isinstance(val, (int, float)) or val < 0:
                     raise ValidationError({
-                        'port_map': f'{prefix}: "{key}" must be a non-negative number.',
+                        field: f'{prefix}: "{key}" must be a non-negative number.',
                     })
 
         elif entry_type == 'pin':
             missing = _PIN_REQUIRED - set(entry.keys())
             if missing:
                 raise ValidationError({
-                    'port_map': f'{prefix}: pin missing keys: {sorted(missing)}.',
+                    field: f'{prefix}: pin missing keys: {sorted(missing)}.',
                 })
             for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
                 val = entry.get(key)
                 if not isinstance(val, (int, float)):
                     raise ValidationError({
-                        'port_map': f'{prefix}: "{key}" must be a number.',
+                        field: f'{prefix}: "{key}" must be a number.',
                     })
 
         elif entry_type == 'module_bay':
             missing = _MODULE_BAY_REQUIRED - set(entry.keys())
             if missing:
                 raise ValidationError({
-                    'port_map': f'{prefix}: module_bay missing keys: {sorted(missing)}.',
+                    field: f'{prefix}: module_bay missing keys: {sorted(missing)}.',
                 })
             for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
                 val = entry.get(key)
                 if not isinstance(val, (int, float)):
                     raise ValidationError({
-                        'port_map': f'{prefix}: "{key}" must be a number.',
+                        field: f'{prefix}: "{key}" must be a number.',
                     })
 
         elif entry_type == 'lcd':
             missing = _LCD_REQUIRED - set(entry.keys())
             if missing:
                 raise ValidationError({
-                    'port_map': f'{prefix}: lcd missing keys: {sorted(missing)}.',
+                    field: f'{prefix}: lcd missing keys: {sorted(missing)}.',
                 })
             for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
                 val = entry.get(key)
                 if not isinstance(val, (int, float)) or val < 0:
                     raise ValidationError({
-                        'port_map': f'{prefix}: "{key}" must be a non-negative number.',
+                        field: f'{prefix}: "{key}" must be a non-negative number.',
+                    })
+
+        elif entry_type == 'decor':
+            missing = _DECOR_REQUIRED - set(entry.keys())
+            if missing:
+                raise ValidationError({
+                    field: f'{prefix}: decor missing keys: {sorted(missing)}.',
+                })
+            for key in ('x_mm', 'y_mm', 'width_mm', 'height_mm'):
+                val = entry.get(key)
+                if not isinstance(val, (int, float)) or val < 0:
+                    raise ValidationError({
+                        field: f'{prefix}: "{key}" must be a non-negative number.',
                     })
 
         # Validate protrudes_mm if present (all types except lcd)
@@ -122,8 +142,15 @@ def _validate_port_map(entries):
             val = entry['protrudes_mm']
             if not isinstance(val, (int, float)) or val < 0:
                 raise ValidationError({
-                    'port_map': f'{prefix}: "protrudes_mm" must be a non-negative number.',
+                    field: f'{prefix}: "protrudes_mm" must be a non-negative number.',
                 })
+
+        # 'style' (connector glyph / decor kind) is an optional string on any
+        # entry; the line-art generator uses it to pick a shape.
+        if 'style' in entry and not isinstance(entry['style'], str):
+            raise ValidationError({
+                field: f'{prefix}: "style" must be a string.',
+            })
 
 
 # ---------------------------------------------------------------------------
@@ -231,6 +258,25 @@ class DeviceMountProfile(NetBoxModel):
         ),
     )
 
+    # v0.8.0: rear-face image + port map. Mirrors NetBox core
+    # DeviceType.front_image / rear_image so devices with ports on both
+    # faces (e.g. switches with rear power-module bays) can map each side.
+    # The renderer checks DeviceType.rear_image first (core), then this field.
+    rear_image = models.ImageField(
+        upload_to='devicetype-images',
+        blank=True,
+        help_text='Rear-panel image for this device type. Used as a fallback when DeviceType.rear_image is not set.',
+    )
+    rear_port_map = models.JSONField(
+        blank=True,
+        default=list,
+        help_text=(
+            'JSON list of overlay entries (same schema as port_map) for the '
+            'device REAR-panel image. Rendered on the rear elevation / rear '
+            'front-panel view.'
+        ),
+    )
+
     class Meta:
         ordering = ('device_type',)
         verbose_name = 'Device Mount Profile'
@@ -265,6 +311,8 @@ class DeviceMountProfile(NetBoxModel):
             })
         if self.port_map:
             _validate_port_map(self.port_map)
+        if self.rear_port_map:
+            _validate_port_map(self.rear_port_map, field='rear_port_map')
 
 
 # ---------------------------------------------------------------------------
@@ -352,6 +400,22 @@ class ModuleMountProfile(NetBoxModel):
         ),
     )
 
+    # v0.8.0: rear-face image + port map, symmetric with DeviceMountProfile.
+    # Lets a module that presents connectors on both faces map each side.
+    rear_image = models.ImageField(
+        upload_to='moduletype-images',
+        blank=True,
+        help_text='Rear-panel image for this module type. Rendered on the rear view with its own overlay.',
+    )
+    rear_port_map = models.JSONField(
+        blank=True,
+        default=list,
+        help_text=(
+            'JSON list of overlay entries (same schema as port_map) for the '
+            'module REAR-panel image.'
+        ),
+    )
+
     class Meta:
         ordering = ('module_type',)
         verbose_name = 'Module Mount Profile'
@@ -386,6 +450,8 @@ class ModuleMountProfile(NetBoxModel):
             })
         if self.port_map:
             _validate_port_map(self.port_map)
+        if self.rear_port_map:
+            _validate_port_map(self.rear_port_map, field='rear_port_map')
 
 
 # ---------------------------------------------------------------------------
