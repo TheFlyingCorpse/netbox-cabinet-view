@@ -754,6 +754,24 @@ class CabinetLayoutSVG:
     # v0.7.0: port / connector overlay
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _resolve_token(text, placement):
+        """
+        Substitute the ``{module}`` token in a port_map name/pattern with
+        the placement's module-bay position (falling back to its name).
+
+        A module's port_map is authored in the module's own frame with a
+        ``{module}`` placeholder so one map is reusable in any bay - e.g.
+        ETH-BB's ``Port {module} CH1`` becomes ``Port E CH1`` in bay E and
+        ``Port F CH1`` in bay F. Mirrors the same substitution done by the
+        standalone front_panel renderer so both paths resolve identically.
+        """
+        if '{module}' not in (text or ''):
+            return text
+        mb = getattr(placement, 'module_bay', None)
+        token = str(getattr(mb, 'position', None) or getattr(mb, 'name', None) or '') if mb else ''
+        return text.replace('{module}', token)
+
     def _resolve_port_status_color(self, component):
         """
         Return a hex colour (no '#' prefix) for a port overlay pin based
@@ -844,27 +862,28 @@ class CabinetLayoutSVG:
         (e.g. 'R1S5/DI-1'). The port_map patterns on ModuleMountProfile are
         defined relative to the module's own namespace ('DI-*'), so we strip
         the prefix when building the lookup dict.
+
+        Console and console-server ports are included too: a base chassis
+        models its integrated service connectors (time-sync, serial) as
+        console ports, not interfaces.
         """
         components = {}
         bay_prefix = ''
         mb = getattr(module, 'module_bay', None)
         if mb:
             bay_prefix = f'{mb.name}/'
-        for iface in module.interfaces.all():
-            key = iface.name
-            if bay_prefix and key.startswith(bay_prefix):
-                key = key[len(bay_prefix):]
-            components[key] = iface
-        for fp in module.frontports.all():
-            key = fp.name
-            if bay_prefix and key.startswith(bay_prefix):
-                key = key[len(bay_prefix):]
-            components[key] = fp
-        for rp in module.rearports.all():
-            key = rp.name
-            if bay_prefix and key.startswith(bay_prefix):
-                key = key[len(bay_prefix):]
-            components[key] = rp
+        for qs in (
+            module.interfaces.all(),
+            module.frontports.all(),
+            module.rearports.all(),
+            module.consoleports.all(),
+            module.consoleserverports.all(),
+        ):
+            for comp in qs:
+                key = comp.name
+                if bay_prefix and key.startswith(bay_prefix):
+                    key = key[len(bay_prefix):]
+                components[key] = comp
         return components
 
     def _draw_port_overlay(self, dwg, mount, placement, target, x, y, w, h, clip_ref):
@@ -901,7 +920,7 @@ class CabinetLayoutSVG:
             if entry_type == 'zone':
                 zone_pins = self._expand_zone(entry, placement_w_mm, placement_h_mm)
                 # Match components by fnmatch glob, sorted alphabetically
-                pattern = entry.get('name_pattern', '')
+                pattern = self._resolve_token(entry.get('name_pattern', ''), placement)
                 matched = sorted(
                     (n for n in components if fnmatch.fnmatch(n, pattern)),
                 )
@@ -913,7 +932,7 @@ class CabinetLayoutSVG:
                     )
 
             elif entry_type == 'pin':
-                name = entry.get('name', '')
+                name = self._resolve_token(entry.get('name', ''), placement)
                 component = components.get(name)
                 self._draw_pin(
                     dwg, x, y,
@@ -924,12 +943,20 @@ class CabinetLayoutSVG:
                 )
 
             elif entry_type == 'module_bay':
-                # Module bay position on the device image.  If the bay
-                # has an installed module with its own port_map, render
-                # the module's pins offset by the bay position.
-                self._draw_module_bay_overlay(
-                    dwg, placement, entry, x, y, clip_ref,
-                )
+                if placement.module_bay_id:
+                    # The placement is itself a module; this entry marks a
+                    # NESTED module bay on that module (e.g. a base chassis
+                    # carrying plug-in slots Port E / Port F). Recurse.
+                    self._draw_nested_module_overlay(
+                        dwg, placement, entry, x, y, clip_ref,
+                    )
+                else:
+                    # Module bay position on a device image.  If the bay
+                    # has an installed module with its own port_map, render
+                    # the module's pins offset by the bay position.
+                    self._draw_module_bay_overlay(
+                        dwg, placement, entry, x, y, clip_ref,
+                    )
 
             # 'lcd' entries are handled by _draw_lcd_overlay (Feature 3)
 
@@ -960,7 +987,7 @@ class CabinetLayoutSVG:
             style=f'fill: #{color}',
             class_='port-pin protruding' if protrudes else 'port-pin',
         )
-        if not protrudes:
+        if not protrudes and clip_ref:
             rect['clip-path'] = clip_ref
 
         if component:
@@ -1032,11 +1059,12 @@ class CabinetLayoutSVG:
             return
 
         # Render the module's port_map entries offset by the bay position.
+        token = str(getattr(module_bay, 'position', None) or getattr(module_bay, 'name', None) or '')
         for entry in module_profile.port_map:
             entry_type = entry.get('type')
             if entry_type == 'zone':
                 zone_pins = self._expand_zone(entry, bay_w_mm, bay_h_mm)
-                pattern = entry.get('name_pattern', '')
+                pattern = (entry.get('name_pattern', '') or '').replace('{module}', token)
                 matched = sorted(
                     (n for n in components if fnmatch.fnmatch(n, pattern)),
                 )
@@ -1047,7 +1075,7 @@ class CabinetLayoutSVG:
                         protrudes, component, clip_ref,
                     )
             elif entry_type == 'pin':
-                name = entry.get('name', '')
+                name = (entry.get('name', '') or '').replace('{module}', token)
                 component = components.get(name)
                 self._draw_pin(
                     dwg, bx, by,
@@ -1057,6 +1085,162 @@ class CabinetLayoutSVG:
                     component, clip_ref,
                 )
             # LCD entries inside module port_map are also valid.
+
+    def _draw_nested_module_overlay(self, dwg, placement, bay_entry, px, py, clip_ref):
+        """
+        Draw a module NESTED inside the placement's installed module.
+
+        A module's port_map may declare a ``module_bay`` entry marking a
+        sub-slot on that module (e.g. a SIPROTEC base chassis whose PS module
+        carries plug-in slots Port E / Port F for Ethernet cards). NetBox
+        models these as nested ``ModuleBay`` rows owned by the parent module.
+        For each we draw the installed nested module's faceplate image and its
+        own port_map pins inside the sub-rectangle the parent assigns to the
+        bay, so the plug-in appears ON the base chassis tile - not floating in
+        a separate mount.
+        """
+        from dcim.models import ModuleBay
+
+        bx = px + self._mm(bay_entry.get('x_mm', 0))
+        by = py + self._mm(bay_entry.get('y_mm', 0))
+        bw = self._mm(bay_entry.get('width_mm', 0))
+        bh = self._mm(bay_entry.get('height_mm', 0))
+
+        # Dashed slot outline (visible whether or not the bay is populated).
+        outline = Rect(
+            insert=(bx, by), size=(bw, bh),
+            style='fill: none; stroke: #2ecc71; stroke-width: 1; stroke-dasharray: 4 2;',
+            class_='module-bay-outline',
+        )
+        if clip_ref:
+            outline['clip-path'] = clip_ref
+        dwg.add(outline)
+
+        parent_module = getattr(placement.module_bay, 'installed_module', None)
+        if not parent_module:
+            return
+        nested_bay = ModuleBay.objects.filter(
+            module=parent_module, name=bay_entry.get('name'),
+        ).first()
+        nested_module = getattr(nested_bay, 'installed_module', None) if nested_bay else None
+        if not nested_module:
+            return
+
+        nprofile = getattr(
+            getattr(nested_module, 'module_type', None), 'cabinet_profile', None,
+        )
+        if not nprofile:
+            return
+
+        # Nested faceplate image, filling the sub-rect (clipped to the tile).
+        if self.include_images and getattr(nprofile, 'front_image', None):
+            try:
+                url = nprofile.front_image.url
+            except ValueError:
+                url = ''
+            if url:
+                if url.startswith('/'):
+                    url = f'{self.base_url}{url}'
+                img = Image(
+                    href=url, insert=(bx, by), size=(bw, bh),
+                    class_='device-image', clip_path=clip_ref,
+                )
+                img.fit(scale='slice')
+                dwg.add(img)
+
+        # Nested module's own ports, offset into the sub-rect.
+        if not nprofile.port_map:
+            return
+        ncomps = self._components_from_module(nested_module)
+        token = str(
+            getattr(nested_bay, 'position', None)
+            or getattr(nested_bay, 'name', None) or ''
+        )
+        for entry in nprofile.port_map:
+            if entry.get('type') != 'pin':
+                continue
+            name = (entry.get('name', '') or '').replace('{module}', token)
+            component = ncomps.get(name)
+            self._draw_pin(
+                dwg, bx, by,
+                entry.get('x_mm', 0), entry.get('y_mm', 0),
+                entry.get('width_mm', 3), entry.get('height_mm', 3),
+                entry.get('protrudes_mm', 0), component, clip_ref,
+            )
+
+    # ------------------------------------------------------------------
+    # Host-level onboard port overlay
+    # ------------------------------------------------------------------
+
+    def _collect_host_components(self, device):
+        """
+        Collect the HOST device's own onboard components (interfaces, front/
+        rear ports, console + console-server ports), keyed by name. Unlike
+        ``_components_from_device`` this also pulls console ports, because a
+        base unit's onboard connectors (time-sync, service serial, USB) are
+        modelled as console ports, not interfaces.
+        """
+        comps = {}
+        for qs in (
+            device.interfaces.all(),
+            device.frontports.all(),
+            device.rearports.all(),
+            device.consoleports.all(),
+            device.consoleserverports.all(),
+        ):
+            for c in qs:
+                comps[c.name] = c
+        return comps
+
+    def _draw_host_port_overlay(self, dwg):
+        """
+        Draw the host device's OWN onboard ports from its DeviceMountProfile
+        port_map, positioned in the drawing's device coordinate frame (mm
+        from the inner origin). This is how a mount-host's integrated base
+        connectors (e.g. a SIPROTEC base unit's Port G/H/J/K) appear in the
+        cabinet layout - they belong to the device itself, not to any mounted
+        module, so they are not covered by the per-placement overlay.
+
+        Skipped on the front face (these are rear base connectors) and in
+        thumbnail mode.
+        """
+        if self.thumbnail or not self._enable_port_overlay:
+            return
+        if self.face == 'front':
+            return
+        profile = self.profile
+        if not profile or not getattr(profile, 'enable_port_overlay', True):
+            return
+        # v0.8.0: prefer the dedicated rear_port_map on the rear face, and
+        # fall back to port_map for profiles authored before rear support.
+        port_map = getattr(profile, 'port_map', None)
+        if self.face == 'rear':
+            port_map = getattr(profile, 'rear_port_map', None) or port_map
+        if not port_map:
+            return
+        components = self._collect_host_components(self.host_device)
+        ox = oy = DRAWING_PADDING
+        for entry in port_map:
+            if entry.get('type') != 'pin':
+                continue
+            name = entry.get('name', '')
+            component = components.get(name)
+            self._draw_pin(
+                dwg, ox, oy,
+                entry.get('x_mm', 0), entry.get('y_mm', 0),
+                entry.get('width_mm', 3), entry.get('height_mm', 3),
+                entry.get('protrudes_mm', 0), component, None,
+            )
+            # Short label under the pin (last token of the port name).
+            label = entry.get('label') or (name.split()[-1] if name else '')
+            if label:
+                dwg.add(Text(
+                    label,
+                    insert=(ox + self._mm(entry.get('x_mm', 0) + entry.get('width_mm', 3) / 2),
+                            oy + self._mm(entry.get('y_mm', 0) + entry.get('height_mm', 3)) + 9),
+                    text_anchor='middle',
+                    class_='mount-label',
+                ))
 
     # ------------------------------------------------------------------
     # v0.7.0 Feature 3: management IP LCD overlay (opt-in)
@@ -1514,6 +1698,9 @@ class CabinetLayoutSVG:
                 placements = placements.restrict(self.user, 'view')
             for placement in placements:
                 self._draw_placement(dwg, mount, placement)
+
+        # Host onboard ports (device's own base connectors, e.g. Port G/H/J/K).
+        self._draw_host_port_overlay(dwg)
 
         # Pass 2: empty-slot click targets (Finding C). Skipped in
         # thumbnail mode because the rack elevation <image> wrapper

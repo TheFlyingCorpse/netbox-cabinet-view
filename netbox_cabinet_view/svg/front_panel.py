@@ -17,30 +17,33 @@ from svgwrite.text import Text
 from .cabinets import _EMBEDDED_CSS
 
 
-def render_front_panel(device, base_url='', theme=None):
+def render_front_panel(device, base_url='', theme=None, face='front'):
     """
-    Return an SVG string showing the device's front-panel image with
-    port overlay pins.
+    Return an SVG string showing the device's front- or rear-panel image
+    with its port overlay pins. ``face`` selects which image + port map to
+    draw: ``front_image``/``port_map`` or ``rear_image``/``rear_port_map``.
     """
     profile = getattr(device.device_type, 'cabinet_profile', None)
     if not profile:
         return _empty_svg('No profile')
 
-    port_map = profile.port_map or []
+    is_rear = face == 'rear'
+    port_map = (profile.rear_port_map if is_rear else profile.port_map) or []
     if not port_map:
-        return _empty_svg('No port_map')
+        return _empty_svg('No rear port_map' if is_rear else 'No port_map')
 
-    # Resolve the front-panel image URL.
+    # Resolve the panel image URL (core DeviceType image first, then profile).
     image_url = None
-    dt_image = getattr(device.device_type, 'front_image', None)
+    dt_image = getattr(device.device_type, 'rear_image' if is_rear else 'front_image', None)
     if dt_image:
         try:
             image_url = dt_image.url
         except ValueError:
             pass
-    if not image_url and profile.front_image:
+    profile_image = profile.rear_image if is_rear else profile.front_image
+    if not image_url and profile_image:
         try:
-            image_url = profile.front_image.url
+            image_url = profile_image.url
         except ValueError:
             pass
 
@@ -85,8 +88,11 @@ def render_front_panel(device, base_url='', theme=None):
     dwg.add(Rect(insert=(0, 0), size=(width + 40, height + 40), class_='svg-bg'))
 
     # Device label.
+    label = device.name or str(device.device_type)
+    if is_rear:
+        label = f'{label} (rear)'
     dwg.add(Text(
-        device.name or str(device.device_type),
+        label,
         insert=(22, 15),
         class_='cabinet-label',
     ))

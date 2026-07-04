@@ -88,14 +88,22 @@ def _make_face_patch(original, face_name: str):
 
     def patched(self, device, coords, size):
         try:
+            from django.db.models import Q
             profile = getattr(device.device_type, 'cabinet_profile', None)
             u_height = getattr(device.device_type, 'u_height', 0) or 0
+            # Only substitute the cabinet layout when this device actually has
+            # mounts on THIS face. A device whose terminals are modelled on the
+            # rear then keeps its stock front_image (e.g. an operator panel) on
+            # the front elevation instead of rendering an empty front layout.
+            has_face_mounts = device.cabinet_mounts.filter(
+                Q(face='') | Q(face=face_name)
+            ).exists()
             if (
                 self.include_images
                 and profile is not None
                 and profile.hosts_mounts
                 and u_height >= _MIN_U_FOR_LAYOUT
-                and device.cabinet_mounts.exists()
+                and has_face_mounts
             ):
                 slot_w = max(1, int(size[0]))
                 slot_h = max(1, int(size[1]))
