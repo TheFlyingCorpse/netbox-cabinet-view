@@ -57,3 +57,8 @@ venv.bak/
 
 # Claude Code session artefacts
 .claude/
+
+# uv dev-toolchain lockfile (hooks pin tools via uvx; not a uv-managed project)
+uv.lock
+.ruff_cache/
+.mypy_cache/

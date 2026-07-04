@@ -39,7 +39,8 @@ Design notes
 import hashlib
 import logging
 
-from django.urls import NoReverseMatch, reverse
+from django.urls import NoReverseMatch
+from django.urls import reverse
 
 log = logging.getLogger(__name__)
 

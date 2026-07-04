@@ -5,7 +5,10 @@ REST API in v1.
 """
 from rest_framework import serializers
 
-from ..models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
+from ..models import DeviceMountProfile
+from ..models import ModuleMountProfile
+from ..models import Mount
+from ..models import Placement
 
 
 class DeviceMountProfileSerializer(serializers.ModelSerializer):

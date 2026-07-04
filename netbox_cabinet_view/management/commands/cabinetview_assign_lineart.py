@@ -25,7 +25,8 @@ import os
 from django.core.files import File
 from django.core.management.base import BaseCommand
 
-from netbox_cabinet_view.models import DeviceMountProfile, ModuleMountProfile
+from netbox_cabinet_view.models import DeviceMountProfile
+from netbox_cabinet_view.models import ModuleMountProfile
 
 
 def _static_line_art_dir():

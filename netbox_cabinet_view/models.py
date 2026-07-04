@@ -4,22 +4,18 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
-
 from netbox.models import NetBoxModel
 
-from .choices import (
-    MOUNT_TYPE_SUBTYPES,
-    MountFaceChoices,
-    MountSubtypeChoices,
-    MountTypeChoices,
-    GRID_MOUNT_TYPES,
-    ONE_D_MOUNT_TYPES,
-    OrientationChoices,
-    TWO_D_MOUNT_TYPES,
-    UNIT_TO_MM,
-    UnitChoices,
-)
-
+from .choices import GRID_MOUNT_TYPES
+from .choices import MOUNT_TYPE_SUBTYPES
+from .choices import ONE_D_MOUNT_TYPES
+from .choices import TWO_D_MOUNT_TYPES
+from .choices import UNIT_TO_MM
+from .choices import MountFaceChoices
+from .choices import MountSubtypeChoices
+from .choices import MountTypeChoices
+from .choices import OrientationChoices
+from .choices import UnitChoices
 
 # ---------------------------------------------------------------------------
 # Port map validation (shared by DeviceMountProfile and ModuleMountProfile)

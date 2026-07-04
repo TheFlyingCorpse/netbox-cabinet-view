@@ -12,16 +12,17 @@ from dataclasses import dataclass
 
 import svgwrite
 from django.conf import settings
-from django.urls import NoReverseMatch, reverse
+from django.urls import NoReverseMatch
+from django.urls import reverse
 from svgwrite.container import Hyperlink
 from svgwrite.image import Image
 from svgwrite.masking import ClipPath
 from svgwrite.shapes import Rect
 from svgwrite.text import Text
-
 from utilities.html import foreground_color
 
-from ..choices import MountTypeChoices, OrientationChoices
+from ..choices import MountTypeChoices
+from ..choices import OrientationChoices
 
 
 class _RawSVGElement:

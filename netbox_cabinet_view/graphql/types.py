@@ -2,8 +2,8 @@ from typing import Annotated
 
 import strawberry
 import strawberry_django
-
 from netbox.graphql.types import NetBoxObjectType
+
 from netbox_cabinet_view import models
 
 __all__ = (

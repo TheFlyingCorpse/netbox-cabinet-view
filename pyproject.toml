@@ -46,7 +46,7 @@ classifiers = [
 
 # NetBox itself is installed from source inside the NetBox image / dev env; it is not
 # distributed on PyPI (the `netbox` name there is unrelated). Plugins therefore don't
-# depend on it at the Python package level — they target a NetBox version at runtime.
+# depend on it at the Python package level - they target a NetBox version at runtime.
 dependencies = [
     "svgwrite>=1.4",
 ]
@@ -66,3 +66,53 @@ netbox_cabinet_view = ["templates/**/*", "static/**/*"]
 
 [project.entry-points."netbox_plugins"]
 netbox_cabinet_view = "netbox_cabinet_view:config"
+
+# ---------------------------------------------------------------------------
+# Local quality gate (GitHub CI is not relied on here - see .pre-commit-config.yaml)
+# ---------------------------------------------------------------------------
+
+[dependency-groups]
+dev = [
+    "ruff==0.15.17",
+    "mypy==1.20.1",
+    "pre-commit==4.6.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = ["netbox_cabinet_view/migrations/*.py"]
+lint.select = ["E", "F", "W", "I", "B", "C4", "UP", "SIM", "RUF", "PIE"]
+lint.ignore = [
+    "E501",    # line too long - long help_text / querysets / URLs; not worth wrapping
+    "RUF001",  # ambiguous unicode (string) - intentional glyphs in demo data
+    "RUF002",  # ambiguous unicode (docstring)
+    "RUF003",  # ambiguous unicode (comment)
+    "RUF012",  # mutable class default - Django/ChoiceSet class attrs are fine
+    "RUF046",  # unnecessary int() around round() - explicit is fine
+    "RUF059",  # unused unpacked variable - readable destructuring
+    "F403",    # star import - deliberate (choices, settings)
+    "F405",    # name may be undefined from star import
+    "F821",    # undefined name - false positives with star imports
+    "SIM105",  # use contextlib.suppress - try/except/pass reads fine
+    "SIM108",  # ternary instead of if-else - not always clearer
+    "B007",    # unused loop control variable
+    "B904",    # raise ... from - not required
+    "B905",    # zip without strict=
+]
+lint.isort.force-single-line = true
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_configs = true
+# The django-stubs mypy plugin can't run standalone (it needs NetBox's Django
+# settings), so Django model-field descriptors read as untyped -> var-annotated
+# noise. Disable that one code; graphql/ is strawberry lazy forward-refs.
+disable_error_code = ["var-annotated"]
+exclude = [
+    'netbox_cabinet_view/migrations/',
+    'netbox_cabinet_view/graphql/',
+    'netbox_cabinet_view/management/',
+    'build/',
+]

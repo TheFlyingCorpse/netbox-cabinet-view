@@ -1,26 +1,30 @@
+import json
+import os
+
+from dcim.models import Device
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
-
-from dcim.models import Device
 from netbox.views import generic
-from utilities.views import ViewTab, register_model_view
+from utilities.views import ViewTab
+from utilities.views import register_model_view
 
-import json
-import os
-
-from . import filtersets, forms, models, tables
+from . import filtersets
+from . import forms
+from . import models
+from . import tables
 from .ledger import enumerate_ledger
-from .provision import auto_provision_mount_and_placements, auto_provision_placements
+from .provision import auto_provision_mount_and_placements
+from .provision import auto_provision_placements
 from .svg import CabinetLayoutSVG
-
 
 # ---------------------------------------------------------------------------
 # DeviceMountProfile

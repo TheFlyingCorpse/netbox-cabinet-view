@@ -1,12 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
 
-from ..models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
-from .serializers import (
-    DeviceMountProfileSerializer,
-    ModuleMountProfileSerializer,
-    MountSerializer,
-    PlacementSerializer,
-)
+from ..models import DeviceMountProfile
+from ..models import ModuleMountProfile
+from ..models import Mount
+from ..models import Placement
+from .serializers import DeviceMountProfileSerializer
+from .serializers import ModuleMountProfileSerializer
+from .serializers import MountSerializer
+from .serializers import PlacementSerializer
 
 
 class DeviceMountProfileViewSet(ModelViewSet):

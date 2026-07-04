@@ -19,31 +19,27 @@ Creates:
   * Two rack-mounted DIN rail shelves (2U and 4U) inside Test Rack A, the
     realistic rack-elevation test cases for the cabinet-view rack integration
 """
+from dcim.models import Device
+from dcim.models import DeviceBay
+from dcim.models import DeviceBayTemplate
+from dcim.models import DeviceRole
+from dcim.models import DeviceType
+from dcim.models import InterfaceTemplate
+from dcim.models import Location
+from dcim.models import Manufacturer
+from dcim.models import Module
+from dcim.models import ModuleBay
+from dcim.models import ModuleBayTemplate
+from dcim.models import ModuleType
+from dcim.models import Rack
+from dcim.models import Site
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from dcim.models import (
-    Device,
-    DeviceBay,
-    DeviceBayTemplate,
-    DeviceRole,
-    DeviceType,
-    InterfaceTemplate,
-    Location,
-    Manufacturer,
-    Module,
-    ModuleBay,
-    ModuleBayTemplate,
-    ModuleType,
-    Rack,
-    Site,
-)
-from netbox_cabinet_view.models import (
-    DeviceMountProfile,
-    ModuleMountProfile,
-    Mount,
-    Placement,
-)
+from netbox_cabinet_view.models import DeviceMountProfile
+from netbox_cabinet_view.models import ModuleMountProfile
+from netbox_cabinet_view.models import Mount
+from netbox_cabinet_view.models import Placement
 
 
 def goc(_model_cls, defaults=None, **lookup):

@@ -1,9 +1,11 @@
 import django_tables2 as tables
-
 from netbox.tables import NetBoxTable
 from netbox.tables.columns import ChoiceFieldColumn
 
-from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
+from .models import DeviceMountProfile
+from .models import ModuleMountProfile
+from .models import Mount
+from .models import Placement
 
 
 class DeviceMountProfileTable(NetBoxTable):

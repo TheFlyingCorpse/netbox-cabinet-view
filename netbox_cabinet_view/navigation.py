@@ -1,5 +1,6 @@
-from netbox.plugins.navigation import PluginMenu, PluginMenuButton, PluginMenuItem
-
+from netbox.plugins.navigation import PluginMenu
+from netbox.plugins.navigation import PluginMenuButton
+from netbox.plugins.navigation import PluginMenuItem
 
 menu = PluginMenu(
     label='Cabinet View',

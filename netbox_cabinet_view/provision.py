@@ -19,8 +19,11 @@ from collections import Counter
 
 from django.core.exceptions import ValidationError
 
-from .choices import UNIT_TO_MM, MountTypeChoices, UnitChoices
-from .models import Mount, Placement
+from .choices import UNIT_TO_MM
+from .choices import MountTypeChoices
+from .choices import UnitChoices
+from .models import Mount
+from .models import Placement
 
 log = logging.getLogger(__name__)
 

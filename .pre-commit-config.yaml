@@ -1,0 +1,39 @@
+# Local quality gate. GitHub CI is not relied on here; these run on every
+# commit once installed with:  uv tool run pre-commit install
+# Run the whole suite by hand:  uv tool run pre-commit run --all-files
+minimum_pre_commit_version: "3.2.0"
+# Skip migrations (generated) and SVG assets (line-art + regenerated screenshots
+# that scripts rewrite; a trailing-newline fix would just churn them back).
+exclude: '^netbox_cabinet_view/migrations/|\.svg$'
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      # uvx runs the pinned tool from uv's global cache - no project venv or
+      # uv.lock to churn (a `uv run` hook rewrites the lockfile as a side effect).
+      - id: ruff
+        name: ruff (lint)
+        entry: uvx ruff@0.15.17 check --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+      - id: mypy
+        name: mypy
+        entry: uvx mypy@1.20.1 netbox_cabinet_view
+        language: system
+        types: [python]
+        pass_filenames: false
+        require_serial: true

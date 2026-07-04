@@ -1,17 +1,19 @@
 import django_filters
+from dcim.models import Device
+from dcim.models import DeviceType
+from dcim.models import ModuleType
 from django.db.models import Q
-
-from dcim.models import Device, DeviceType, ModuleType
 from netbox.filtersets import NetBoxModelFilterSet
 
-from .choices import (
-    MountFaceChoices,
-    MountSubtypeChoices,
-    MountTypeChoices,
-    OrientationChoices,
-    UnitChoices,
-)
-from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
+from .choices import MountFaceChoices
+from .choices import MountSubtypeChoices
+from .choices import MountTypeChoices
+from .choices import OrientationChoices
+from .choices import UnitChoices
+from .models import DeviceMountProfile
+from .models import ModuleMountProfile
+from .models import Mount
+from .models import Placement
 
 
 class DeviceMountProfileFilterSet(NetBoxModelFilterSet):

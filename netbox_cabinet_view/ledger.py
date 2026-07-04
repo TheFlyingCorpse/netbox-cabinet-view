@@ -16,8 +16,8 @@ The enumeration logic intentionally mirrors the empty-slot
 enumeration used by the SVG renderer's Finding C pass — if one
 changes, the other should follow.
 """
-from dataclasses import dataclass, field
-
+from dataclasses import dataclass
+from dataclasses import field
 
 # ---------------------------------------------------------------------------
 # Row dataclasses
@@ -114,7 +114,8 @@ def _empty_ranges(occupied, capacity):
 
 def _placement_add_url(**params):
     """Build a pre-filled placement_add URL. Falls back to '#' on NoReverseMatch."""
-    from django.urls import NoReverseMatch, reverse
+    from django.urls import NoReverseMatch
+    from django.urls import reverse
     try:
         base = reverse('plugins:netbox_cabinet_view:placement_add')
     except NoReverseMatch:

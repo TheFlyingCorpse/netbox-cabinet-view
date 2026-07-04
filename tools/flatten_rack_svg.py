@@ -53,12 +53,11 @@ Re-run this any time the seed data changes or the SVG renderer
 changes in a way that affects the rendered output, then commit the
 regenerated files.
 """
+import http.cookiejar
 import re
 import sys
 import urllib.parse
 import urllib.request
-import http.cookiejar
-
 
 NETBOX_URL = 'http://localhost:7543'
 RACK_PK = 2  # Test Rack A

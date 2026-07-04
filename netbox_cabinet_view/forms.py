@@ -1,21 +1,25 @@
+from dcim.models import Device
+from dcim.models import DeviceBay
+from dcim.models import DeviceType
+from dcim.models import ModuleBay
+from dcim.models import ModuleType
 from django import forms
 from django.utils.translation import gettext_lazy as _
-
-from dcim.models import Device, DeviceBay, DeviceType, ModuleBay, ModuleType
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import NetBoxModelFilterSetForm
+from netbox.forms import NetBoxModelForm
 from utilities.forms.fields import DynamicModelChoiceField
 from utilities.forms.rendering import FieldSet
 from utilities.forms.utils import get_field_value
 
-from .choices import (
-    MountFaceChoices,
-    MountSubtypeChoices,
-    MountTypeChoices,
-    OrientationChoices,
-    UnitChoices,
-)
-from .models import DeviceMountProfile, ModuleMountProfile, Mount, Placement
-
+from .choices import MountFaceChoices
+from .choices import MountSubtypeChoices
+from .choices import MountTypeChoices
+from .choices import OrientationChoices
+from .choices import UnitChoices
+from .models import DeviceMountProfile
+from .models import ModuleMountProfile
+from .models import Mount
+from .models import Placement
 
 # ---------------------------------------------------------------------------
 # DeviceMountProfile (formerly DeviceTypeProfile)
