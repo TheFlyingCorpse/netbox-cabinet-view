@@ -1,0 +1,560 @@
+{% extends 'base/layout.html' %}
+{% load helpers %}
+
+{% block title %}Port Map Annotator{% endblock %}
+
+{% block content %}
+<div id="pma"
+     data-image-url="{{ image_url }}"
+     data-frame-w="{{ frame_w }}"
+     data-frame-h="{{ frame_h }}"
+     data-kind="{{ kind }}"
+     data-face="{{ face }}"
+     data-profile="{{ profile.pk|default:'' }}">
+
+  <div class="row mb-3">
+    <div class="col-12 col-lg-8">
+      <label class="form-label">Profile to annotate</label>
+      <select id="pma-target" class="form-select">
+        <option value="">&mdash; choose a device or module type &mdash;</option>
+        <optgroup label="Module types">
+          {% for mp in module_profiles %}
+            <option value="module:{{ mp.pk }}" {% if kind == 'module' and profile.pk == mp.pk %}selected{% endif %}>{{ mp.module_type }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Device types">
+          {% for dp in device_profiles %}
+            <option value="device:{{ dp.pk }}" {% if kind == 'device' and profile.pk == dp.pk %}selected{% endif %}>{{ dp.device_type }}</option>
+          {% endfor %}
+        </optgroup>
+      </select>
+      <div class="form-text">
+        Pick a profile, load its faceplate image (or upload one), draw a <b>device/module frame</b> around one
+        device or module and set its real width/height in mm, then box each port inside it. Positions are saved
+        <b>relative to the frame</b>, so one photo (any scale, several units) can seed multiple faceplates.
+      </div>
+      {% if profile %}
+      <div class="btn-group btn-group-sm mt-2" role="group" aria-label="Face">
+        <a class="btn btn-outline-primary {% if face != 'rear' %}active{% endif %}"
+           href="?{{ kind }}_profile={{ profile.pk }}">Front</a>
+        <a class="btn btn-outline-primary {% if face == 'rear' %}active{% endif %}"
+           href="?{{ kind }}_profile={{ profile.pk }}&amp;face=rear">Rear</a>
+      </div>
+      <span class="text-muted small ms-2">Editing the <b>{{ face }}</b> image / port map.</span>
+      {% endif %}
+    </div>
+    <div class="col-12 col-lg-4">
+      <label class="form-label">{{ face|capfirst }} image (trace)</label>
+      <input type="file" id="pma-file" accept="image/*" class="form-control">
+      <div class="form-text">Loads an image to trace. To persist it, upload as the profile's {{ face }} image.</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-8 mb-3">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Canvas</span>
+          <span>Zoom
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="pma-zout">&minus;</button>
+            <span id="pma-zlbl">100%</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="pma-zin">+</button>
+          </span>
+        </div>
+        <div class="card-body p-0" style="overflow:auto;max-height:75vh;background:#0c0f12">
+          <div id="pma-wrap" style="position:relative;display:inline-block;line-height:0">
+            <img id="pma-img" alt="" style="display:block;max-width:none;user-select:none">
+            <canvas id="pma-ov" style="position:absolute;inset:0;cursor:crosshair"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4 mb-3">
+      <div class="card">
+        <div class="card-header">Annotation</div>
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label">Type</label>
+              <select id="pma-type" class="form-select form-select-sm">
+                <option value="pin" selected>Port</option>
+                <option value="slot">Module slot</option>
+                <option value="zone">Zone / region</option>
+                <option value="lcd">Display</option>
+                <option value="decor">Decoration</option>
+                <option value="module">Frame (reference)</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Line art</label>
+              <select id="pma-style" class="form-select form-select-sm">
+                <option value="">Auto / generic</option>
+                <optgroup label="Data connectors">
+                  <option value="rj45">RJ45</option>
+                  <option value="qsfp">QSFP</option>
+                  <option value="sfp">SFP</option>
+                  <option value="db9">DB-9</option>
+                  <option value="db25">DB-25</option>
+                  <option value="usb-a">USB-A</option>
+                  <option value="usb-b">USB-B</option>
+                  <option value="usb-c">USB-C</option>
+                  <option value="usb-mini">USB-mini</option>
+                  <option value="usb-micro">USB-micro</option>
+                  <option value="hdmi">HDMI</option>
+                  <option value="vga">VGA</option>
+                  <option value="ps2">PS/2</option>
+                  <option value="ps2-dual">PS/2 (dual)</option>
+                  <option value="terminal">Terminal block</option>
+                </optgroup>
+                <optgroup label="Indicators &amp; controls">
+                  <option value="led-green">LED (green)</option>
+                  <option value="led-red">LED (red)</option>
+                  <option value="led-amber">LED (amber)</option>
+                  <option value="button">Push button</option>
+                  <option value="keypad">Numberpad / keypad</option>
+                </optgroup>
+                <optgroup label="Displays">
+                  <option value="display-dark">Display (dark)</option>
+                  <option value="display-green">Display (green)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Label / name</label>
+              <input id="pma-label" class="form-control form-control-sm" placeholder="Port E, CH1, ...">
+            </div>
+            <div class="col-6">
+              <label class="form-label">Frame W (mm)</label>
+              <input id="pma-modw" type="number" step="0.1" class="form-control form-control-sm" value="{{ frame_w }}">
+            </div>
+            <div class="col-6">
+              <label class="form-label">Frame H (mm)</label>
+              <input id="pma-modh" type="number" step="0.1" class="form-control form-control-sm" value="{{ frame_h }}">
+            </div>
+          </div>
+          <div class="form-text mt-1"><b>Type</b> is the port-map role; <b>Line art</b> is the glyph the generator draws. Drag a box to move it; <b>Shift</b>-drag to draw over an existing box. Frame W/H apply to the selected frame.</div>
+
+          <hr class="my-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Boxes (<span id="pma-count">0</span>)</span>
+            <span class="d-flex gap-1">
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="pma-dup" title="Duplicate the selected box at the same size">Duplicate</button>
+              <button type="button" class="btn btn-sm btn-outline-danger" id="pma-clear">Clear all</button>
+            </span>
+          </div>
+          <div style="max-height:220px;overflow:auto">
+            <table class="table table-sm table-hover mb-0"><tbody id="pma-list"></tbody></table>
+          </div>
+
+          <hr class="my-2">
+          <form method="post" id="pma-save">
+            {% csrf_token %}
+            {% if profile %}<input type="hidden" name="{{ kind }}_profile" value="{{ profile.pk }}">{% endif %}
+            <input type="hidden" name="face" value="{{ face }}">
+            <input type="hidden" name="port_map" id="pma-portmap">
+            <button type="submit" class="btn btn-primary w-100" id="pma-savebtn" {% if not profile %}disabled{% endif %}>
+              {% if profile %}Save {{ face }} port map to {{ profile }}{% else %}Choose a profile to save{% endif %}
+            </button>
+          </form>
+          <div class="btns d-flex gap-2 mt-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" id="pma-copy">Copy JSON</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" id="pma-load">Load JSON</button>
+          </div>
+          <div class="form-text">Edit or paste a port map below, then <b>Load JSON</b> to draw it on the canvas.</div>
+          <textarea id="pma-json" class="form-control mt-2" spellcheck="false" style="height:130px;font-family:monospace;font-size:11px"></textarea>
+
+          <hr class="my-2">
+          <div class="d-grid">
+            <button type="button" class="btn btn-outline-success btn-sm" id="pma-genart">
+              <i class="mdi mdi-draw"></i> Generate line art from frame
+            </button>
+          </div>
+          <div id="pma-artwrap" class="mt-2" style="display:none">
+            <div style="background:#fff;border:1px solid #333;border-radius:4px;padding:4px;text-align:center">
+              <img id="pma-artimg" alt="Generated line art" style="max-width:100%;max-height:260px">
+            </div>
+            <div class="d-flex gap-2 mt-2">
+              <a class="btn btn-sm btn-outline-secondary flex-fill" id="pma-artdl" download="lineart.svg">Download SVG</a>
+              {% if profile %}
+              <form method="post" id="pma-artsave" class="flex-fill m-0">
+                {% csrf_token %}
+                <input type="hidden" name="{{ kind }}_profile" value="{{ profile.pk }}">
+                <input type="hidden" name="face" value="{{ face }}">
+                <input type="hidden" name="image_svg" id="pma-artsvg">
+                <button type="submit" class="btn btn-sm btn-success w-100">Save as {{ face }} image</button>
+              </form>
+              {% endif %}
+            </div>
+            <div class="form-text">Builds a faceplate from the frame + the elements inside it. Save replaces the profile's {{ face }} image.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const root = document.getElementById('pma');
+  const COLORS = {
+    // structural types
+    module:'#f778ba', slot:'#2ecc71', pin:'#4a9eff', zone:'#8a94a6', lcd:'#00bcd4', decor:'#e0902a',
+    // connector styles
+    rj45:'#3fb950', qsfp:'#12b886', sfp:'#20c997', db9:'#e0902a', db25:'#d2691e',
+    'usb-a':'#1f6feb', 'usb-b':'#2f80ed', 'usb-c':'#4a9eff', 'usb-mini':'#5aa9ff', 'usb-micro':'#6cb4ff',
+    hdmi:'#a371f7', vga:'#c678dd', ps2:'#d29922', 'ps2-dual':'#b8860b', terminal:'#e0902a',
+    // decor styles
+    'led-green':'#2ecc71', 'led-red':'#e5534b', 'led-amber':'#e0902a',
+    button:'#a0a0a0', keypad:'#8a94a6', 'display-dark':'#00bcd4', 'display-green':'#26a69a',
+  };
+  // Canvas frame-style types are drawn as a dashed outline (not filled).
+  const CANVAS_FRAMES = new Set(['module','slot','zone']);
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const boxColor = b => COLORS[b.style] || COLORS[b.type] || '#888';
+  const img = document.getElementById('pma-img');
+  const ov = document.getElementById('pma-ov');
+  const ctx = ov.getContext('2d');
+  const $ = id => document.getElementById(id);
+  let boxes = [], scale = 1, natW = 0, natH = 0, sel = -1, drawing = null, moving = null, dirty = false;
+
+  // profile switch
+  $('pma-target').addEventListener('change', e => {
+    const v = e.target.value;
+    const base = window.location.pathname;
+    if (!v) { window.location = base; return; }
+    const [kind, pk] = v.split(':');
+    const face = root.dataset.face === 'rear' ? '&face=rear' : '';
+    window.location = base + '?' + kind + '_profile=' + pk + face;
+  });
+
+  // Existing port_map is stored relative to the device/module frame, so on load we
+  // reconstruct it inside a whole-image reference frame using the profile's mm size.
+  // (If the original photo framed only part of the image, drag the pins to correct.)
+  const existing = {{ port_map_json|safe }};
+  const FRAME_W = +root.dataset.frameW || 73, FRAME_H = +root.dataset.frameH || 255.8;
+  let didReconstruct = false;
+  $('pma-json').value = JSON.stringify(existing, null, 1);
+
+  // Rebuild the canvas from a saved/pasted port_map array (positions are frame-relative mm).
+  function loadPortMap(arr){
+    if(!Array.isArray(arr) || !natW) return false;
+    boxes = [{ x:0, y:0, w:natW, h:natH, label:'frame', type:'module', mm_w:FRAME_W, mm_h:FRAME_H }];
+    arr.forEach(e=>{
+      if(!e || e.x_mm==null) return;
+      boxes.push({
+        x:Math.round(e.x_mm/FRAME_W*natW), y:Math.round(e.y_mm/FRAME_H*natH),
+        w:Math.max(3,Math.round((e.width_mm||0)/FRAME_W*natW)),
+        h:Math.max(3,Math.round((e.height_mm||0)/FRAME_H*natH)),
+        label:e.name||'', type:inType(e), style:e.style||'',
+      });
+    });
+    sel = 0; sync();
+    return true;
+  }
+  // Restore the annotator Type from a saved entry; the Line-art glyph is the
+  // entry's own style string (carried separately onto the box).
+  function inType(e){
+    if(e.type==='module_bay') return 'slot';
+    if(e.type==='zone') return 'zone';
+    if(e.type==='lcd') return 'lcd';
+    if(e.type==='decor') return 'decor';
+    return 'pin';
+  }
+  function reconstructFromExisting(){
+    if(didReconstruct || !Array.isArray(existing) || !existing.length || !natW) return;
+    didReconstruct = true;
+    loadPortMap(existing);
+  }
+
+  function fitScale(){ const s = ov.parentElement.parentElement.clientWidth - 8; return Math.min(1, s/(natW||1)); }
+  function setZoom(z){ scale = Math.max(0.1, Math.min(4, z)); img.style.width=(natW*scale)+'px'; img.style.height=(natH*scale)+'px'; ov.width=natW*scale; ov.height=natH*scale; $('pma-zlbl').textContent=Math.round(scale*100)+'%'; redraw(); }
+  $('pma-zin').onclick = ()=>setZoom(scale*1.25);
+  $('pma-zout').onclick = ()=>setZoom(scale/1.25);
+
+  function loadImage(src, reconstruct){ img.onload = ()=>{ natW=img.naturalWidth; natH=img.naturalHeight; setZoom(fitScale()); if(reconstruct) reconstructFromExisting(); }; img.src = src; }
+  const url = root.dataset.imageUrl;
+  if (url) loadImage(url, true);
+  $('pma-file').addEventListener('change', e => { const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>loadImage(r.result, false); r.readAsDataURL(f); });
+
+  function toImg(ev){ const r=ov.getBoundingClientRect(); return { x:(ev.clientX-r.left)/scale, y:(ev.clientY-r.top)/scale }; }
+  // Topmost non-frame box under a point (for drag-to-move).
+  function hitBox(p){
+    for(let i=boxes.length-1;i>=0;i--){ const b=boxes[i];
+      if(b.type==='module') continue;
+      if(p.x>=b.x && p.x<=b.x+b.w && p.y>=b.y && p.y<=b.y+b.h) return i;
+    }
+    return -1;
+  }
+  ov.addEventListener('mousedown', ev => {
+    const p=toImg(ev);
+    const hit = ev.shiftKey ? -1 : hitBox(p);   // Shift forces draw-over
+    if(hit>=0){
+      moving={ i:hit, dx:p.x-boxes[hit].x, dy:p.y-boxes[hit].y, moved:false };
+      sel=hit; const b=boxes[hit];
+      if(b.type==='module'){ $('pma-modw').value=b.mm_w; $('pma-modh').value=b.mm_h; }
+      highlightRows(); redraw();
+    } else {
+      drawing={x0:p.x,y0:p.y,x1:p.x,y1:p.y};
+    }
+  });
+  ov.addEventListener('mousemove', ev => {
+    const p=toImg(ev);
+    if(moving){ const b=boxes[moving.i]; b.x=Math.round(p.x-moving.dx); b.y=Math.round(p.y-moving.dy); moving.moved=true; redraw(); return; }
+    if(drawing){ drawing.x1=p.x; drawing.y1=p.y; redraw(); }
+  });
+  window.addEventListener('mouseup', () => {
+    if(moving){ if(moving.moved){ dirty=true; sync(); } moving=null; return; }
+    if(!drawing) return;
+    const x=Math.round(Math.min(drawing.x0,drawing.x1)), y=Math.round(Math.min(drawing.y0,drawing.y1));
+    const w=Math.round(Math.abs(drawing.x1-drawing.x0)), h=Math.round(Math.abs(drawing.y1-drawing.y0));
+    drawing=null;
+    if(w<=3||h<=3){ redraw(); return; }
+    const type=$('pma-type').value, style=$('pma-style').value;
+    const b={ x, y, w, h, label:$('pma-label').value||'', type, style };
+    if(type==='module'){ b.mm_w=+$('pma-modw').value||73; b.mm_h=+$('pma-modh').value||255.8; }
+    boxes.push(b); sel=boxes.length-1; dirty=true; sync();
+  });
+
+  function redraw(){
+    ctx.clearRect(0,0,ov.width,ov.height);
+    boxes.forEach((b,i)=>{
+      const c=boxColor(b), frame=CANVAS_FRAMES.has(b.type);
+      ctx.strokeStyle=c; ctx.setLineDash(frame?[7,3]:[]); ctx.lineWidth=(i===sel)?3:2;
+      if(!frame){ ctx.fillStyle=c+'55'; ctx.fillRect(b.x*scale,b.y*scale,b.w*scale,b.h*scale); }
+      ctx.strokeRect(b.x*scale,b.y*scale,b.w*scale,b.h*scale); ctx.setLineDash([]);
+      if(b.label){ ctx.fillStyle=c; ctx.font='bold 12px sans-serif'; ctx.fillText(b.label, b.x*scale+2, b.y*scale-3); }
+    });
+    if(drawing){ ctx.strokeStyle='#fff'; ctx.setLineDash([4,2]); ctx.strokeRect(Math.min(drawing.x0,drawing.x1)*scale,Math.min(drawing.y0,drawing.y1)*scale,Math.abs(drawing.x1-drawing.x0)*scale,Math.abs(drawing.y1-drawing.y0)*scale); ctx.setLineDash([]); }
+  }
+
+  function optsFrom(selId, selected){
+    return Array.from($(selId).querySelectorAll('option')).map(o=>
+      `<option value="${o.value}"${o.value===selected?' selected':''}>${o.textContent}</option>`).join('');
+  }
+  const typeOptionsHTML = s => optsFrom('pma-type', s);
+  const styleOptionsHTML = s => optsFrom('pma-style', s||'');
+  function highlightRows(){ Array.from($('pma-list').children).forEach((tr,i)=>tr.classList.toggle('table-active', i===sel)); }
+
+  function sync(){
+    const tb=$('pma-list'); tb.innerHTML='';
+    boxes.forEach((b,i)=>{
+      const tr=document.createElement('tr'); if(i===sel) tr.classList.add('table-active');
+      const mm = b.type==='module' ? `<div class="text-muted" style="font-size:10px">${b.mm_w}&times;${b.mm_h}mm</div>` : '';
+      const lbl = (b.label||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      tr.innerHTML =
+        `<td style="width:12px;padding-right:0"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${boxColor(b)}"></span></td>`+
+        `<td style="min-width:70px"><input class="form-control form-control-sm py-0 pma-rlabel" data-i="${i}" value="${lbl}" placeholder="(no label)">${mm}</td>`+
+        `<td><select class="form-select form-select-sm py-0 pma-rtype" data-i="${i}">${typeOptionsHTML(b.type)}</select></td>`+
+        `<td><select class="form-select form-select-sm py-0 pma-rstyle" data-i="${i}">${styleOptionsHTML(b.style)}</select></td>`+
+        `<td class="text-end" style="width:20px"><button type="button" class="btn btn-sm btn-outline-danger py-0 pma-del" data-i="${i}">&times;</button></td>`;
+      tr.addEventListener('click', ()=>{ sel=i; highlightRows(); if(b.type==='module'){ $('pma-modw').value=b.mm_w; $('pma-modh').value=b.mm_h; } redraw(); });
+      tb.appendChild(tr);
+    });
+    tb.querySelectorAll('.pma-rlabel').forEach(inp=>inp.addEventListener('input', ()=>{ boxes[+inp.dataset.i].label=inp.value; dirty=true; refreshJson(); redraw(); }));
+    tb.querySelectorAll('.pma-rtype').forEach(sl=>sl.addEventListener('change', ()=>{
+      const i=+sl.dataset.i; boxes[i].type=sl.value;
+      if(sl.value==='module' && (boxes[i].mm_w==null||boxes[i].mm_h==null)){ boxes[i].mm_w=+$('pma-modw').value||73; boxes[i].mm_h=+$('pma-modh').value||255.8; }
+      dirty=true; sync();
+    }));
+    tb.querySelectorAll('.pma-rstyle').forEach(sl=>sl.addEventListener('change', ()=>{ boxes[+sl.dataset.i].style=sl.value; dirty=true; refreshJson(); redraw(); }));
+    tb.querySelectorAll('.pma-del').forEach(btn=>btn.addEventListener('click', e=>{ e.stopPropagation(); boxes.splice(+btn.dataset.i,1); sel=-1; dirty=true; sync(); }));
+    $('pma-count').textContent=boxes.length;
+    redraw();
+    refreshJson();
+  }
+
+  // Editing the mm inputs updates the selected module frame.
+  ['pma-modw','pma-modh'].forEach(id=>$(id).addEventListener('input', ()=>{
+    if(sel>=0 && boxes[sel] && boxes[sel].type==='module'){ boxes[sel].mm_w=+$('pma-modw').value||73; boxes[sel].mm_h=+$('pma-modh').value||255.8; dirty=true; sync(); }
+  }));
+
+  function referenceFrame(){
+    const frames=boxes.filter(b=>b.type==='module');
+    if(sel>=0 && boxes[sel] && boxes[sel].type==='module') return boxes[sel];
+    if(frames.length===1) return frames[0];
+    if(frames.length===0) return { x:0,y:0,w:natW||1,h:natH||1, mm_w:+$('pma-modw').value||73, mm_h:+$('pma-modh').value||255.8, whole:true };
+    return null;
+  }
+  function buildPortMap(quiet){
+    const f=referenceFrame();
+    if(!f){ if(!quiet) alert('Multiple device/module frames on the image - click the one you want to save.'); return null; }
+    // Containment filter only matters when several frames share one photo; with
+    // a single frame (or the whole-image fallback) every non-frame box is a port,
+    // so don't drop edge boxes or spuriously collapse to [].
+    const multi = boxes.filter(b=>b.type==='module').length > 1;
+    const MW=f.mm_w||73, MH=f.mm_h||255.8, r=v=>Math.round(v*10)/10;
+    const inside = boxes.filter(b=>b!==f && b.type!=='module' && (!multi ||
+      (b.x+b.w/2>=f.x && b.x+b.w/2<=f.x+f.w && b.y+b.h/2>=f.y && b.y+b.h/2<=f.y+f.h)));
+    return inside.map(b=>{
+      const geo = {
+        x_mm:r((b.x-f.x)/f.w*MW), y_mm:r((b.y-f.y)/f.h*MH),
+        width_mm:r(b.w/f.w*MW), height_mm:r(b.h/f.h*MH),
+      };
+      // Type is the port-map role; slot -> module_bay, others map 1:1.
+      const type = b.type==='slot' ? 'module_bay' : b.type;
+      // decor must carry a style; default it if the user left it Auto.
+      const style = b.style || (type==='decor' ? 'button' : '');
+      const e = { name:b.label||'', type, ...geo };
+      if(style) e.style = style;
+      return e;
+    });
+  }
+  // Keep the JSON textarea in sync with the current boxes once the user has
+  // started editing. Quiet (no alert) so it can run on every change; only
+  // overwrites when a reference frame is resolvable.
+  function refreshJson(){
+    if(!dirty) return;
+    const pm=buildPortMap(true);
+    if(pm) $('pma-json').value=JSON.stringify(pm,null,1);
+  }
+
+  // ---- Line-art generator ---------------------------------------------
+  // Draw one element as SVG (coordinates are in mm within the panel).
+  function drawElement(P, type, style, x, y, w, h, label){
+    const key = style || type;
+    const cx=x+w/2, cy=y+h/2, mn=Math.min(w,h);
+    const F='fill:#e4e4e4;stroke:#555;stroke-width:0.4';
+    const box=(st)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="0.6" style="${st||F}"/>`;
+    switch(key){
+      case 'slot':
+        P.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="0.6" style="fill:none;stroke:#555;stroke-width:0.5;stroke-dasharray:2 1.2"/>`); break;
+      case 'zone':
+        P.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:none;stroke:#777;stroke-width:0.4;stroke-dasharray:1 1"/>`); break;
+      case 'lcd': case 'display-dark':
+        P.push(box('fill:#1c1c1c;stroke:#000;stroke-width:0.4'));
+        P.push(`<rect x="${x+w*0.08}" y="${y+h*0.16}" width="${w*0.84}" height="${h*0.68}" style="fill:#333"/>`); break;
+      case 'display-green':
+        P.push(box('fill:#0b2b0b;stroke:#062006;stroke-width:0.4'));
+        P.push(`<rect x="${x+w*0.08}" y="${y+h*0.18}" width="${w*0.84}" height="${h*0.64}" style="fill:#0f3d0f"/>`);
+        P.push(`<rect x="${x+w*0.12}" y="${y+h*0.32}" width="${w*0.5}" height="${h*0.12}" style="fill:#39d353"/>`); break;
+      case 'led-green': case 'led-red': case 'led-amber': {
+        const col={'led-green':'#2ecc71','led-red':'#e5534b','led-amber':'#e0902a'}[key], rr=mn/2;
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${rr}" style="fill:${col};stroke:#333;stroke-width:0.3"/>`);
+        P.push(`<circle cx="${cx-rr*0.3}" cy="${cy-rr*0.3}" r="${rr*0.32}" style="fill:#fff;fill-opacity:0.5"/>`); break; }
+      case 'button':
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="fill:#dcdcdc;stroke:#555;stroke-width:0.5"/>`);
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn*0.3}" style="fill:none;stroke:#888;stroke-width:0.3"/>`); break;
+      case 'keypad': {
+        P.push(box('fill:#efefef;stroke:#555;stroke-width:0.4'));
+        const cols=3, rows=4, gx=w/cols, gy=h/rows, m=Math.min(gx,gy)*0.16;
+        for(let r0=0;r0<rows;r0++) for(let c0=0;c0<cols;c0++)
+          P.push(`<rect x="${x+c0*gx+m}" y="${y+r0*gy+m}" width="${gx-2*m}" height="${gy-2*m}" rx="0.4" style="fill:#d8d8d8;stroke:#666;stroke-width:0.25"/>`);
+        break; }
+      case 'rj45':
+        P.push(box());
+        P.push(`<rect x="${cx-w*0.16}" y="${y+h}" width="${w*0.32}" height="${h*0.16}" style="${F}"/>`);
+        P.push(`<rect x="${x+w*0.2}" y="${y+h*0.12}" width="${w*0.6}" height="${h*0.3}" style="fill:none;stroke:#777;stroke-width:0.25"/>`); break;
+      case 'sfp':
+        P.push(box());
+        P.push(`<rect x="${x+w*0.1}" y="${y+h*0.2}" width="${w*0.8}" height="${h*0.6}" style="fill:#cfcfcf;stroke:#666;stroke-width:0.25"/>`); break;
+      case 'qsfp':
+        P.push(box());
+        P.push(`<rect x="${x+w*0.08}" y="${y+h*0.18}" width="${w*0.84}" height="${h*0.64}" style="fill:#c4c4c4;stroke:#666;stroke-width:0.25"/>`);
+        P.push(`<rect x="${x+w*0.14}" y="${y+h*0.34}" width="${w*0.72}" height="${h*0.14}" style="fill:#8f8f8f"/>`); break;
+      case 'usb-a':
+        P.push(box());
+        P.push(`<rect x="${x+w*0.22}" y="${y+h*0.16}" width="${w*0.56}" height="${h*0.34}" style="fill:#9a9a9a"/>`); break;
+      case 'usb-b':
+        P.push(`<path d="M ${x} ${y+h*0.32} L ${x+w*0.25} ${y} L ${x+w*0.75} ${y} L ${x+w} ${y+h*0.32} L ${x+w} ${y+h} L ${x} ${y+h} Z" style="${F}"/>`); break;
+      case 'usb-c':
+        P.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" style="${F}"/>`);
+        P.push(`<rect x="${x+w*0.18}" y="${y+h*0.3}" width="${w*0.64}" height="${h*0.4}" rx="${h*0.2}" style="fill:#b5b5b5"/>`); break;
+      case 'usb-mini': case 'usb-micro':
+        P.push(`<path d="M ${x} ${y} L ${x+w} ${y} L ${x+w*0.84} ${y+h} L ${x+w*0.16} ${y+h} Z" style="${F}"/>`); break;
+      case 'hdmi':
+        P.push(`<path d="M ${x} ${y} L ${x+w} ${y} L ${x+w*0.82} ${y+h} L ${x+w*0.18} ${y+h} Z" style="${F}"/>`); break;
+      case 'db9': case 'db25': case 'vga': {
+        P.push(`<path d="M ${x+w*0.06} ${y} L ${x+w*0.94} ${y} L ${x+w} ${y+h} L ${x} ${y+h} Z" style="${F}"/>`);
+        const n = key==='db9'?9:(key==='db25'?25:15), rows=2, per=Math.ceil(n/rows);
+        const pr=Math.max(0.25, Math.min(w/(per+1), h/4)*0.22);
+        for(let ri=0;ri<rows;ri++) for(let ci=0;ci<per;ci++)
+          P.push(`<circle cx="${x+w*(ci+1)/(per+1)}" cy="${y+h*(ri+1)/(rows+1)}" r="${pr}" style="fill:#777"/>`);
+        break; }
+      case 'ps2':
+        P.push(`<circle cx="${cx}" cy="${cy}" r="${mn/2}" style="${F}"/>`);
+        for(let i=0;i<6;i++){ const a=Math.PI*2*i/6 - Math.PI/2;
+          P.push(`<circle cx="${cx+Math.cos(a)*mn*0.22}" cy="${cy+Math.sin(a)*mn*0.22}" r="0.4" style="fill:#777"/>`); } break;
+      case 'ps2-dual': {
+        const r2=Math.min(w/2, h)/2*0.9;
+        [x+w*0.28, x+w*0.72].forEach(px2=>P.push(`<circle cx="${px2}" cy="${cy}" r="${r2}" style="${F}"/>`)); break; }
+      case 'terminal': {
+        P.push(box('fill:none;stroke:#555;stroke-width:0.4'));
+        const n2=Math.max(2, Math.round(w/2.5)), sw=w/n2;
+        for(let i=0;i<n2;i++) P.push(`<rect x="${x+i*sw+sw*0.15}" y="${y+h*0.2}" width="${sw*0.7}" height="${h*0.6}" style="fill:#d8d8d8;stroke:#666;stroke-width:0.2"/>`);
+        break; }
+      default: P.push(box());
+    }
+    if(label){
+      const fs=Math.min(2.4, Math.max(1.4, h*0.5));
+      P.push(`<text x="${cx}" y="${y+h+fs+0.4}" text-anchor="middle" style="font:${fs}px sans-serif;fill:#444">${esc(label)}</text>`);
+    }
+  }
+
+  function generateLineArt(){
+    const f=referenceFrame();
+    if(!f){ alert('Draw or select a single device/module frame first.'); return null; }
+    const MW=f.mm_w||73, MH=f.mm_h||255.8, P=2;
+    const multi = boxes.filter(b=>b.type==='module').length > 1;
+    const inside = boxes.filter(b=>b!==f && b.type!=='module' && (!multi ||
+      (b.x+b.w/2>=f.x && b.x+b.w/2<=f.x+f.w && b.y+b.h/2>=f.y && b.y+b.h/2<=f.y+f.h)));
+    const parts=[];
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-P} ${-P} ${MW+2*P} ${MH+2*P}" width="${Math.round(MW*3)}" height="${Math.round(MH*3)}">`);
+    parts.push(`<rect x="0" y="0" width="${MW}" height="${MH}" rx="2" style="fill:#f6f6f6;stroke:#666;stroke-width:0.6"/>`);
+    inside.forEach(b=>{
+      const x=(b.x-f.x)/f.w*MW, y=(b.y-f.y)/f.h*MH, w=b.w/f.w*MW, h=b.h/f.h*MH;
+      const style = b.style || (b.type==='decor' ? 'button' : '');
+      drawElement(parts, b.type, style, x, y, w, h, b.label||'');
+    });
+    parts.push('</svg>');
+    return parts.join('');
+  }
+
+  $('pma-copy').onclick=()=>{ const pm=buildPortMap(); if(!pm) return; const s=JSON.stringify(pm,null,1); $('pma-json').value=s; navigator.clipboard.writeText(s).catch(()=>{}); };
+  $('pma-load').onclick=()=>{
+    if(!natW){ alert('Load a faceplate image first.'); return; }
+    let arr;
+    try { arr = JSON.parse($('pma-json').value || '[]'); }
+    catch(err){ alert('JSON is not valid: '+err.message); return; }
+    if(!Array.isArray(arr)){ alert('JSON must be an array of port-map entries.'); return; }
+    if(boxes.length && !confirm('Replace the current boxes with the JSON contents?')) return;
+    loadPortMap(arr);
+  };
+  $('pma-clear').onclick=()=>{ if(confirm('Clear all boxes?')){ boxes=[]; sel=-1; dirty=true; sync(); } };
+  $('pma-dup').onclick=()=>{
+    if(sel<0 || !boxes[sel]){ alert('Select a box to duplicate.'); return; }
+    const s=boxes[sel];
+    boxes.push({ ...s, x:s.x+8, y:s.y+8 });   // same size/type/style, nudged so it's grabbable
+    sel=boxes.length-1; dirty=true; sync();
+  };
+
+  // Line-art generator UI.
+  let lastArt='';
+  $('pma-genart').onclick=()=>{
+    const svg=generateLineArt();
+    if(!svg) return;
+    lastArt=svg;
+    const durl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+    $('pma-artimg').src=durl;
+    $('pma-artdl').href=durl;
+    const svgIn=$('pma-artsvg'); if(svgIn) svgIn.value=svg;
+    $('pma-artwrap').style.display='';
+  };
+  const artForm=$('pma-artsave');
+  if(artForm) artForm.addEventListener('submit', e=>{
+    if(!lastArt){ e.preventDefault(); alert('Generate the line art first.'); return; }
+    $('pma-artsvg').value=lastArt;
+    if(!confirm('Save this line art as the {{ face }} image? It replaces any existing {{ face }} image on this profile.')){ e.preventDefault(); }
+  });
+  $('pma-save').addEventListener('submit', e=>{
+    const pm=buildPortMap();
+    if(!pm){ e.preventDefault(); return; }
+    if(!pm.length && !confirm('No ports inside the frame - save an empty port map?')){ e.preventDefault(); return; }
+    $('pma-portmap').value=JSON.stringify(pm);
+    $('pma-json').value=JSON.stringify(pm,null,1);
+  });
+
+  sync();
+})();
+</script>
+{% endblock content %}

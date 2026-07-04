@@ -60,6 +60,10 @@ urlpatterns = [
     path('line-art/',
          views.LineArtGalleryView.as_view(), name='line_art_gallery'),
 
+    # Port-map annotator - v0.8.0.
+    path('port-map-annotator/',
+         views.PortMapAnnotatorView.as_view(), name='portmap_annotator'),
+
     # Placement
     path('placements/',
          views.PlacementListView.as_view(), name='placement_list'),

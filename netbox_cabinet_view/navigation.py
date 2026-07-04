@@ -74,6 +74,11 @@ menu = PluginMenu(
                     link_text='Line-Art Gallery',
                     permissions=[],
                 ),
+                PluginMenuItem(
+                    link='plugins:netbox_cabinet_view:portmap_annotator',
+                    link_text='Port Map Annotator',
+                    permissions=[],
+                ),
             ),
         ),
     ),

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -182,15 +183,15 @@ def _device_hosts_mounts(device):
     The Layout tab is visible when:
     * The device's DeviceType has a profile with ``hosts_mounts=True``
       (even with zero mounts — unlocks the empty-state CTA), OR
-    * The profile has a non-empty ``port_map`` (v0.7.2) — enables a
-      full-size front-panel view with interactive port overlay for
-      standalone rack-mount devices like switches that don't host
-      internal mounts.
+    * The profile has a non-empty ``port_map`` (v0.7.2) or
+      ``rear_port_map`` (v0.8.0). Enables a full-size front/rear-panel
+      view with interactive port overlay for standalone rack-mount
+      devices like switches that don't host internal mounts.
     """
     profile = getattr(device.device_type, 'cabinet_profile', None)
     if not profile:
         return False
-    return bool(profile.hosts_mounts or profile.port_map)
+    return bool(profile.hosts_mounts or profile.port_map or profile.rear_port_map)
 
 
 @register_model_view(Device, 'cabinet_layout', path='cabinet-layout')
@@ -232,15 +233,20 @@ class DeviceCabinetLayoutView(generic.ObjectView):
         )
 
         # v0.7.2: front-panel-only mode for non-host devices with port_map.
+        # v0.8.0: also triggers on a rear_port_map (front and/or rear).
+        has_front_panel = bool(profile and profile.port_map)
+        has_rear_panel = bool(profile and profile.rear_port_map)
         front_panel_only = bool(
             profile and not profile.hosts_mounts
-            and profile.port_map and not has_mounts
+            and (has_front_panel or has_rear_panel) and not has_mounts
         )
 
         return {
             'mounts': mounts,
             'has_mounts': has_mounts,
             'front_panel_only': front_panel_only,
+            'has_front_panel': has_front_panel,
+            'has_rear_panel': has_rear_panel,
             # Internal dimensions for the empty-state scale-reference
             # canvas. May be None — the template degrades gracefully to
             # a plain Bootstrap card + button when unset.
@@ -374,6 +380,118 @@ class LineArtGalleryView(LoginRequiredMixin, View):
         })
 
 
+class PortMapAnnotatorView(LoginRequiredMixin, View):
+    """
+    In-NetBox port-map annotator. Load a Device/Module mount profile's
+    front image, drag boxes over its ports/slots, and save the result
+    straight to the profile's ``port_map`` - no external tool, no
+    copy/paste of JSON.
+
+    Positions are normalised against a "module frame" box drawn on the
+    image, whose real width/height in mm the user sets. That decouples the
+    annotation from the image's own pixel scale, so a single photo (not
+    perfectly to scale, possibly holding several modules) can be used to
+    draw up multiple faceplates - each frame exports its own port_map.
+    """
+    template_name = 'netbox_cabinet_view/portmap_annotator.html'
+
+    def _resolve(self, data):
+        mp = data.get('module_profile')
+        dp = data.get('device_profile')
+        if mp:
+            return get_object_or_404(models.ModuleMountProfile, pk=mp), 'module'
+        if dp:
+            return get_object_or_404(models.DeviceMountProfile, pk=dp), 'device'
+        return None, None
+
+    @staticmethod
+    def _face(data):
+        return 'rear' if data.get('face') == 'rear' else 'front'
+
+    def _url_for(self, profile, kind, face='front'):
+        base = reverse('plugins:netbox_cabinet_view:portmap_annotator')
+        if not profile:
+            return base
+        param = 'module_profile' if kind == 'module' else 'device_profile'
+        url = f'{base}?{param}={profile.pk}'
+        if face == 'rear':
+            url += '&face=rear'
+        return url
+
+    def get(self, request):
+        from django.shortcuts import render as django_render
+        profile, kind = self._resolve(request.GET)
+        face = self._face(request.GET)
+        image_url = ''
+        frame_w, frame_h = 73, 255.8
+        port_map = []
+        if profile:
+            image_field = profile.rear_image if face == 'rear' else profile.front_image
+            try:
+                if image_field:
+                    image_url = image_field.url
+            except ValueError:
+                pass
+            port_map = (profile.rear_port_map if face == 'rear' else profile.port_map) or []
+            if kind == 'device':
+                frame_w = profile.internal_width_mm or 483
+                frame_h = profile.internal_height_mm or 88
+        return django_render(request, self.template_name, {
+            'profile': profile,
+            'kind': kind,
+            'face': face,
+            'image_url': image_url,
+            'frame_w': frame_w,
+            'frame_h': frame_h,
+            'port_map_json': json.dumps(port_map),
+            'module_profiles': models.ModuleMountProfile.objects.all().select_related('module_type'),
+            'device_profiles': models.DeviceMountProfile.objects.all().select_related('device_type'),
+        })
+
+    def post(self, request):
+        profile, kind = self._resolve(request.POST)
+        face = self._face(request.POST)
+        if not profile:
+            messages.error(request, 'Select a profile before saving.')
+            return redirect(reverse('plugins:netbox_cabinet_view:portmap_annotator'))
+        perm = f'netbox_cabinet_view.change_{kind}mountprofile'
+        if not request.user.has_perm(perm):
+            messages.error(request, 'You do not have permission to edit this profile.')
+            return redirect(self._url_for(profile, kind, face))
+
+        # v0.8.0: save generated line art as the profile's front/rear image.
+        image_svg = request.POST.get('image_svg')
+        if image_svg:
+            from django.core.files.base import ContentFile
+            field = profile.rear_image if face == 'rear' else profile.front_image
+            field.save(
+                f'{kind}-{profile.pk}-{face}-lineart.svg',
+                ContentFile(image_svg.encode('utf-8')),
+                save=True,
+            )
+            messages.success(request, f'Saved generated line art as the {face} image of {profile}.')
+            return redirect(self._url_for(profile, kind, face))
+
+        try:
+            port_map = json.loads(request.POST.get('port_map') or '[]')
+            if face == 'rear':
+                profile.rear_port_map = port_map
+            else:
+                profile.port_map = port_map
+            profile.full_clean()
+            profile.save()
+            n = len(port_map)
+            messages.success(
+                request,
+                f'Saved {n} {face} port-map entr{"y" if n == 1 else "ies"} to {profile}.',
+            )
+        except json.JSONDecodeError as exc:
+            messages.error(request, f'Invalid JSON: {exc}')
+        except ValidationError as exc:
+            messages.error(request, f'Invalid port map: {exc.messages[0] if exc.messages else exc}')
+        return redirect(self._url_for(profile, kind, face))
+
+
 @register_model_view(Device, 'cabinet_layout_svg', path='cabinet-layout/svg')
 class DeviceCabinetLayoutSVGView(View):
     """
@@ -455,6 +573,9 @@ class DeviceFrontPanelSVGView(View):
         theme = request.GET.get('theme') or None
         if theme not in ('dark', 'light', None):
             theme = None
+        face = request.GET.get('face')
+        if face not in ('front', 'rear'):
+            face = 'front'
         base_url = request.build_absolute_uri('/').rstrip('/')
-        svg = render_front_panel(device, base_url=base_url, theme=theme)
+        svg = render_front_panel(device, base_url=base_url, theme=theme, face=face)
         return HttpResponse(svg, content_type='image/svg+xml')

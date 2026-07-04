@@ -71,4 +71,34 @@
   </div>
 
 </div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <div class="card">
+      <h5 class="card-header">Port Maps</h5>
+      <div class="card-body">
+        <table class="table table-hover attr-table mb-0">
+          <tr>
+            <th scope="row">Front port map</th>
+            <td>{{ object.port_map|length }} entr{{ object.port_map|length|pluralize:"y,ies" }} defined{% if object.front_image %} &middot; image set{% endif %}</td>
+            <td class="text-end">
+              <a href="{% url 'plugins:netbox_cabinet_view:portmap_annotator' %}?device_profile={{ object.pk }}" class="btn btn-sm btn-outline-primary">
+                <i class="mdi mdi-vector-rectangle"></i> Annotate front
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Rear port map</th>
+            <td>{{ object.rear_port_map|length }} entr{{ object.rear_port_map|length|pluralize:"y,ies" }} defined{% if object.rear_image %} &middot; image set{% endif %}</td>
+            <td class="text-end">
+              <a href="{% url 'plugins:netbox_cabinet_view:portmap_annotator' %}?device_profile={{ object.pk }}&amp;face=rear" class="btn btn-sm btn-outline-primary">
+                <i class="mdi mdi-vector-rectangle"></i> Annotate rear
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}

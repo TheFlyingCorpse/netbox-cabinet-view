@@ -29,13 +29,33 @@
       <div class="card-body text-center p-0">
         {% if front_panel_only %}
           {# v0.7.2: standalone front-panel view for non-host devices with port_map. #}
-          <object type="image/svg+xml"
-                  id="cabinet-layout-svg-embed"
-                  class="cabinet-svg-embed"
-                  data-src="{% url 'dcim:device_cabinet_front_panel_svg' pk=object.pk %}"
-                  style="max-width: 100%; height: auto;">
-            Front panel for {{ object }}
-          </object>
+          {# v0.8.0: front and/or rear panel, side by side when both exist. #}
+          <div class="row g-0">
+            {% if has_front_panel %}
+            <div class="{% if has_rear_panel %}col-6 border-end{% else %}col-12{% endif %}">
+              {% if has_rear_panel %}<div class="small text-muted py-1 border-bottom">Front</div>{% endif %}
+              <object type="image/svg+xml"
+                      id="cabinet-layout-svg-embed"
+                      class="cabinet-svg-embed"
+                      data-src="{% url 'dcim:device_cabinet_front_panel_svg' pk=object.pk %}?face=front"
+                      style="max-width: 100%; height: auto;">
+                Front panel for {{ object }}
+              </object>
+            </div>
+            {% endif %}
+            {% if has_rear_panel %}
+            <div class="{% if has_front_panel %}col-6{% else %}col-12{% endif %}">
+              {% if has_front_panel %}<div class="small text-muted py-1 border-bottom">Rear</div>{% endif %}
+              <object type="image/svg+xml"
+                      {% if not has_front_panel %}id="cabinet-layout-svg-embed"{% endif %}
+                      class="cabinet-svg-embed"
+                      data-src="{% url 'dcim:device_cabinet_front_panel_svg' pk=object.pk %}?face=rear"
+                      style="max-width: 100%; height: auto;">
+                Rear panel for {{ object }}
+              </object>
+            </div>
+            {% endif %}
+          </div>
         {% elif has_mounts %}
           {% if has_face_specific %}
             {# Feature 1 (v0.5.0): dual-SVG rendering when mounts have explicit faces. #}
