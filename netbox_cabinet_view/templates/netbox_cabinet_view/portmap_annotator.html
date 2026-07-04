@@ -154,6 +154,18 @@
               <label class="form-label">Frame H (mm)</label>
               <input id="pma-modh" type="number" step="0.1" class="form-control form-control-sm" value="{{ frame_h }}">
             </div>
+            <div class="col-12" id="pma-frametarget-wrap" style="display:none">
+              <label class="form-label mb-0 small">This frame saves to profile</label>
+              <select id="pma-frametarget" class="form-select form-select-sm">
+                <option value="">(this profile - use the main Save button)</option>
+                <optgroup label="Module types">
+                  {% for mp in module_profiles %}<option value="module:{{ mp.pk }}">{{ mp.module_type }}</option>{% endfor %}
+                </optgroup>
+                <optgroup label="Device types">
+                  {% for dp in device_profiles %}<option value="device:{{ dp.pk }}">{{ dp.device_type }}</option>{% endfor %}
+                </optgroup>
+              </select>
+            </div>
           </div>
           <div class="form-text mt-1"><b>Type</b> is the port-map role; <b>Line art</b> is the glyph the generator draws. Drag a box to move it; <b>Shift</b>-drag to draw over an existing box. Frame W/H apply to the selected frame.</div>
 
@@ -193,6 +205,14 @@
               {% if profile %}Save {{ face }} port map to {{ profile }}{% else %}Choose a profile to save{% endif %}
             </button>
           </form>
+          <form method="post" id="pma-saveall-form" class="d-none">
+            {% csrf_token %}
+            {% if profile %}<input type="hidden" name="{{ kind }}_profile" value="{{ profile.pk }}">{% endif %}
+            <input type="hidden" name="face" value="{{ face }}">
+            <input type="hidden" name="frames" id="pma-frames">
+          </form>
+          <button type="button" class="btn btn-outline-primary w-100 mt-2" id="pma-saveall" title="Save every frame that has a target profile assigned">Save all frames to their targets</button>
+          <div class="form-text">Draw a frame per module, set <b>This frame saves to profile</b> for each, then save them all to their {{ face }} maps in one go.</div>
           <div class="btns d-flex gap-2 mt-2">
             <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" id="pma-copy">Copy JSON</button>
             <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" id="pma-load">Load JSON</button>
@@ -256,7 +276,12 @@
   const ov = document.getElementById('pma-ov');
   const ctx = ov.getContext('2d');
   const $ = id => document.getElementById(id);
-  let boxes = [], scale = 1, natW = 0, natH = 0, sel = -1, drawing = null, moving = null, dirty = false;
+  let boxes = [], scale = 1, natW = 0, natH = 0, sel = -1, drawing = null, moving = null, resizing = null, dirty = false;
+  // 8 resize handles: [id, fractionX, fractionY, horizEdge, vertEdge]
+  const HANDLES = [
+    ['nw',0,0,'l','t'], ['n',0.5,0,'','t'], ['ne',1,0,'r','t'], ['e',1,0.5,'r',''],
+    ['se',1,1,'r','b'], ['s',0.5,1,'','b'], ['sw',0,1,'l','b'], ['w',0,0.5,'l',''],
+  ];
 
   // profile switch
   $('pma-target').addEventListener('change', e => {
@@ -326,8 +351,19 @@
     }
     return -1;
   }
+  // Resize handle of the selected box under a point (null if none).
+  function handleAt(p){
+    if(sel<0 || !boxes[sel]) return null;
+    const b=boxes[sel], tol=6/scale;
+    for(const [id,fx,fy,hx,hy] of HANDLES){
+      if(Math.abs(p.x-(b.x+b.w*fx))<=tol && Math.abs(p.y-(b.y+b.h*fy))<=tol) return {hx,hy};
+    }
+    return null;
+  }
   ov.addEventListener('mousedown', ev => {
     const p=toImg(ev);
+    const rh = ev.shiftKey ? null : handleAt(p);   // grab a resize handle first
+    if(rh){ resizing={ i:sel, hx:rh.hx, hy:rh.hy, moved:false }; return; }
     const hit = ev.shiftKey ? -1 : hitBox(p);   // Shift forces draw-over
     if(hit>=0){
       moving={ i:hit, dx:p.x-boxes[hit].x, dy:p.y-boxes[hit].y, moved:false };
@@ -340,10 +376,19 @@
   });
   ov.addEventListener('mousemove', ev => {
     const p=toImg(ev);
+    if(resizing){
+      const b=boxes[resizing.i];
+      if(resizing.hx==='l'){ const right=b.x+b.w; b.x=Math.round(Math.min(p.x, right-2)); b.w=right-b.x; }
+      if(resizing.hx==='r'){ b.w=Math.max(2, Math.round(p.x-b.x)); }
+      if(resizing.hy==='t'){ const bot=b.y+b.h; b.y=Math.round(Math.min(p.y, bot-2)); b.h=bot-b.y; }
+      if(resizing.hy==='b'){ b.h=Math.max(2, Math.round(p.y-b.y)); }
+      resizing.moved=true; redraw(); fillBoxMm(); return;
+    }
     if(moving){ const b=boxes[moving.i]; b.x=Math.round(p.x-moving.dx); b.y=Math.round(p.y-moving.dy); moving.moved=true; redraw(); return; }
     if(drawing){ drawing.x1=p.x; drawing.y1=p.y; redraw(); }
   });
   window.addEventListener('mouseup', () => {
+    if(resizing){ if(resizing.moved){ dirty=true; sync(); } resizing=null; return; }
     if(moving){ if(moving.moved){ dirty=true; sync(); } moving=null; return; }
     if(!drawing) return;
     const x=Math.round(Math.min(drawing.x0,drawing.x1)), y=Math.round(Math.min(drawing.y0,drawing.y1));
@@ -365,6 +410,15 @@
       ctx.strokeRect(b.x*scale,b.y*scale,b.w*scale,b.h*scale); ctx.setLineDash([]);
       if(b.label){ ctx.fillStyle=c; ctx.font='bold 12px sans-serif'; ctx.fillText(b.label, b.x*scale+2, b.y*scale-3); }
     });
+    // Resize handles on the selected box.
+    if(sel>=0 && boxes[sel]){
+      const b=boxes[sel];
+      ctx.fillStyle='#fff'; ctx.strokeStyle='#1f6feb'; ctx.lineWidth=1;
+      HANDLES.forEach(([id,fx,fy])=>{
+        const hx=(b.x+b.w*fx)*scale, hy=(b.y+b.h*fy)*scale;
+        ctx.fillRect(hx-3,hy-3,6,6); ctx.strokeRect(hx-3,hy-3,6,6);
+      });
+    }
     if(drawing){ ctx.strokeStyle='#fff'; ctx.setLineDash([4,2]); ctx.strokeRect(Math.min(drawing.x0,drawing.x1)*scale,Math.min(drawing.y0,drawing.y1)*scale,Math.abs(drawing.x1-drawing.x0)*scale,Math.abs(drawing.y1-drawing.y0)*scale); ctx.setLineDash([]); }
   }
 
@@ -410,6 +464,9 @@
     const b=boxes[sel], f=referenceFrame();
     const ok = sel>=0 && b && b.type!=='module' && f;
     ['pma-bx','pma-by','pma-bw','pma-bh'].forEach(id=>{ $(id).disabled=!ok; if(!ok) $(id).value=''; });
+    // Per-frame target picker: only meaningful when a frame is selected.
+    const isFrame = sel>=0 && b && b.type==='module';
+    const ftw=$('pma-frametarget-wrap'); if(ftw){ ftw.style.display = isFrame ? '' : 'none'; if(isFrame) $('pma-frametarget').value = b.target || ''; }
     if(!ok) return;
     const MW=f.mm_w||73, MH=f.mm_h||255.8, r=v=>Math.round(v*10)/10;
     $('pma-bx').value=r((b.x-f.x)/f.w*MW);
@@ -462,6 +519,26 @@
     if(frames.length===0) return { x:0,y:0,w:natW||1,h:natH||1, mm_w:+$('pma-modw').value||73, mm_h:+$('pma-modh').value||255.8, whole:true };
     return null;
   }
+  const rnd = v => Math.round(v*10)/10;
+  // Map one canvas box to a port_map entry, relative to frame f.
+  function mapEntry(b, f){
+    const MW=f.mm_w||73, MH=f.mm_h||255.8;
+    const geo = {
+      x_mm:rnd((b.x-f.x)/f.w*MW), y_mm:rnd((b.y-f.y)/f.h*MH),
+      width_mm:rnd(b.w/f.w*MW), height_mm:rnd(b.h/f.h*MH),
+    };
+    const type = b.type==='slot' ? 'module_bay' : b.type;   // slot -> module_bay
+    const style = b.style || (type==='decor' ? 'button' : ''); // decor must carry a style
+    const e = { name:b.label||'', type, ...geo };
+    if(style) e.style = style;
+    return e;
+  }
+  // Boxes whose centre falls inside frame f (its ports).
+  function portMapForFrame(f){
+    return boxes.filter(b=>b!==f && b.type!=='module' &&
+      b.x+b.w/2>=f.x && b.x+b.w/2<=f.x+f.w && b.y+b.h/2>=f.y && b.y+b.h/2<=f.y+f.h)
+      .map(b=>mapEntry(b, f));
+  }
   function buildPortMap(quiet){
     const f=referenceFrame();
     if(!f){ if(!quiet) alert('Multiple device/module frames on the image - click the one you want to save.'); return null; }
@@ -469,22 +546,9 @@
     // a single frame (or the whole-image fallback) every non-frame box is a port,
     // so don't drop edge boxes or spuriously collapse to [].
     const multi = boxes.filter(b=>b.type==='module').length > 1;
-    const MW=f.mm_w||73, MH=f.mm_h||255.8, r=v=>Math.round(v*10)/10;
     const inside = boxes.filter(b=>b!==f && b.type!=='module' && (!multi ||
       (b.x+b.w/2>=f.x && b.x+b.w/2<=f.x+f.w && b.y+b.h/2>=f.y && b.y+b.h/2<=f.y+f.h)));
-    return inside.map(b=>{
-      const geo = {
-        x_mm:r((b.x-f.x)/f.w*MW), y_mm:r((b.y-f.y)/f.h*MH),
-        width_mm:r(b.w/f.w*MW), height_mm:r(b.h/f.h*MH),
-      };
-      // Type is the port-map role; slot -> module_bay, others map 1:1.
-      const type = b.type==='slot' ? 'module_bay' : b.type;
-      // decor must carry a style; default it if the user left it Auto.
-      const style = b.style || (type==='decor' ? 'button' : '');
-      const e = { name:b.label||'', type, ...geo };
-      if(style) e.style = style;
-      return e;
-    });
+    return inside.map(b=>mapEntry(b, f));
   }
   // Keep the JSON textarea in sync with the current boxes once the user has
   // started editing. Quiet (no alert) so it can run on every change; only
@@ -666,6 +730,19 @@
     const s=boxes[sel];
     boxes.push({ ...s, x:s.x+8, y:s.y+8 });   // same size/type/style, nudged so it's grabbable
     sel=boxes.length-1; dirty=true; sync();
+  };
+  // Per-frame target profile (multi-module save from one canvas).
+  $('pma-frametarget').addEventListener('change', ()=>{
+    if(sel>=0 && boxes[sel] && boxes[sel].type==='module') boxes[sel].target=$('pma-frametarget').value;
+  });
+  $('pma-saveall').onclick=()=>{
+    const targeted=boxes.filter(b=>b.type==='module' && b.target);
+    if(!targeted.length){ alert('Assign at least one frame a target profile first (select a frame, then "This frame saves to profile").'); return; }
+    const batch=targeted.map(f=>({ target:f.target, port_map:portMapForFrame(f) }));
+    const total=batch.reduce((a,x)=>a+x.port_map.length,0);
+    if(!confirm(`Save ${batch.length} frame(s) (${total} entries) to their target profiles' ${root.dataset.face} maps?`)) return;
+    $('pma-frames').value=JSON.stringify(batch);
+    $('pma-saveall-form').submit();
   };
 
   // Line-art generator UI.

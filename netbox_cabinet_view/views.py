@@ -451,6 +451,12 @@ class PortMapAnnotatorView(LoginRequiredMixin, View):
     def post(self, request):
         profile, kind = self._resolve(request.POST)
         face = self._face(request.POST)
+
+        # v0.8.0: batch save - one canvas, several frames each to its own profile.
+        frames = request.POST.get('frames')
+        if frames is not None:
+            return self._save_frames(request, frames, face, profile, kind)
+
         if not profile:
             messages.error(request, 'Select a profile before saving.')
             return redirect(reverse('plugins:netbox_cabinet_view:portmap_annotator'))
@@ -489,6 +495,60 @@ class PortMapAnnotatorView(LoginRequiredMixin, View):
             messages.error(request, f'Invalid JSON: {exc}')
         except ValidationError as exc:
             messages.error(request, f'Invalid port map: {exc.messages[0] if exc.messages else exc}')
+        return redirect(self._url_for(profile, kind, face))
+
+    def _save_frames(self, request, frames_json, face, profile, kind):
+        """
+        Batch save: each item is {target: 'module:pk'|'device:pk', port_map: [...]}.
+        Saves each port_map to the target profile's front or rear map. Per-record
+        errors are collected and surfaced, never silently dropped.
+        """
+        try:
+            batch = json.loads(frames_json or '[]')
+        except json.JSONDecodeError as exc:
+            messages.error(request, f'Invalid frames JSON: {exc}')
+            return redirect(self._url_for(profile, kind, face))
+        if not isinstance(batch, list):
+            messages.error(request, 'frames must be a JSON list.')
+            return redirect(self._url_for(profile, kind, face))
+
+        saved = 0
+        errors = []
+        for item in batch:
+            if not isinstance(item, dict):
+                errors.append('malformed frame entry')
+                continue
+            target = str(item.get('target') or '')
+            port_map = item.get('port_map') or []
+            tkind, _, tpk = target.partition(':')
+            if tkind not in ('module', 'device') or not tpk.isdigit():
+                errors.append(f'bad target "{target}"')
+                continue
+            model = models.ModuleMountProfile if tkind == 'module' else models.DeviceMountProfile
+            prof = model.objects.filter(pk=int(tpk)).first()
+            if not prof:
+                errors.append(f'{target}: profile not found')
+                continue
+            if not request.user.has_perm(f'netbox_cabinet_view.change_{tkind}mountprofile'):
+                errors.append(f'{prof}: no permission')
+                continue
+            if face == 'rear':
+                prof.rear_port_map = port_map
+            else:
+                prof.port_map = port_map
+            try:
+                prof.full_clean()
+                prof.save()
+                saved += 1
+            except ValidationError as exc:
+                errors.append(f'{prof}: {exc.messages[0] if exc.messages else exc}')
+
+        if saved:
+            messages.success(request, f'Saved {face} port maps to {saved} profile(s).')
+        for err in errors[:10]:
+            messages.error(request, err)
+        if not saved and not errors:
+            messages.warning(request, 'No frames had a target profile assigned.')
         return redirect(self._url_for(profile, kind, face))
 
 
